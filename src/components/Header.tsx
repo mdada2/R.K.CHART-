@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Calendar, BookOpen, BarChart3, Calculator, ShieldCheck, Flame, RefreshCw, ExternalLink, Globe, Moon, Sun } from 'lucide-react';
+import { Sparkles, Calendar, BookOpen, BarChart3, Calculator, ShieldCheck, Flame, RefreshCw, ExternalLink, Globe, Moon, Sun, Monitor } from 'lucide-react';
 import { Language, MarketType, MARKETS } from '../types';
 import { Theme } from '../App';
 
@@ -106,21 +106,46 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Theme Switcher */}
-          <div className="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700">
+          {/* Theme Switcher (Light / Dark / System) */}
+          <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg border border-slate-700/80 shadow-inner" role="group" aria-label="Theme selector">
             <button
+              type="button"
               onClick={() => onThemeChange('light')}
-              className={`p-1.5 rounded-md ${theme === 'light' ? 'bg-slate-700 text-amber-400' : 'text-slate-400'}`}
-              title="Light Mode"
+              className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                theme === 'light'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-amber-400'
+              }`}
+              title={isMr ? 'लाईट मोड (Light)' : 'Light Theme'}
+              aria-label="Light mode"
             >
               <Sun className="w-3.5 h-3.5" />
             </button>
             <button
+              type="button"
               onClick={() => onThemeChange('dark')}
-              className={`p-1.5 rounded-md ${theme === 'dark' ? 'bg-slate-700 text-indigo-400' : 'text-slate-400'}`}
-              title="Dark Mode"
+              className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-slate-700 text-indigo-300 font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-indigo-400'
+              }`}
+              title={isMr ? 'डार्क मोड (Dark)' : 'Dark Theme'}
+              aria-label="Dark mode"
             >
               <Moon className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onThemeChange('system')}
+              className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                theme === 'system'
+                  ? 'bg-slate-700 text-emerald-300 font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-emerald-400'
+              }`}
+              title={isMr ? 'सिस्टम थीम ऑटो (System Auto)' : 'System Default Theme'}
+              aria-label="System theme"
+            >
+              <Monitor className="w-3.5 h-3.5" />
             </button>
           </div>
           

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, Calendar, X, Eye, Info, Sparkles, Layers, Download, Grid, LayoutList } from 'lucide-react';
-import { DayKey, Language, WeekRecord } from '../types';
+import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { 
   DAY_NAMES, 
   DAY_KEYS, 
@@ -17,13 +17,17 @@ import {
 interface ChartExplorerProps {
   history: WeekRecord[];
   language: Language;
+  market?: MarketType;
 }
 
 export const ChartExplorer: React.FC<ChartExplorerProps> = ({
   history,
   language,
+  market = 'kalyan',
 }) => {
   const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const marketInfo = MARKETS[market];
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState<string>('2026');
@@ -127,7 +131,7 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `kalyan_historical_chart_2021_2026.csv`);
+    link.setAttribute('download', isNight ? `rajdhani_night_historical_chart_2016_2026.csv` : `kalyan_historical_chart_2021_2026.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -136,16 +140,25 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
   return (
     <div className="space-y-5 max-w-6xl mx-auto pb-12">
       {/* Search and Filters Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-              <span>{isMr ? 'कल्याण जोडी व पॅनल चार्ट (२०२१ - २०२६)' : 'Kalyan Jodi & Panel Chart Archive'}</span>
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>
+                  {isNight 
+                    ? (isMr ? 'राजधानी नाईट जोडी व पॅनल चार्ट (२०१६ - २०२६)' : 'Rajdhani Night Jodi & Panel Chart Archive')
+                    : (isMr ? 'कल्याण जोडी व पॅनल चार्ट (२०२१ - २०२६)' : 'Kalyan Jodi & Panel Chart Archive')}
+                </span>
+              </h2>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30">
+                {marketInfo.name[language]}
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
               {isMr 
-                ? '२७२ आठवड्यांचा संपूर्ण चार्ट. कोणत्याही जोडीवर क्लिक करून सखोल गणित तपासा.'
-                : 'Complete historical panel database. Click on any pair to inspect formulas and panas.'}
+                ? `${history.length} आठवड्यांचा संपूर्ण चार्ट. कोणत्याही जोडीवर क्लिक करून सखोल गणित तपासा.`
+                : `${history.length} weeks complete historical panel archive. Click on any pair to inspect formulas and panas.`}
             </p>
           </div>
 
@@ -246,22 +259,27 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
       </div>
 
       {/* Chart Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-center border-collapse">
             <thead>
-              <tr className="bg-slate-950 text-slate-300 border-b border-slate-800 text-xs sm:text-sm">
+              <tr className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
                 <th className="py-3 px-3 font-semibold tracking-wider text-left min-w-[120px]">
                   {isMr ? 'तारीख (Week)' : 'Week Dates'}
                 </th>
                 {DAY_KEYS.map((day) => (
-                  <th key={day} className="py-3 px-2 font-bold tracking-wider text-amber-400 min-w-[130px]">
-                    {DAY_NAMES[day][language]}
+                  <th key={day} className="py-3 px-2 font-bold tracking-wider text-amber-600 dark:text-amber-400 min-w-[130px]">
+                    <div>{DAY_NAMES[day][language]}</div>
+                    {isNight && day === 'sat' && (
+                      <span className="inline-block text-[10px] font-normal text-slate-500 dark:text-slate-400">
+                        ({isMr ? 'सुट्टी / Off' : 'Closed'})
+                      </span>
+                    )}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-xs sm:text-sm font-mono">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs sm:text-sm font-mono">
               {paginatedRows.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-8 text-center text-slate-400 text-sm">
@@ -633,7 +651,7 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
               }
 
               return (
-                <div className="bg-gradient-to-r from-amber-500/10 via-slate-950 to-amber-500/5 border border-amber-500/30 p-3.5 rounded-xl text-xs space-y-2">
+                <div className="bg-amber-500/10 dark:bg-gradient-to-r dark:from-amber-500/10 dark:via-slate-950 dark:to-amber-500/5 border border-amber-500/30 p-3.5 rounded-xl text-xs space-y-2">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-amber-400" />
                     <span className="font-bold text-amber-400 uppercase tracking-wider">

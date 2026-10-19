@@ -575,7 +575,7 @@ export function generateSolidPredictions(
     steps = f3.steps;
     formulaName = 'वारंवारता व संभाव्यता सूत्र (Frequency & Due Probability)';
     confidence = 80;
-    lineAnalysis = `२७२ आठवड्यांच्या गणितीय वारंवारतेनुसार कोल्ड आणि हॉट अंकांचे संयोजन.`;
+    lineAnalysis = `${history.length} आठवड्यांच्या गणितीय वारंवारतेनुसार कोल्ड आणि हॉट अंकांचे संयोजन.`;
   } else {
     // MASTER: Weighted consensus
     const scoreMap: Record<number, number> = {};
@@ -615,7 +615,7 @@ export function generateSolidPredictions(
     ];
 
     confidence = 89;
-    lineAnalysis = `कल्याण चार्टच्या तिन्ही प्रमुख गणितीय सूत्रांचे (बेरीज, लाईन प्रोग्रेशन, आणि २७२ आठवड्यांचे वारंवारता मॉडेल) एकत्रीकरण करून हे ४ अंक सर्वाधिक मजबूत ठरले आहेत.`;
+    lineAnalysis = `चार्टच्या तिन्ही प्रमुख गणितीय सूत्रांचे (बेरीज, लाईन प्रोग्रेशन, आणि ${history.length} आठवड्यांचे वारंवारता मॉडेल) एकत्रीकरण करून हे ४ अंक सर्वाधिक मजबूत ठरले आहेत.`;
   }
 
   // Generate 4 Strong Jodis and 4 Support Jodis from chosenOTC
@@ -769,7 +769,7 @@ export function runBacktest(
   for (let w = 1; w < history.length; w++) {
     for (const d of DAY_KEYS) {
       const cell = history[w][d];
-      if (cell && cell.jodi && !cell.jodi.includes('*')) {
+      if (cell && isValidPlayedJodi(cell.jodi) && cell.openPana !== '***') {
         validWeeks.push({ weekIdx: w, day: d });
       }
     }

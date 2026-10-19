@@ -15,19 +15,48 @@ export type Theme = 'light' | 'dark' | 'system';
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('mr');
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState<Theme>(() => {
+    try {
+      const saved = localStorage.getItem('app-theme') as Theme;
+      if (saved === 'light' || saved === 'dark' || saved === 'system') {
+        return saved;
+      }
+    } catch {}
+    return 'system';
+  });
   const [market, setMarket] = useState<MarketType>('kalyan');
   const [activeTab, setActiveTab] = useState<string>('predictor');
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+
+    const applyTheme = (isDark: boolean) => {
+      if (isDark) {
+        root.classList.add('dark');
+        root.classList.remove('light');
+        root.style.colorScheme = 'dark';
+      } else {
+        root.classList.add('light');
+        root.classList.remove('dark');
+        root.style.colorScheme = 'light';
+      }
+    };
+
+    try {
+      localStorage.setItem('app-theme', theme);
+    } catch {}
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.add(systemTheme);
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      applyTheme(mediaQuery.matches);
+
+      const handler = (e: MediaQueryListEvent) => {
+        applyTheme(e.matches);
+      };
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
     } else {
-      root.classList.add(theme);
+      applyTheme(theme === 'dark');
     }
   }, [theme]);
 
@@ -75,7 +104,7 @@ export default function App() {
   const latestDateStr = history.length > 0 ? history[history.length - 1].week : '19-10-26 to 25-10-26';
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-200">
       {/* Top Header */}
       <Header
         language={language}

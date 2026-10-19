@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Radio, RefreshCw, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Language, WeekRecord, DayKey } from '../types';
+import { Language, WeekRecord, DayKey, MarketType, MARKETS } from '../types';
 import { getISTDayKey } from '../utils/matkaMath';
 
 interface LiveAlertBarProps {
   language: Language;
   history: WeekRecord[];
+  market?: MarketType;
   onHistoryUpdated: (newHistory: WeekRecord[]) => void;
 }
 
 export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
   language,
   history,
+  market = 'kalyan',
   onHistoryUpdated,
 }) => {
   const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const marketInfo = MARKETS[market];
   const [isAutoTrackOn, setIsAutoTrackOn] = useState<boolean>(false);
   const [isVoiceOn, setIsVoiceOn] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -84,24 +88,34 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
     try {
       const todayKey = getISTDayKey();
 
-      // On Sunday, Kalyan market is completely closed. No draws take place.
-      if (!todayKey) {
+      // Check market-specific closure:
+      // For Rajdhani Night: Saturday and Sunday are closed.
+      // For Kalyan: Only Sunday is closed.
+      if (!todayKey || (isNight && todayKey === 'sat')) {
         setLastCheckedMsg(
-          isMr
-            ? 'रविवार: कल्याण मार्केट आज बंद आहे (Market Holiday). सोमवार दुपारी ३:४५ ची प्रतीक्षा करा.'
-            : 'Sunday: Kalyan Market closed today. Monday draw starts ~3:45 PM.'
+          isNight
+            ? (isMr
+                ? 'शनिवार/रविवार: राजधानी नाईट आज बंद आहे (Market Holiday). सोमवार रात्री ९:३० ची प्रतीक्षा करा.'
+                : 'Sat/Sun: Rajdhani Night closed today. Monday draw starts ~9:30 PM.')
+            : (isMr
+                ? 'रविवार: कल्याण मार्केट आज बंद आहे (Market Holiday). सोमवार दुपारी ३:४५ ची प्रतीक्षा करा.'
+                : 'Sunday: Kalyan Market closed today. Monday draw starts ~3:45 PM.')
         );
         return;
       }
 
-      const res = await fetch('/api/fetch-live');
+      const res = await fetch(`/api/fetch-live?market=${market}`);
       const json = await res.json();
 
       if (json.isSunday || json.isMarketClosed) {
         setLastCheckedMsg(
-          isMr
-            ? 'रविवार: कल्याण मार्केट आज बंद आहे. नवीन निकाल सोमवारी दुपारी ३:४५ नंतर येईल.'
-            : 'Sunday: Kalyan Market closed. Next draw Monday ~3:45 PM.'
+          isNight
+            ? (isMr
+                ? 'राजधानी नाईट: आज सुट्टी/मार्केट बंद आहे. पुढील निकाल सोमवारी रात्री ९:३० नंतर येईल.'
+                : 'Rajdhani Night closed today. Next draw Monday ~9:30 PM.')
+            : (isMr
+                ? 'कल्याण मार्केट आज बंद आहे. नवीन निकाल सोमवारी दुपारी ३:४५ नंतर येईल.'
+                : 'Sunday: Kalyan Market closed. Next draw Monday ~3:45 PM.')
         );
         return;
       }

@@ -19,7 +19,7 @@ import {
   ExternalLink,
   Globe
 } from 'lucide-react';
-import { DayKey, Language, WeekRecord } from '../types';
+import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { 
   CUT_MAP, 
   getCutAnk, 
@@ -38,14 +38,18 @@ interface MathCalculatorsProps {
   language: Language;
   history?: WeekRecord[];
   initialTool?: 'cut' | 'family' | 'pana' | 'motor' | 'matrix' | 'openToClose' | 'cyclePana';
+  market?: MarketType;
 }
 
 export const MathCalculators: React.FC<MathCalculatorsProps> = ({ 
   language, 
   history = [], 
-  initialTool = 'openToClose' 
+  initialTool = 'openToClose',
+  market = 'kalyan',
 }) => {
   const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const marketInfo = MARKETS[market];
 
   // Sub-tabs
   const [activeTool, setActiveTool] = useState<'cut' | 'family' | 'pana' | 'motor' | 'matrix' | 'openToClose' | 'cyclePana'>(initialTool);
@@ -128,12 +132,16 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
           <div>
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <ArrowRightLeft className="w-5 h-5 text-amber-400" />
-              <span>{isMr ? 'कल्याण कट अंक नियम व तक्ता (Cut Ank Rules)' : 'Kalyan Cut Ank Rules & Table'}</span>
+              <span>
+                {isNight 
+                  ? (isMr ? 'राजधानी नाईट: कट अंक नियम व तक्ता' : 'Rajdhani Night: Cut Ank Rules & Table') 
+                  : (isMr ? 'कल्याण: कट अंक नियम व तक्ता' : 'Kalyan: Cut Ank Rules & Table')}
+              </span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
               {isMr
-                ? 'कल्याण अंक गणितात ५ चा फरक असणारे अंक एकमेकांचे "कट अंक" मानले जातात. सूत्र: (अंक + ५) % १०'
-                : 'In Indian Matka math, digits differing by 5 are reciprocal Cut pairs. Formula: (Digit + 5) % 10.'}
+                ? `${marketInfo.name[language]} अंक गणितात ५ चा फरक असणारे अंक एकमेकांचे "कट अंक" मानले जातात. सूत्र: (अंक + ५) % १०`
+                : `In ${marketInfo.name[language]} math, digits differing by 5 are reciprocal Cut pairs. Formula: (Digit + 5) % 10.`}
             </p>
           </div>
 
@@ -211,7 +219,11 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
           <div>
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Hash className="w-5 h-5 text-amber-400" />
-              <span>{isMr ? 'कल्याण फॅमिली जोडी जनरेटर (Family Jodi Generator)' : 'Kalyan Family Jodi Generator'}</span>
+              <span>
+                {isNight 
+                  ? (isMr ? 'राजधानी नाईट: फॅमिली जोडी जनरेटर' : 'Rajdhani Night: Family Jodi Generator') 
+                  : (isMr ? 'कल्याण: फॅमिली जोडी जनरेटर' : 'Kalyan: Family Jodi Generator')}
+              </span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
               {isMr

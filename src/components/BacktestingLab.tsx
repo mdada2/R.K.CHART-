@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   Play, 
@@ -9,21 +9,27 @@ import {
   Award, 
   TrendingUp, 
   Layers,
-  Sparkles
+  Sparkles,
+  Calendar,
+  Clock
 } from 'lucide-react';
-import { DayKey, Language, WeekRecord, BacktestSummary } from '../types';
+import { DayKey, Language, WeekRecord, BacktestSummary, MarketType, MARKETS } from '../types';
 import { DAY_NAMES, runBacktest } from '../utils/matkaMath';
 
 interface BacktestingLabProps {
   history: WeekRecord[];
   language: Language;
+  market?: MarketType;
 }
 
 export const BacktestingLab: React.FC<BacktestingLabProps> = ({
   history,
   language,
+  market = 'kalyan',
 }) => {
   const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const marketInfo = MARKETS[market];
 
   const [testCount, setTestCount] = useState<number>(30);
   const [selectedFormula, setSelectedFormula] = useState<'master' | 'totalDiff' | 'weeklyLine' | 'frequency'>('master');
@@ -31,6 +37,11 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
   const [results, setResults] = useState<BacktestSummary | null>(() =>
     runBacktest(history, 30, 'master')
   );
+
+  // Recalculate backtest when market, history, count, or formula changes
+  useEffect(() => {
+    setResults(runBacktest(history, testCount, selectedFormula));
+  }, [history, market, testCount, selectedFormula]);
 
   const handleRunTest = () => {
     setIsRunning(true);
@@ -52,25 +63,38 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Intro Box */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-xs uppercase tracking-wider font-semibold text-emerald-400">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
                 {isMr ? 'गणितीय मॉडेल बॅकटेस्टिंग' : 'Mathematical Backtest Simulator'}
               </span>
-              <span className="text-slate-600">·</span>
-              <span className="text-xs text-slate-400">
-                {isMr ? 'खऱ्या निकालांवर चाचणी' : 'Tested on actual outcomes'}
+              <span className="text-slate-400 dark:text-slate-600">·</span>
+              <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30">
+                {marketInfo.name[language]}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                {isNight 
+                  ? (isMr ? 'सोम ते शुक्र (शनि-रवि बंद/XX)' : 'Mon to Fri (Sat-Sun Off)') 
+                  : (isMr ? 'सोम ते शनि (६ दिवस)' : 'Mon to Sat (6 Days)')}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              {isMr ? 'अंदाज सूत्रांचे प्रत्यक्ष ऐतिहासिक परीक्षण' : 'Empirical Verification of Prediction Formulas'}
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <span>
+                {isNight 
+                  ? (isMr ? 'राजधानी नाईट: ऐतिहासिक निकाल पडताळणी लॅब' : 'Rajdhani Night: Historical Verification Lab')
+                  : (isMr ? 'कल्याण: ऐतिहासिक निकाल पडताळणी लॅब' : 'Kalyan: Historical Verification Lab')}
+              </span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-              {isMr
-                ? 'या लॅबमध्ये तुम्ही निवडलेले सूत्र मागील १०, ३०, किंवा १०० सत्रांवर चालवून पाहू शकता. प्रणाली सांगेल की किती वेळा ओपन, क्लोज किंवा जोडी पास झाली.'
-                : 'Test how any formula would have performed historically. Evaluates OTC pass rates, Jodi hits, and Pana accuracy.'}
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              {isNight
+                ? (isMr 
+                    ? `राजधानी नाईटच्या २०१६ ते २०२६ मधील ५३०+ आठवड्यांच्या अधिकृत निकालांवर निवडलेल्या सूत्राची चाचणी केली जाते. यामध्ये शनिवार बंद (सुट्टी) असल्याने शुक्रवारनंतर थेट सोमवारची लाईन अचूक तपासली जाते.`
+                    : `Tested against 530+ historical weeks of Rajdhani Night (2016-2026). Saturday is recognized as closed/holiday so Friday flows directly into Monday predictions.`)
+                : (isMr
+                    ? `कल्याणच्या २०२१ ते २०२६ मधील २७०+ आठवड्यांच्या (सोमवार ते शनिवार) अधिकृत निकालांवर मागील सत्रांची थेट अचूकता तपासा.`
+                    : `Tested against 270+ historical weeks of Kalyan (Mon to Sat) to evaluate OTC and Jodi hit rates.`)}
             </p>
           </div>
 
@@ -87,16 +111,16 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
             ) : (
               <>
                 <Play className="w-4 h-4" />
-                <span>{isMr ? 'बॅकटेस्ट चालवा' : 'Run Backtest Simulation'}</span>
+                <span>{isMr ? 'पुन्हा बॅकटेस्ट चालवा' : 'Re-Run Backtest'}</span>
               </>
             )}
           </button>
         </div>
 
         {/* Configuration Controls */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 pt-4 border-t border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
           <div>
-            <label className="text-xs font-semibold text-slate-400 block mb-1.5">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-400 block mb-1.5">
               {isMr ? 'चाचणी सत्र संख्या (Number of Sessions):' : 'Number of Historical Sessions:'}
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -106,24 +130,24 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
                   onClick={() => setTestCount(cnt)}
                   className={`py-2 text-xs font-bold rounded-xl border transition-all ${
                     testCount === cnt
-                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
                   }`}
                 >
-                  {cnt} {isMr ? 'दिवस' : 'Days'}
+                  {cnt} {isMr ? 'सत्रे' : 'Sessions'}
                 </button>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-400 block mb-1.5">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-400 block mb-1.5">
               {isMr ? 'तपासायचे सूत्र (Formula to Evaluate):' : 'Formula to Evaluate:'}
             </label>
             <select
               value={selectedFormula}
               onChange={(e) => setSelectedFormula(e.target.value as any)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500"
             >
               <option value="master">{isMr ? 'मास्टर संगम हायब्रीड (Master Ensemble)' : 'Master Ensemble'}</option>
               <option value="totalDiff">{isMr ? 'चालू बेरीज-फरक ओटीसी (Total-Diff Trick)' : 'Total-Diff Trick'}</option>
@@ -134,57 +158,58 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
         </div>
       </div>
 
+
       {/* METRIC SCORECARDS */}
       {results && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {/* OTC Hit Rate */}
-          <div className="bg-slate-900 border-2 border-emerald-500/40 rounded-2xl p-4 text-center shadow-lg relative overflow-hidden">
-            <div className="text-xs text-slate-400 mb-1">
+          <div className="bg-white dark:bg-slate-900 border-2 border-emerald-500/50 rounded-2xl p-4 text-center shadow-lg relative overflow-hidden">
+            <div className="text-xs text-slate-600 dark:text-slate-400 mb-1 font-semibold">
               {isMr ? 'ओटीसी पास दर (OTC Hit %)' : 'OTC Pass Rate'}
             </div>
-            <div className="text-3xl sm:text-4xl font-black font-mono text-emerald-400">
+            <div className="text-3xl sm:text-4xl font-black font-mono text-emerald-600 dark:text-emerald-400">
               {results.otcHitRate}%
             </div>
-            <div className="text-[11px] text-slate-400 mt-1 font-medium">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
               {results.otcHits} / {results.totalTested} {isMr ? 'सत्रे पास' : 'sessions passed'}
             </div>
           </div>
 
           {/* Open Hits */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center shadow-lg">
-            <div className="text-xs text-slate-400 mb-1">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center shadow-lg">
+            <div className="text-xs text-slate-600 dark:text-slate-400 mb-1 font-semibold">
               {isMr ? 'ओपन पास (Open Hits)' : 'Open Digits Hit'}
             </div>
-            <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400">
+            <div className="text-3xl sm:text-4xl font-black font-mono text-amber-600 dark:text-amber-400">
               {results.openHits}
             </div>
-            <div className="text-[11px] text-slate-500 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-500 mt-1">
               {((results.openHits / results.totalTested) * 100).toFixed(1)}% {isMr ? 'दर' : 'rate'}
             </div>
           </div>
 
           {/* Close Hits */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center shadow-lg">
-            <div className="text-xs text-slate-400 mb-1">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center shadow-lg">
+            <div className="text-xs text-slate-600 dark:text-slate-400 mb-1 font-semibold">
               {isMr ? 'क्लोज पास (Close Hits)' : 'Close Digits Hit'}
             </div>
-            <div className="text-3xl sm:text-4xl font-black font-mono text-sky-400">
+            <div className="text-3xl sm:text-4xl font-black font-mono text-sky-600 dark:text-sky-400">
               {results.closeHits}
             </div>
-            <div className="text-[11px] text-slate-500 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-500 mt-1">
               {((results.closeHits / results.totalTested) * 100).toFixed(1)}% {isMr ? 'दर' : 'rate'}
             </div>
           </div>
 
           {/* Jodi Hits */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center shadow-lg">
-            <div className="text-xs text-slate-400 mb-1">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center shadow-lg">
+            <div className="text-xs text-slate-600 dark:text-slate-400 mb-1 font-semibold">
               {isMr ? 'थेट जोडी पास (Jodi Hits)' : 'Direct Jodi Hits'}
             </div>
-            <div className="text-3xl sm:text-4xl font-black font-mono text-purple-400">
+            <div className="text-3xl sm:text-4xl font-black font-mono text-purple-600 dark:text-purple-400">
               {results.jodiHits}
             </div>
-            <div className="text-[11px] text-slate-500 mt-1">
+            <div className="text-[11px] text-slate-500 dark:text-slate-500 mt-1">
               {results.jodiHitRate}% (8 {isMr ? 'जोड्यांपैकी' : 'pairs'})
             </div>
           </div>
@@ -193,20 +218,20 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
 
       {/* DETAILED VERIFICATION LOG TABLE */}
       {results && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-          <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
               <span>{isMr ? 'सत्रवार पडताळणी लॉग (Session Verification Log)' : 'Historical Verification Log'}</span>
             </h3>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-slate-400">
               {isMr ? `मागील ${results.recentResults.length} निकाल तपासले` : `Checked ${results.recentResults.length} sessions`}
             </span>
           </div>
 
           <div className="overflow-x-auto max-h-[500px]">
             <table className="w-full text-left border-collapse text-xs">
-              <thead className="bg-slate-950/80 sticky top-0 text-slate-400 border-b border-slate-800 text-[11px]">
+              <thead className="bg-slate-100 dark:bg-slate-950/80 sticky top-0 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 text-[11px]">
                 <tr>
                   <th className="py-2.5 px-3">{isMr ? 'आठवडा व वार' : 'Week & Day'}</th>
                   <th className="py-2.5 px-3">{isMr ? 'प्रत्यक्ष निकाल' : 'Actual Result'}</th>
@@ -215,56 +240,56 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
                   <th className="py-2.5 px-3 text-right">{isMr ? 'स्थिती' : 'Status'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-mono">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 font-mono">
                 {results.recentResults.map((item, idx) => (
                   <tr
                     key={idx}
-                    className={`hover:bg-slate-800/40 transition-colors ${
+                    className={`hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors ${
                       item.isJodiHit
-                        ? 'bg-purple-950/20'
+                        ? 'bg-purple-500/10 dark:bg-purple-950/20'
                         : item.isOtcHit
-                        ? 'bg-emerald-950/15'
+                        ? 'bg-emerald-500/10 dark:bg-emerald-950/15'
                         : ''
                     }`}
                   >
-                    <td className="py-2.5 px-3 text-slate-300 font-sans">
-                      <div className="font-medium text-white">{DAY_NAMES[item.day][language]}</div>
+                    <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-sans">
+                      <div className="font-medium text-slate-900 dark:text-white">{DAY_NAMES[item.day][language]}</div>
                       <div className="text-[10px] text-slate-500">{item.week}</div>
                     </td>
 
                     <td className="py-2.5 px-3">
                       <div className="flex items-center gap-1.5 font-bold">
-                        <span className="text-slate-400 text-[11px]">{item.actualOpenPana}</span>
-                        <span className="text-amber-400 text-sm bg-slate-950 px-1 rounded border border-slate-800">
+                        <span className="text-slate-500 dark:text-slate-400 text-[11px]">{item.actualOpenPana}</span>
+                        <span className="text-amber-600 dark:text-amber-400 text-sm bg-white dark:bg-slate-950 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 font-mono shadow-xs">
                           {item.actualJodi}
                         </span>
-                        <span className="text-slate-400 text-[11px]">{item.actualClosePana}</span>
+                        <span className="text-slate-500 dark:text-slate-400 text-[11px]">{item.actualClosePana}</span>
                       </div>
                     </td>
 
-                    <td className="py-2.5 px-3 text-slate-200">
-                      <span className="bg-slate-950 px-2 py-1 rounded border border-slate-800 font-bold text-amber-300">
+                    <td className="py-2.5 px-3">
+                      <span className="bg-white dark:bg-slate-950 px-2 py-1 rounded border border-slate-200 dark:border-slate-800 font-bold text-amber-600 dark:text-amber-300 font-mono shadow-xs">
                         {item.predictedOTC.join(', ')}
                       </span>
                     </td>
 
-                    <td className="py-2.5 px-3 text-slate-300 font-sans text-xs">
+                    <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-sans text-xs">
                       {item.hitDetails}
                     </td>
 
                     <td className="py-2.5 px-3 text-right font-sans">
                       {item.isJodiHit ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40">
                           <Award className="w-3 h-3" />
                           <span>जोडी पास</span>
                         </span>
                       ) : item.isOtcHit ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40">
                           <CheckCircle2 className="w-3 h-3" />
                           <span>ओटीसी पास</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700">
                           <XCircle className="w-3 h-3" />
                           <span>मिस</span>
                         </span>

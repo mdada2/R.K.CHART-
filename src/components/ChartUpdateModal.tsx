@@ -12,13 +12,14 @@ import {
   Sparkles,
   ExternalLink 
 } from 'lucide-react';
-import { DayKey, Language, WeekRecord } from '../types';
+import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { DAY_NAMES, DAY_KEYS } from '../utils/matkaMath';
 
 interface ChartUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   language: Language;
+  market?: MarketType;
   latestWeek?: WeekRecord;
   onHistoryUpdated: (newHistory: WeekRecord[]) => void;
 }
@@ -27,10 +28,13 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   isOpen,
   onClose,
   language,
+  market = 'kalyan',
   latestWeek,
   onHistoryUpdated,
 }) => {
   const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const marketInfo = MARKETS[market];
 
   const [activeSubTab, setActiveSubTab] = useState<'auto' | 'manual'>('auto');
 
@@ -69,7 +73,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
       const res = await fetch('/api/fetch-live', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customUrl: fetchUrl }),
+        body: JSON.stringify({ customUrl: fetchUrl, market }),
       });
       const json = await res.json();
 
@@ -139,6 +143,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setSaveSuccess(null);
 
     const payload = {
+      market,
       week: weekString,
       day: selectedDay,
       openPana: overrideData ? overrideData.openPana : openPanaInput,

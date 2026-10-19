@@ -190,8 +190,8 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Intro Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
+        <div className="hidden dark:block absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
           <div>
@@ -335,7 +335,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
         </div>
 
         {/* Live Open-to-Close Shortcut Banner */}
-        <div className="mt-4 p-3 bg-gradient-to-r from-amber-500/15 via-slate-900 to-amber-500/10 border border-amber-500/30 rounded-xl flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-4 p-3 bg-amber-500/10 dark:bg-gradient-to-r dark:from-amber-500/15 dark:via-slate-900 dark:to-amber-500/10 border border-amber-500/30 rounded-xl flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
               ⚡
@@ -740,8 +740,8 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
 
       {/* MULTI-FORMULA CONFLUENCE & JODI PROBABILITY METER */}
       {prediction.digitConfluences && prediction.digitConfluences.length > 0 && (
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border border-amber-500/30 rounded-2xl space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-amber-500/30 rounded-2xl space-y-3 shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
             <div className="flex items-center gap-2">
               <span className="text-base sm:text-lg">🎯</span>
               <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
@@ -871,7 +871,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
       </div>
 
       {/* AI DEEP REASONING SECTION */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl p-4 sm:p-6 shadow-xl">
+      <div className="bg-white dark:bg-slate-900 border border-indigo-500/30 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
