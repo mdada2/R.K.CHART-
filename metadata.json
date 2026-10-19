@@ -1,0 +1,8 @@
+{
+  "name": "Kalyan Ank Ganit & Jodi Chart Study",
+  "description": "शैक्षणिक उद्देशाने कल्याण जोडी व पॅनल चार्टचा सखोल अभ्यास, कट अंक, लाईन-त्रिक, ओटीसी (OTC) सूत्रे, आणि भविष्यातील अंकांचे पक्के गणितीय अंदाज लावणारे स्मार्ट विश्लेषक साधन.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

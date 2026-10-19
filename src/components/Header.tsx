@@ -1,0 +1,206 @@
+import React from 'react';
+import { Sparkles, Calendar, BookOpen, BarChart3, Calculator, ShieldCheck, Flame, RefreshCw, ExternalLink, Globe, Moon, Sun } from 'lucide-react';
+import { Language, MarketType, MARKETS } from '../types';
+import { Theme } from '../App';
+
+interface HeaderProps {
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+  market: MarketType;
+
+  onMarketChange: (market: MarketType) => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  latestDateStr: string;
+  totalWeeks?: number;
+  onOpenUpdateModal?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  language,
+  onLanguageChange,
+  theme,
+  onThemeChange,
+  market,
+  onMarketChange,
+  activeTab,
+  onTabChange,
+  latestDateStr,
+  totalWeeks,
+  onOpenUpdateModal,
+}) => {
+  const isMr = language === 'mr';
+  const isNight = market === 'rajdhani_night';
+  const currentMarketInfo = MARKETS[market];
+
+  const navItems = [
+    { id: 'predictor', label: isMr ? 'पक्के अंदाज' : 'Solid Predictor', icon: Sparkles },
+    { id: 'chart', label: isMr ? (isNight ? 'राजधानी चार्ट' : 'कल्याण चार्ट') : (isNight ? 'Rajdhani Chart' : 'Kalyan Chart'), icon: BarChart3 },
+    { id: 'calculators', label: isMr ? 'अंक गणित टूल्स' : 'Math Calculators', icon: Calculator },
+    { id: 'analytics', label: isMr ? 'वारंवारता सांख्यिकी' : 'Frequency Analytics', icon: Flame },
+    { id: 'backtest', label: isMr ? 'बॅकटेस्ट लॅब' : 'Backtest Lab', icon: ShieldCheck },
+    { id: 'guide', label: isMr ? 'मार्गदर्शक व नियम' : 'Study Guide', icon: BookOpen },
+  ];
+
+  return (
+    <header className="border-b border-slate-200/20 dark:border-slate-800 bg-[var(--background)]/90 backdrop-blur-md sticky top-0 z-40">
+      {/* Top Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg font-bold text-xl transition-all ${
+            isNight
+              ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-indigo-800 text-white shadow-indigo-500/20'
+              : 'bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 shadow-amber-500/20'
+          }`}>
+            {isNight ? 'रा' : 'क'}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
+                <span>{isMr ? (isNight ? 'राजधानी नाईट अंक गणित & चार्ट' : 'कल्याण अंक गणित & जोडी चार्ट') : (isNight ? 'Rajdhani Night Ganit & Chart' : 'Kalyan Ank Ganit & Jodi Chart')}</span>
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap">
+              <span className={isNight ? 'text-indigo-400 font-medium' : 'text-amber-400 font-medium'}>
+                {currentMarketInfo.tagline[language]}
+              </span>
+              <span aria-hidden="true">·</span>
+              <span>{totalWeeks || (isNight ? 535 : 273)} {isMr ? 'आठवडे डेटा' : 'Weeks Archive'}</span>
+              <span aria-hidden="true">·</span>
+              <span className="hidden sm:inline">{isMr ? 'सक्रिय:' : 'Active:'} {latestDateStr}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Center: Market Switcher (Kalyan Day vs Rajdhani Night) */}
+        <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shadow-inner">
+          <button
+            onClick={() => onMarketChange('kalyan')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              market === 'kalyan'
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+            title={isMr ? 'कल्याण (दुपारी ३:४५ - ५:५५)' : 'Kalyan (Day Market: 3:45 PM - 5:55 PM)'}
+          >
+            <span>☀️</span>
+            <span>{isMr ? 'कल्याण' : 'Kalyan'}</span>
+            <span className="text-[10px] opacity-75 font-normal hidden sm:inline">(Day)</span>
+          </button>
+          <button
+            onClick={() => onMarketChange('rajdhani_night')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              market === 'rajdhani_night'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
+            title={isMr ? 'राजधानी नाईट (रात्री ९:३० - ११:४५)' : 'Rajdhani Night (Night Market: 9:30 PM - 11:45 PM)'}
+          >
+            <span>🌙</span>
+            <span>{isMr ? 'राजधानी नाईट' : 'Rajdhani Night'}</span>
+            <span className="text-[10px] opacity-75 font-normal hidden sm:inline">(Night)</span>
+          </button>
+        </div>
+
+        {/* Right Controls */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Theme Switcher */}
+          <div className="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700">
+            <button
+              onClick={() => onThemeChange('light')}
+              className={`p-1.5 rounded-md ${theme === 'light' ? 'bg-slate-700 text-amber-400' : 'text-slate-400'}`}
+              title="Light Mode"
+            >
+              <Sun className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => onThemeChange('dark')}
+              className={`p-1.5 rounded-md ${theme === 'dark' ? 'bg-slate-700 text-indigo-400' : 'text-slate-400'}`}
+              title="Dark Mode"
+            >
+              <Moon className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          
+          {/* Official Website External Link */}
+          <a
+
+            href="https://dpboss.tax/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700/90 text-amber-300 hover:text-white border border-slate-700 rounded-lg text-xs font-semibold shadow-sm transition-all"
+            title={isMr ? 'अधिकृत निकाल वेबसाईटवर जा (थेट निकाल व OTC पाहण्यासाठी)' : 'Go to Official Live Website'}
+          >
+            <Globe className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden md:inline">{isMr ? 'अधिकृत निकाल वेबसाईट' : 'Live Official Site'}</span>
+            <span className="md:hidden">{isMr ? 'लाईव्ह साईट' : 'Live Site'}</span>
+            <ExternalLink className="w-3 h-3 text-slate-400" />
+          </a>
+
+          {/* Update / Fetch Result Modal Trigger */}
+          {onOpenUpdateModal && (
+            <button
+              onClick={onOpenUpdateModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-lg shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+              title={isMr ? 'वेबवरून निकाल फेच किंवा मॅन्युअल अपडेट करा' : 'Fetch from web or manually update result'}
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{isMr ? 'दैनिक निकाल अपडेट / फेच' : 'Update / Fetch Daily Result'}</span>
+              <span className="sm:hidden">{isMr ? 'अपडेट' : 'Update'}</span>
+            </button>
+          )}
+
+          {/* Language Switcher */}
+          <div className="flex items-center bg-slate-800/90 rounded-lg p-0.5 border border-slate-700">
+            <button
+              onClick={() => onLanguageChange('mr')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
+                isMr
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              मराठी
+            </button>
+            <button
+              onClick={() => onLanguageChange('en')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
+                !isMr
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              English
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto scrollbar-none py-1 border-t border-slate-800/60">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+    </header>
+  );
+};
