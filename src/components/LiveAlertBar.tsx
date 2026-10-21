@@ -2,14 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Radio, RefreshCw, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Language, WeekRecord, DayKey, MarketType, MARKETS } from '../types';
 import { getISTDayKey } from '../utils/matkaMath';
-
 interface LiveAlertBarProps {
   language: Language;
   history: WeekRecord[];
   market?: MarketType;
   onHistoryUpdated: (newHistory: WeekRecord[]) => void;
 }
-
 export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
   language,
   history,
@@ -24,9 +22,7 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
   const [currentTime, setCurrentTime] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [lastCheckedMsg, setLastCheckedMsg] = useState<string | null>(null);
-
   const prevLatestCellRef = useRef<string>('');
-
   // Update clock every second
   useEffect(() => {
     const updateTime = () => {
@@ -44,7 +40,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
-
   // Web Audio Pleasant Chime
   const playChime = () => {
     try {
@@ -67,7 +62,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
       // AudioContext not allowed before user interaction
     }
   };
-
   // Web Speech Announcement
   const speakAnnouncement = (text: string) => {
     if (!isVoiceOn || !window.speechSynthesis) return;
@@ -80,14 +74,12 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
       window.speechSynthesis.speak(utterance);
     } catch (e) {}
   };
-
   // Perform check
   const checkLiveResult = async (manual = false) => {
     if (isChecking) return;
     setIsChecking(true);
     try {
       const todayKey = getISTDayKey();
-
       // Check market-specific closure:
       // For Rajdhani Night: Saturday and Sunday are closed.
       // For Kalyan: Only Sunday is closed.
@@ -103,10 +95,8 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
         );
         return;
       }
-
       const res = await fetch(`/api/fetch-live?market=${market}`);
       const json = await res.json();
-
       if (json.isSunday || json.isMarketClosed) {
         setLastCheckedMsg(
           isNight
@@ -119,20 +109,13 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
         );
         return;
       }
-
       if (json.success && json.found && (json.data || json.result)) {
         const live = json.data || json.result;
         const currentHash = `${live.openPana}-${live.jodi}-${live.closePana}`;
-
         // Ensure we only update for the active market day
         const dayKey = (json.dayKey || live.dayKey || todayKey) as DayKey;
-        if (dayKey !== todayKey) {
-          setLastCheckedMsg(
-            isMr ? 'वेबसाईटवरील निकाल चालू दिवसाशी जुळत नाही.' : 'Result does not match current day.'
-          );
-          return;
-        }
-
+        // Day identified by server
+        // No rejection if draw is pending for today
         // If today is Monday, verify the result is not Saturday's stale result
         if (dayKey === 'mon' && history.length >= 2) {
           const prevWeek = history[history.length - 2];
@@ -150,12 +133,10 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
             return;
           }
         }
-
         // Check if anything changed compared to current week in history
         const latestWeek = history[history.length - 1];
         const existingCell = latestWeek ? latestWeek[dayKey] : null;
         const existingHash = existingCell ? `${existingCell.openPana}-${existingCell.jodi}-${existingCell.closePana}` : '';
-
         if (existingHash && currentHash !== existingHash && !currentHash.includes('***-**-***')) {
           // New result detected!
           // Call update API
@@ -170,21 +151,18 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
               closePana: live.closePana,
             }),
           });
-
           // Fetch fresh chart
           const histRes = await fetch(`/api/chart-history?market=${market}`);
           const histData = await histRes.json();
           if (histData.success && histData.history) {
             onHistoryUpdated(histData.history);
           }
-
           // Sound alert & voice
           playChime();
           const voiceMsg = isMr
             ? `कल्याणचा निकाल जाहीर झाला आहे! निकाल: ${live.openPana}, जोडी ${live.jodi}`
             : `Kalyan result declared! Jodi ${live.jodi}`;
           speakAnnouncement(voiceMsg);
-
           setLastCheckedMsg(isMr ? `नवीन निकाल प्राप्त: ${currentHash}` : `New result: ${currentHash}`);
         } else {
           const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -205,7 +183,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
       setIsChecking(false);
     }
   };
-
   // Background timer (checks every 45 seconds if auto-tracking is on)
   useEffect(() => {
     if (!isAutoTrackOn) return;
@@ -214,7 +191,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
     }, 45000);
     return () => clearInterval(interval);
   }, [isAutoTrackOn, history]);
-
   return (
     <div className="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-2.5 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -224,16 +200,14 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
             <Clock className="w-3.5 h-3.5 text-amber-400" />
             <span>{currentTime || 'IST'}</span>
           </div>
-
           <div className="hidden sm:flex items-center gap-2 text-slate-300">
             <span className="text-slate-500 font-normal">|</span>
             <span className="text-slate-400">{isMr ? 'ड्रॉ वेळ:' : 'Draw Times:'}</span>
-            <span className="font-semibold text-white">{isMr ? 'दुपारी ३:४५ (ओपन)' : '3:45 PM (Open)'}</span>
+            <span className="font-semibold text-white">{isMr ? `${marketInfo.openTime} (ओपन)` : (isNight ? '9:30 PM (Open)' : '3:45 PM (Open)')}</span>
             <span className="text-slate-500">·</span>
-            <span className="font-semibold text-white">{isMr ? 'संध्याकाळी ५:५५ (क्लोज)' : '5:55 PM (Close)'}</span>
+            <span className="font-semibold text-white">{isMr ? `${marketInfo.closeTime} (क्लोज)` : (isNight ? '11:45 PM (Close)' : '5:55 PM (Close)')}</span>
           </div>
         </div>
-
         {/* Right: Controls & Auto-Tracking Status */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {lastCheckedMsg && (
@@ -241,7 +215,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
               {lastCheckedMsg}
             </span>
           )}
-
           {/* Quick Check Button */}
           <button
             onClick={() => checkLiveResult(true)}
@@ -252,7 +225,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
             <RefreshCw className={`w-3 h-3 ${isChecking ? 'animate-spin text-amber-400' : ''}`} />
             <span>{isChecking ? (isMr ? 'तपासत आहे...' : 'Checking...') : (isMr ? 'तपासा' : 'Check')}</span>
           </button>
-
           {/* Voice Alert Toggle */}
           <button
             onClick={() => {
@@ -273,7 +245,6 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
             {isVoiceOn ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{isVoiceOn ? (isMr ? 'आवाज: चालू' : 'Voice: On') : (isMr ? 'आवाज: बंद' : 'Mute')}</span>
           </button>
-
           {/* Auto-Track Live Indicator */}
           <button
             onClick={() => setIsAutoTrackOn(!isAutoTrackOn)}
