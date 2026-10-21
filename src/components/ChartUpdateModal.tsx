@@ -290,15 +290,15 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                 </div>
                 <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1 gap-2">
                   <span>{isNight 
-    ? (isMr ? 'टीप: राजधानी नाईट ओपन रात्री ९:३० ला व क्लोज ११:४५ ला येतो.' : 'Note: Rajdhani Night Open ~9:30 PM & Close ~11:45 PM.')
-    : (isMr ? 'टीप: कल्याण ओपन दुपारी ३:४५ ला व क्लोज ५:४५ ला येतो.' : 'Note: Kalyan Open ~3:45 PM & Close ~5:45 PM.')}</span>
+    ? (isMr ? 'टीप: राजधानी नाईट ओपन रात्री ०९:३५ ला व क्लोज ११:४५ ला येतो.' : 'Note: Rajdhani Night Open ~09:35 PM & Close ~11:45 PM.')
+    : (isMr ? 'टीप: कल्याण ओपन संध्याकाळी ०४:५० ला व क्लोज ०६:५० ला येतो.' : 'Note: Kalyan Open ~04:50 PM & Close ~06:50 PM.')}</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleLoadSampleOpenOnly}
                       className="text-amber-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
                     >
                       <Sparkles className="w-3 h-3" />
-                      <span>{isMr ? '३:४५ PM ओपन चाचणी (390-2-***)' : '3:45 PM Open Sample'}</span>
+                      <span>{isMr ? '०४:५० PM ओपन चाचणी (390-2-***)' : '04:50 PM Open Sample'}</span>
                     </button>
                     <span>·</span>
                     <button
@@ -306,7 +306,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                       className="text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
                     >
                       <CheckCircle2 className="w-3 h-3" />
-                      <span>{isMr ? '६:०० PM पूर्ण निकाल (390-25-113)' : '6:00 PM Full Sample'}</span>
+                      <span>{isMr ? '०६:५० PM पूर्ण निकाल (390-25-113)' : '06:50 PM Full Sample'}</span>
                     </button>
                   </div>
                 </div>
@@ -327,7 +327,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                   </div>
                   <p className="text-[11px] text-slate-400">
                     {isMr 
-                      ? 'वेबसाईट क्लाउडफ्लेअर किंवा ब्लॉकमुळे रिस्पॉन्स न दिल्यास, तुम्ही वरील "३:४५ PM ओपन चाचणी" किंवा "मॅन्युअल निकाल नोंदणी" टॅब वापरू शकता.' 
+                      ? 'वेबसाईट क्लाउडफ्लेअर किंवा ब्लॉकमुळे रिस्पॉन्स न दिल्यास, तुम्ही वरील "०४:५० PM ओपन चाचणी" किंवा "मॅन्युअल निकाल नोंदणी" टॅब वापरू शकता.' 
                       : 'If the web portal is blocked or timed out, you can use Open Sample or switch to Manual Entry.'}
                   </p>
                 </div>

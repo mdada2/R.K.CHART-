@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md shadow-amber-500/20'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title={isMr ? 'कल्याण (दुपारी ३:४५ - ५:५५)' : 'Kalyan (Day Market: 3:45 PM - 5:55 PM)'}
+            title={isMr ? 'कल्याण (संध्याकाळी ०४:५० - ०६:५०)' : 'Kalyan (Day Market: 04:50 PM - 06:50 PM)'}
           >
             <span>☀️</span>
             <span>{isMr ? 'कल्याण' : 'Kalyan'}</span>
@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/30'
                 : 'text-slate-400 hover:text-white'
             }`}
-            title={isMr ? 'राजधानी नाईट (रात्री ९:३० - ११:४५)' : 'Rajdhani Night (Night Market: 9:30 PM - 11:45 PM)'}
+            title={isMr ? 'राजधानी नाईट (रात्री ०९:३५ - ११:४५)' : 'Rajdhani Night (Night Market: 09:35 PM - 11:45 PM)'}
           >
             <span>🌙</span>
             <span>{isMr ? 'राजधानी नाईट' : 'Rajdhani Night'}</span>

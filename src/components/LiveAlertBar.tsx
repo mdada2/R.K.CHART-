@@ -87,11 +87,11 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
         setLastCheckedMsg(
           isNight
             ? (isMr
-                ? 'शनिवार/रविवार: राजधानी नाईट आज बंद आहे (Market Holiday). सोमवार रात्री ९:३० ची प्रतीक्षा करा.'
-                : 'Sat/Sun: Rajdhani Night closed today. Monday draw starts ~9:30 PM.')
+                ? 'शनिवार/रविवार: राजधानी नाईट आज बंद आहे (Market Holiday). सोमवार रात्री ०९:३५ ची प्रतीक्षा करा.'
+                : 'Sat/Sun: Rajdhani Night closed today. Monday draw starts ~09:35 PM.')
             : (isMr
-                ? 'रविवार: कल्याण मार्केट आज बंद आहे (Market Holiday). सोमवार दुपारी ३:४५ ची प्रतीक्षा करा.'
-                : 'Sunday: Kalyan Market closed today. Monday draw starts ~3:45 PM.')
+                ? 'रविवार: कल्याण मार्केट आज बंद आहे (Market Holiday). सोमवार संध्याकाळी ०४:५० ची प्रतीक्षा करा.'
+                : 'Sunday: Kalyan Market closed today. Monday draw starts ~04:50 PM.')
         );
         return;
       }
@@ -101,11 +101,11 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
         setLastCheckedMsg(
           isNight
             ? (isMr
-                ? 'राजधानी नाईट: आज सुट्टी/मार्केट बंद आहे. पुढील निकाल सोमवारी रात्री ९:३० नंतर येईल.'
-                : 'Rajdhani Night closed today. Next draw Monday ~9:30 PM.')
+                ? 'राजधानी नाईट: आज सुट्टी/मार्केट बंद आहे. पुढील निकाल सोमवारी रात्री ०९:३५ नंतर येईल.'
+                : 'Rajdhani Night closed today. Next draw Monday ~09:35 PM.')
             : (isMr
-                ? 'कल्याण मार्केट आज बंद आहे. नवीन निकाल सोमवारी दुपारी ३:४५ नंतर येईल.'
-                : 'Sunday: Kalyan Market closed. Next draw Monday ~3:45 PM.')
+                ? 'कल्याण मार्केट आज बंद आहे. नवीन निकाल सोमवारी संध्याकाळी ०४:५० नंतर येईल.'
+                : 'Sunday: Kalyan Market closed. Next draw Monday ~04:50 PM.')
         );
         return;
       }
@@ -127,7 +127,7 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
           ) {
             setLastCheckedMsg(
               isMr
-                ? 'वेबसाईटवर अजून शनिवारचा निकाल दिसत आहे. सोमवारचा निकाल दुपारी ३:४५ नंतर जाहीर होईल.'
+                ? 'वेबसाईटवर अजून शनिवारचा निकाल दिसत आहे. सोमवारचा निकाल संध्याकाळी ०४:५० नंतर जाहीर होईल.'
                 : 'Old Saturday result still on website. Monday draw starts ~3:45 PM.'
             );
             return;
@@ -203,9 +203,9 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
           <div className="hidden sm:flex items-center gap-2 text-slate-300">
             <span className="text-slate-500 font-normal">|</span>
             <span className="text-slate-400">{isMr ? 'ड्रॉ वेळ:' : 'Draw Times:'}</span>
-            <span className="font-semibold text-white">{isMr ? `${marketInfo.openTime} (ओपन)` : (isNight ? '9:30 PM (Open)' : '3:45 PM (Open)')}</span>
+            <span className="font-semibold text-white">{isMr ? `${marketInfo.openTime} (ओपन)` : (isNight ? '09:35 PM (Open)' : '04:50 PM (Open)')}</span>
             <span className="text-slate-500">·</span>
-            <span className="font-semibold text-white">{isMr ? `${marketInfo.closeTime} (क्लोज)` : (isNight ? '11:45 PM (Close)' : '5:55 PM (Close)')}</span>
+            <span className="font-semibold text-white">{isMr ? `${marketInfo.closeTime} (क्लोज)` : (isNight ? '11:45 PM (Close)' : '06:50 PM (Close)')}</span>
           </div>
         </div>
         {/* Right: Controls & Auto-Tracking Status */}

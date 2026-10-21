@@ -191,8 +191,8 @@ function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): {
   const isNight = market === 'rajdhani_night';
 
   if (isNight) {
-    // Rajdhani Night runs Mon - Fri, open ~21:30 (9:30 PM) to ~23:45 (11:45 PM)
-    const drawStartMinutes = 21 * 60 + 30; // 21:30
+    // Rajdhani Night runs Mon - Fri, open ~21:35 (09:35 PM) to ~23:45 (11:45 PM)
+    const drawStartMinutes = 21 * 60 + 35; // 21:35 (09:35 PM)
     const isDrawWindow = totalMinutes >= drawStartMinutes;
     const isMarketClosed = weekday === 'Sat' || weekday === 'Sun';
 
@@ -215,8 +215,8 @@ function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): {
 
     return { dayKey, isSunday, isMarketClosed, isDrawWindow };
   } else {
-    // Kalyan Day runs Mon - Sat, open ~15:45 (3:45 PM) to ~17:55 (5:55 PM)
-    const drawStartMinutes = 15 * 60 + 45; // 15:45
+    // Kalyan Day runs Mon - Sat, open ~16:50 (04:50 PM) to ~18:50 (06:50 PM)
+    const drawStartMinutes = 16 * 60 + 50; // 16:50 (04:50 PM)
     const isDrawWindow = totalMinutes >= drawStartMinutes;
     const isMarketClosed = weekday === 'Sun';
 

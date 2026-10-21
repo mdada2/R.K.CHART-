@@ -747,7 +747,7 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
                     {isMr ? '२ तास (सुमारे १२० मिनिटे)' : '2 Hours (approx. 120 mins)'}
                   </div>
                   <div className="text-[10px] text-slate-500">
-                    {isMr ? '३:४५ PM ओपन ➔ ५:४५ PM क्लोज' : '3:45 PM Open ➔ 5:45 PM Close'}
+                    {isNight ? (isMr ? '०९:३५ PM ओपन ➔ ११:४५ PM क्लोज' : '09:35 PM Open ➔ 11:45 PM Close') : (isMr ? '०४:५० PM ओपन ➔ ०६:५० PM क्लोज' : '04:50 PM Open ➔ 06:50 PM Close')}
                   </div>
                 </div>
               </div>

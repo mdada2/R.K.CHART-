@@ -532,7 +532,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                   {isMr ? `${DAY_NAMES[selectedDay].mr}चा निकाल प्रलंबित आहे` : `${DAY_NAMES[selectedDay].en} Result Pending`}
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  {isMr ? 'ओपन दुपारी ३:४५ वाजता आणि क्लोज संध्याकाळी ६:०० वाजता जाहीर होतो.' : 'Open at ~3:45 PM and Close at ~6:00 PM.'}
+                  {isMr ? (isNight ? 'ओपन रात्री ०९:३५ वाजता आणि क्लोज रात्री ११:४५ वाजता जाहीर होतो.' : 'ओपन संध्याकाळी ०४:५० वाजता आणि क्लोज संध्याकाळी ०६:५० वाजता जाहीर होतो.') : (isNight ? 'Open at ~09:35 PM and Close at ~11:45 PM.' : 'Open at ~04:50 PM and Close at ~06:50 PM.')}
                 </div>
               </div>
             </div>
