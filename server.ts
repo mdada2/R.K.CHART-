@@ -159,9 +159,14 @@ app.post('/api/update-chart', (req, res) => {
 });
 
 // Helper: Determine Market Status and DayKey from Indian Standard Time (IST)
-function getISTMarketInfo(requestedDay?: string): { dayKey: string | null; isSunday: boolean; isDrawWindow: boolean } {
+function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): { 
+  dayKey: string; 
+  isSunday: boolean; 
+  isMarketClosed: boolean; 
+  isDrawWindow: boolean;
+} {
   if (requestedDay && ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].includes(requestedDay)) {
-    return { dayKey: requestedDay, isSunday: false, isDrawWindow: true };
+    return { dayKey: requestedDay, isSunday: false, isMarketClosed: false, isDrawWindow: true };
   }
   
   const istFormatter = new Intl.DateTimeFormat('en-US', {
@@ -182,21 +187,58 @@ function getISTMarketInfo(requestedDay?: string): { dayKey: string | null; isSun
   }
 
   const isSunday = weekday === 'Sun';
-  const dayMap: Record<string, string> = {
-    Mon: 'mon',
-    Tue: 'tue',
-    Wed: 'wed',
-    Thu: 'thu',
-    Fri: 'fri',
-    Sat: 'sat',
-  };
-
-  const dayKey = dayMap[weekday] || null;
   const totalMinutes = hour * 60 + minute;
-  // Draw window active after 15:30 (3:30 PM IST)
-  const isDrawWindow = totalMinutes >= 15 * 60 + 30;
+  const isNight = market === 'rajdhani_night';
 
-  return { dayKey, isSunday, isDrawWindow };
+  if (isNight) {
+    // Rajdhani Night runs Mon - Fri, open ~21:30 (9:30 PM) to ~23:45 (11:45 PM)
+    const drawStartMinutes = 21 * 60 + 30; // 21:30
+    const isDrawWindow = totalMinutes >= drawStartMinutes;
+    const isMarketClosed = weekday === 'Sat' || weekday === 'Sun';
+
+    let dayKey: string;
+    if (weekday === 'Mon') {
+      dayKey = isDrawWindow ? 'mon' : 'fri';
+    } else if (weekday === 'Tue') {
+      dayKey = isDrawWindow ? 'tue' : 'mon';
+    } else if (weekday === 'Wed') {
+      dayKey = isDrawWindow ? 'wed' : 'tue';
+    } else if (weekday === 'Thu') {
+      dayKey = isDrawWindow ? 'thu' : 'wed';
+    } else if (weekday === 'Fri') {
+      dayKey = isDrawWindow ? 'fri' : 'thu';
+    } else if (weekday === 'Sat' || weekday === 'Sun') {
+      dayKey = 'fri';
+    } else {
+      dayKey = 'mon';
+    }
+
+    return { dayKey, isSunday, isMarketClosed, isDrawWindow };
+  } else {
+    // Kalyan Day runs Mon - Sat, open ~15:45 (3:45 PM) to ~17:55 (5:55 PM)
+    const drawStartMinutes = 15 * 60 + 45; // 15:45
+    const isDrawWindow = totalMinutes >= drawStartMinutes;
+    const isMarketClosed = weekday === 'Sun';
+
+    let dayKey: string;
+    if (weekday === 'Mon') {
+      dayKey = isDrawWindow ? 'mon' : 'sat';
+    } else if (weekday === 'Tue') {
+      dayKey = isDrawWindow ? 'tue' : 'mon';
+    } else if (weekday === 'Wed') {
+      dayKey = isDrawWindow ? 'wed' : 'tue';
+    } else if (weekday === 'Thu') {
+      dayKey = isDrawWindow ? 'thu' : 'wed';
+    } else if (weekday === 'Fri') {
+      dayKey = isDrawWindow ? 'fri' : 'thu';
+    } else if (weekday === 'Sat') {
+      dayKey = isDrawWindow ? 'sat' : 'fri';
+    } else {
+      dayKey = 'sat';
+    }
+
+    return { dayKey, isSunday, isMarketClosed, isDrawWindow };
+  }
 }
 
 // Endpoint 3: Live Web Result Fetcher
@@ -204,37 +246,11 @@ app.all('/api/fetch-live', async (req, res) => {
   const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
   const customUrl = (req.body && req.body.customUrl) || (req.query && req.query.customUrl) as string;
   const targetUrl = customUrl || 'https://dpboss.tax/';
-  const { dayKey: targetDayKey, isSunday } = getISTMarketInfo(
-    (req.body && req.body.dayKey) || (req.query && req.query.dayKey) as string
-  );
+  const requestedDay = (req.body && req.body.dayKey) || (req.query && req.query.dayKey) as string;
+  const { dayKey: targetDayKey, isSunday, isMarketClosed } = getISTMarketInfo(market, requestedDay);
 
   const isNight = market === 'rajdhani_night';
   const marketName = isNight ? 'राजधानी नाईट' : 'कल्याण';
-  const marketClosedDays = isNight ? ['sat', 'sun'] : ['sun'];
-
-  // Handle Weekend Market Closures
-  if (isSunday && !(req.body && req.body.dayKey)) {
-    return res.json({
-      success: true,
-      found: false,
-      isMarketClosed: true,
-      isSunday: true,
-      dayKey: null,
-      message: `रविवार: ${marketName} मार्केट आज बंद आहे (Market Holiday). सोमवारचा नवीन निकाल ${isNight ? 'रात्री ९:३०' : 'दुपारी ३:४५'} नंतर येईल.`,
-      statusText: `रविवार: ${marketName} मार्केट बंद`,
-    });
-  }
-
-  if (isNight && targetDayKey === 'sat' && !(req.body && req.body.dayKey)) {
-    return res.json({
-      success: true,
-      found: false,
-      isMarketClosed: true,
-      dayKey: null,
-      message: 'शनिवार: राजधानी नाईट मार्केट शनिवार आणि रविवार बंद असते (सोमवार ते शुक्रवार सक्रिय). सोमवार रात्री ९:३० ची प्रतीक्षा करा.',
-      statusText: 'शनिवार: राजधानी नाईट मार्केट बंद (Mon-Fri only)',
-    });
-  }
 
   if (!targetDayKey) {
     return res.json({

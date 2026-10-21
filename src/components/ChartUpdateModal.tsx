@@ -85,7 +85,8 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
         setOpenPanaInput(json.data.openPana);
         setJodiInput(json.data.jodi);
         setClosePanaInput(json.data.closePana);
-        setFetchMessage(isMr ? 'वेबसाईटवरून निकाल यशस्वीरित्या फेच झाला!' : 'Live result successfully fetched from website!');
+        const currentMarketTitle = isNight ? (isMr ? 'राजधानी नाईट' : 'Rajdhani Night') : (isMr ? 'कल्याण' : 'Kalyan');
+        setFetchMessage(isMr ? `वेबसाईटवरून ${currentMarketTitle} निकाल यशस्वीरित्या फेच झाला!` : `Live result for ${currentMarketTitle} successfully fetched from website!`);
       } else if (json.message) {
         setFetchError(json.message);
       } else {
@@ -258,7 +259,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
               <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
                 <div className="text-xs text-slate-300 font-medium flex items-center justify-between">
                   <span>{isMr ? 'निकाल वेबसाईट URL (Source Web Portal):' : 'Result Web Portal URL:'}</span>
-                  <span className="text-[11px] text-amber-400 font-mono">Kalyan Live</span>
+                  <span className="text-[11px] text-amber-400 font-mono">{isNight ? 'Rajdhani Night Live' : 'Kalyan Live'}</span>
                 </div>
                 <div className="flex gap-2">
                   <input
@@ -288,7 +289,9 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                   </button>
                 </div>
                 <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1 gap-2">
-                  <span>{isMr ? 'टीप: ओपन दुपारी ३:४५ ला व क्लोज ५:४५ - ६:०० ला येतो.' : 'Note: Open comes ~3:45 PM & Close ~5:45 - 6:00 PM.'}</span>
+                  <span>{isNight 
+    ? (isMr ? 'टीप: राजधानी नाईट ओपन रात्री ९:३० ला व क्लोज ११:४५ ला येतो.' : 'Note: Rajdhani Night Open ~9:30 PM & Close ~11:45 PM.')
+    : (isMr ? 'टीप: कल्याण ओपन दुपारी ३:४५ ला व क्लोज ५:४५ ला येतो.' : 'Note: Kalyan Open ~3:45 PM & Close ~5:45 PM.')}</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleLoadSampleOpenOnly}

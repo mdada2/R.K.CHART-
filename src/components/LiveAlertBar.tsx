@@ -163,6 +163,7 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              market,
               day: dayKey,
               openPana: live.openPana,
               jodi: live.jodi,
@@ -171,7 +172,7 @@ export const LiveAlertBar: React.FC<LiveAlertBarProps> = ({
           });
 
           // Fetch fresh chart
-          const histRes = await fetch('/api/chart-history');
+          const histRes = await fetch(`/api/chart-history?market=${market}`);
           const histData = await histRes.json();
           if (histData.success && histData.history) {
             onHistoryUpdated(histData.history);
