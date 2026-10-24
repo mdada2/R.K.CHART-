@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import { LiveAlertBar } from './components/LiveAlertBar';
 import { PredictorView } from './components/PredictorView';
+import { PatternScannerView } from './components/PatternScannerView';
+import { PersonalPassbookView } from './components/PersonalPassbookView';
 import { ChartExplorer } from './components/ChartExplorer';
 import { MathCalculators } from './components/MathCalculators';
 import { FrequencyAnalytics } from './components/FrequencyAnalytics';
 import { BacktestingLab } from './components/BacktestingLab';
 import { EducationalGuide } from './components/EducationalGuide';
 import { ChartUpdateModal } from './components/ChartUpdateModal';
+import { OfflineIndicator } from './components/PWAInstallButton';
 import { kalyanHistory, rajdhaniNightHistory } from './data/historicalData';
-import { Language, MarketType, WeekRecord, MARKETS } from './types';
+import { Language, MarketType, WeekRecord } from './types';
+import { getEffectiveHistory } from './utils/matkaMath';
+import { mergeBaseAndCloudHistory, useFirebaseApp } from './contexts/FirebaseContext';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -26,6 +31,8 @@ export default function App() {
   });
   const [market, setMarket] = useState<MarketType>('kalyan');
   const [activeTab, setActiveTab] = useState<string>('predictor');
+
+  const { cloudKalyanWeeks, cloudRajdhaniWeeks } = useFirebaseApp();
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -60,16 +67,24 @@ export default function App() {
     }
   }, [theme]);
 
-  
-  // Separate historical state for each market so updates stay preserved
-  const [kalyanRecords, setKalyanRecords] = useState<WeekRecord[]>(kalyanHistory);
-  const [rajdhaniRecords, setRajdhaniRecords] = useState<WeekRecord[]>(rajdhaniNightHistory);
+  // Base historical state per market (updated by server API or local JSON)
+  const [kalyanBaseRecords, setKalyanBaseRecords] = useState<WeekRecord[]>(kalyanHistory);
+  const [rajdhaniBaseRecords, setRajdhaniBaseRecords] = useState<WeekRecord[]>(rajdhaniNightHistory);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
+
+  // Merge real-time Firestore cloud weeks onto base history
+  const kalyanRecords = useMemo(
+    () => mergeBaseAndCloudHistory(kalyanBaseRecords, cloudKalyanWeeks),
+    [kalyanBaseRecords, cloudKalyanWeeks]
+  );
+  const rajdhaniRecords = useMemo(
+    () => mergeBaseAndCloudHistory(rajdhaniBaseRecords, cloudRajdhaniWeeks),
+    [rajdhaniBaseRecords, cloudRajdhaniWeeks]
+  );
 
   // Active history based on chosen market
   const history = market === 'rajdhani_night' ? rajdhaniRecords : kalyanRecords;
   const isNight = market === 'rajdhani_night';
-  const currentMarketInfo = MARKETS[market];
 
   // Fetch updated history from server on mount / market switch if available
   useEffect(() => {
@@ -79,14 +94,14 @@ export default function App() {
       .then((data) => {
         if (isMounted && data.success && Array.isArray(data.history) && data.history.length > 0) {
           if (market === 'rajdhani_night') {
-            setRajdhaniRecords(data.history);
+            setRajdhaniBaseRecords(data.history);
           } else {
-            setKalyanRecords(data.history);
+            setKalyanBaseRecords(data.history);
           }
         }
       })
       .catch(() => {
-        // Fallback to local imported JSON data
+        // Offline / fallback to bundled + Firestore cached data
       });
     return () => {
       isMounted = false;
@@ -95,13 +110,15 @@ export default function App() {
 
   const handleHistoryUpdate = (newHistory: WeekRecord[]) => {
     if (market === 'rajdhani_night') {
-      setRajdhaniRecords(newHistory);
+      setRajdhaniBaseRecords(newHistory);
     } else {
-      setKalyanRecords(newHistory);
+      setKalyanBaseRecords(newHistory);
     }
   };
 
-  const latestDateStr = history.length > 0 ? history[history.length - 1].week : '19-10-26 to 25-10-26';
+  const effectiveHistory = getEffectiveHistory(history, market);
+  const effectiveLatestWeek = effectiveHistory[effectiveHistory.length - 1];
+  const latestDateStr = effectiveLatestWeek ? effectiveLatestWeek.week : '26-10-26 to 01-11-26';
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-200">
@@ -136,6 +153,23 @@ export default function App() {
             language={language}
             market={market}
             onNavigateToTab={setActiveTab}
+          />
+        )}
+
+        {activeTab === 'scanner' && (
+          <PatternScannerView
+            history={history}
+            language={language}
+            market={market}
+          />
+        )}
+
+        {activeTab === 'passbook' && (
+          <PersonalPassbookView
+            kalyanHistory={kalyanRecords}
+            rajdhaniHistory={rajdhaniRecords}
+            language={language}
+            activeMarket={market}
           />
         )}
 
@@ -179,27 +213,41 @@ export default function App() {
         )}
       </main>
 
-      {/* Daily Result Update / Fetch Modal */}
+      {/* Daily Result Update / Cloud Sync Modal */}
       {isUpdateModalOpen && (
         <ChartUpdateModal
           isOpen={isUpdateModalOpen}
           onClose={() => setIsUpdateModalOpen(false)}
           language={language}
           market={market}
-          latestWeek={history[history.length - 1]}
+          latestWeek={effectiveLatestWeek}
+          history={history}
           onHistoryUpdated={handleHistoryUpdate}
         />
       )}
+
+      {/* Offline Connectivity Banner */}
+      <OfflineIndicator language={language} />
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-2">
           <div className="flex flex-wrap items-center justify-center gap-3 text-slate-400">
-            <span>{isNight ? (language === 'mr' ? 'राजधानी नाईट अंक गणित & चार्ट अभ्यास' : 'Rajdhani Night Ganit & Chart Study') : (language === 'mr' ? 'कल्याण अंक गणित & जोडी चार्ट अभ्यास' : 'Kalyan Ank Ganit & Jodi Chart Study')}</span>
+            <span>
+              {isNight
+                ? language === 'mr'
+                  ? 'राजधानी नाईट अंक गणित & चार्ट अभ्यास'
+                  : 'Rajdhani Night Ganit & Chart Study'
+                : language === 'mr'
+                ? 'कल्याण अंक गणित & जोडी चार्ट अभ्यास'
+                : 'Kalyan Ank Ganit & Jodi Chart Study'}
+            </span>
             <span aria-hidden="true">·</span>
             <span>Educational Pattern & Combinatorics Engine</span>
             <span aria-hidden="true">·</span>
-            <span>{history.length} {language === 'mr' ? 'आठवडे डेटा संग्रह' : 'Weeks Data Archive'}</span>
+            <span className="font-mono tabular-nums">
+              {history.length} {language === 'mr' ? 'आठवडे डेटा संग्रह' : 'Weeks Data Archive'}
+            </span>
           </div>
           <p className="text-[11px] text-slate-600">
             {language === 'mr'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Sparkles, 
   HelpCircle, 
@@ -16,8 +16,10 @@ import {
   ShieldCheck,
   Share2,
   Send,
-  Award
+  Award,
+  Image as ImageIcon
 } from 'lucide-react';
+import { PhotoCardModal } from './PhotoCardModal';
 import { DayKey, Language, MarketType, PredictionResult, WeekRecord, MARKETS } from '../types';
 import { 
   DAY_NAMES, 
@@ -27,6 +29,9 @@ import {
   getFamilyJodis,
   isRedJodi,
   isMarketClosed,
+  isValidPlayedJodi,
+  getEffectiveHistory,
+  formatShortWeekRange,
   ALL_PANAS
 } from '../utils/matkaMath';
 
@@ -46,35 +51,76 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   const isMr = language === 'mr';
   const isNight = market === 'rajdhani_night';
   const currentMarketInfo = MARKETS[market];
-  const latest = history[history.length - 1];
 
-  const [viewingWeekIndex, setViewingWeekIndex] = useState<number>(history.length - 1);
+  // Build effective history: automatically appends an empty upcoming week once Saturday (Kalyan) / Friday (Rajdhani) completes
+  const effectiveHistory = useMemo(
+    () => getEffectiveHistory(history, market),
+    [history, market]
+  );
 
-  useEffect(() => {
-    setViewingWeekIndex(history.length - 1);
-  }, [history.length]);
+  const latest = effectiveHistory[effectiveHistory.length - 1];
 
-  const activeWeekRecord = history[viewingWeekIndex] || latest;
-
-  // Auto-detect next open day in active week
-  const determineUpcomingDay = (): DayKey => {
-    const targetRecord = activeWeekRecord || latest;
-    for (const d of DAY_KEYS) {
-      if (targetRecord && targetRecord[d] && targetRecord[d].jodi.includes('*')) {
-        return d;
+  const findNextOpenDay = (record?: WeekRecord): DayKey => {
+    if (record) {
+      for (const d of DAY_KEYS) {
+        if (record[d] && record[d].jodi.includes('*')) {
+          return d;
+        }
       }
     }
     return 'mon';
   };
 
-  const [selectedDay, setSelectedDay] = useState<DayKey>(determineUpcomingDay);
+  const [viewingWeekIndex, setViewingWeekIndex] = useState<number>(() =>
+    Math.max(0, effectiveHistory.length - 1)
+  );
+  const activeWeekRecord = effectiveHistory[viewingWeekIndex] || latest;
+
+  const determineUpcomingDay = (): DayKey => findNextOpenDay(activeWeekRecord || latest);
+
+  const [selectedDay, setSelectedDay] = useState<DayKey>(() => findNextOpenDay(latest));
   const [selectedFormula, setSelectedFormula] = useState<'master' | 'totalDiff' | 'weeklyLine' | 'frequency'>('master');
+
+  // Reset to upcoming week & next open day when market or effectiveHistory length changes
+  useEffect(() => {
+    const newIdx = Math.max(0, effectiveHistory.length - 1);
+    setViewingWeekIndex(newIdx);
+    setSelectedDay(findNextOpenDay(effectiveHistory[newIdx]));
+  }, [market, effectiveHistory.length]);
+
+  // Build history slice as-of selected week & day so Past Results verification has zero lookahead bias
+  const historyForPrediction = useMemo(() => {
+    if (effectiveHistory.length === 0) return history;
+    const safeIdx = Math.min(viewingWeekIndex, effectiveHistory.length - 1);
+    const slice = effectiveHistory.slice(0, safeIdx + 1);
+    const targetWeek = slice[slice.length - 1];
+    if (!targetWeek) return effectiveHistory;
+
+    const targetCell = targetWeek[selectedDay];
+    const isTargetAlreadyPlayed = targetCell && !targetCell.jodi.includes('*') && !isMarketClosed(targetCell.jodi);
+    if (!isTargetAlreadyPlayed) {
+      return slice;
+    }
+
+    // Mask selectedDay and subsequent days in targetWeek as pending so prediction reflects pre-draw state
+    const maskedWeek: WeekRecord = { ...targetWeek };
+    const dayIdx = DAY_KEYS.indexOf(selectedDay);
+    for (let i = dayIdx; i < DAY_KEYS.length; i++) {
+      const k = DAY_KEYS[i];
+      if (!isMarketClosed(maskedWeek[k]?.jodi)) {
+        maskedWeek[k] = { openPana: '***', jodi: '**', closePana: '***' };
+      }
+    }
+    return [...slice.slice(0, -1), maskedWeek];
+  }, [effectiveHistory, history, viewingWeekIndex, selectedDay]);
+
   const [prediction, setPrediction] = useState<PredictionResult>(() =>
-    generateSolidPredictions(history, selectedDay, selectedFormula)
+    generateSolidPredictions(historyForPrediction, selectedDay, selectedFormula)
   );
   const [showDerivation, setShowDerivation] = useState(true);
   const [copiedJodi, setCopiedJodi] = useState<string | null>(null);
   const [copiedShareCard, setCopiedShareCard] = useState<boolean>(false);
+  const [isPhotoCardOpen, setIsPhotoCardOpen] = useState<boolean>(false);
 
   // AI Analysis state
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -82,16 +128,18 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
-    const res = generateSolidPredictions(history, selectedDay, selectedFormula);
+    const res = generateSolidPredictions(historyForPrediction, selectedDay, selectedFormula);
     setPrediction(res);
     setAiAnalysisData(null);
-  }, [selectedDay, selectedFormula, history]);
+  }, [historyForPrediction, selectedDay, selectedFormula]);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedJodi(text);
     setTimeout(() => setCopiedJodi(null), 2000);
   };
+
+  const marketLabelMr = isNight ? 'राजधानी नाईट' : 'कल्याण';
 
   const handleWhatsAppShare = () => {
     const dayName = DAY_NAMES[selectedDay].mr;
@@ -102,16 +150,20 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
     const supportStr = prediction.supportJodis
       .map(j => `${j} (${prediction.jodiProbabilities?.[j]?.probability || 65}%)`)
       .join(', ');
-    const text = `🎰 *कल्याण निकाल & मजबूत ओटीसी अंदाज* 🎰\n\n` +
-      `📅 *वार:* ${dayName} (${latest?.week || ''})\n` +
+    const text = `🎰 *${marketLabelMr} निकाल & मजबूत ओटीसी अंदाज* 🎰\n\n` +
+      `📅 *वार:* ${dayName} (${activeWeekRecord?.week || ''})\n` +
       `⭐ *मजबूत OTC (ओपन/क्लोज):* ${otcStr}\n` +
       `🎯 *पक्की जोडी (संभाव्यतेसह):* ${strongStr}\n` +
       `🛡️ *सपोर्ट जोडी:* ${supportStr}\n\n` +
       `📊 *सूत्र संगम:* ${prediction.formulaName}\n` +
-      `👉 *कल्याण अंक गणित अभ्यास ॲप*`;
+      `👉 *${marketLabelMr} अंक गणित अभ्यास ॲप*`;
     
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.click();
   };
 
   const handleCopyShareCard = () => {
@@ -123,13 +175,13 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
     const supportStr = prediction.supportJodis
       .map(j => `${j} (${prediction.jodiProbabilities?.[j]?.probability || 65}%)`)
       .join(', ');
-    const text = `🎰 कल्याण निकाल & मजबूत ओटीसी अंदाज 🎰\n\n` +
-      `📅 वार: ${dayName} (${latest?.week || ''})\n` +
+    const text = `🎰 ${marketLabelMr} निकाल & मजबूत ओटीसी अंदाज 🎰\n\n` +
+      `📅 वार: ${dayName} (${activeWeekRecord?.week || ''})\n` +
       `⭐ मजबूत OTC: ${otcStr}\n` +
       `🎯 पक्की जोडी (संभाव्यतेसह): ${strongStr}\n` +
       `🛡️ सपोर्ट जोडी: ${supportStr}\n\n` +
       `📊 सूत्र: ${prediction.formulaName}\n` +
-      `👉 कल्याण अंक गणित अभ्यास`;
+      `👉 ${marketLabelMr} अंक गणित अभ्यास`;
     
     navigator.clipboard.writeText(text);
     setCopiedShareCard(true);
@@ -197,7 +249,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs uppercase tracking-wider font-semibold text-amber-400">
-                {isMr ? 'कल्याण पक्के अंक अंदाज' : 'Kalyan Solid Number Forecasting'}
+                {isMr ? `${marketLabelMr} पक्के अंक अंदाज` : `${currentMarketInfo.name.en} Solid Number Forecasting`}
               </span>
               <span className="text-slate-600">·</span>
               <span className="text-xs text-slate-400">
@@ -209,8 +261,8 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
             </h2>
             <p className="text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
               {isMr
-                ? '२७२ आठवड्यांच्या ऐतिहासिक कल्याण चार्टचा अभ्यास करून कट अंक, बेरीज-फरक सूत्रे आणि लाईन त्रिक पद्धतीद्वारे काढलेले पक्के ४ अंक (OTC), मजबूत जोड्या आणि पाने.'
-                : 'Formulated using 272 weeks of historical Kalyan charts with Cut Ank algorithms, Jodi Total-Difference rules, and weekly line progression.'}
+                ? `${history.length} आठवड्यांच्या ऐतिहासिक ${marketLabelMr} चार्टचा अभ्यास करून कट अंक, बेरीज-फरक सूत्रे आणि लाईन त्रिक पद्धतीद्वारे काढलेले पक्के ४ अंक (OTC), मजबूत जोड्या आणि पाने.`
+                : `Formulated using ${history.length} weeks of historical ${currentMarketInfo.name.en} charts with Cut Ank algorithms, Jodi Total-Difference rules, and weekly line progression.`}
             </p>
           </div>
 
@@ -233,53 +285,100 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
             <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               {isMr ? '१. वार निवडा (Select Weekday):' : '1. Select Weekday:'}
             </div>
-            {history.length >= 2 && (
+            {effectiveHistory.length >= 2 && (
               <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px]">
                 <span className="text-slate-400 px-1 font-medium">{isMr ? 'आठवडा:' : 'Week:'}</span>
                 <button
                   type="button"
                   onClick={() => {
-                    setViewingWeekIndex(history.length - 1);
-                    setSelectedDay('mon');
+                    const idx = effectiveHistory.length - 1;
+                    setViewingWeekIndex(idx);
+                    setSelectedDay(findNextOpenDay(effectiveHistory[idx]));
                   }}
                   className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                    viewingWeekIndex === history.length - 1
+                    viewingWeekIndex === effectiveHistory.length - 1
                       ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  ✨ {isMr ? 'आगामी आठवडा (19-10 ते 25-10)' : 'Upcoming (19-10 to 25-10)'}
+                  ✨ {isMr
+                    ? `आगामी आठवडा (${formatShortWeekRange(effectiveHistory[effectiveHistory.length - 1].week, true)})`
+                    : `Upcoming (${formatShortWeekRange(effectiveHistory[effectiveHistory.length - 1].week, false)})`}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setViewingWeekIndex(history.length - 2)}
+                  onClick={() => {
+                    setViewingWeekIndex(effectiveHistory.length - 2);
+                    setSelectedDay('mon');
+                  }}
                   className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                    viewingWeekIndex === history.length - 2
+                    viewingWeekIndex === effectiveHistory.length - 2
                       ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  {isMr ? 'मागील निकाल (12-10 ते 18-10)' : 'Past Results (12-10 to 18-10)'}
+                  {isMr
+                    ? `मागील निकाल (${formatShortWeekRange(effectiveHistory[effectiveHistory.length - 2].week, true)})`
+                    : `Past Results (${formatShortWeekRange(effectiveHistory[effectiveHistory.length - 2].week, false)})`}
                 </button>
               </div>
             )}
           </div>
 
-          {/* Special Weekend Info Banner when viewing upcoming week */}
-          {viewingWeekIndex === history.length - 1 && (
-            <div className="mb-3 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs text-amber-300 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">🎯</span>
-                <span>
-                  {isMr 
-                    ? 'शनिवारचा अंतिम निकाल (२५० - ७७ - ३५९) वरून आगामी सोमवारसाठीचे ४ पक्के OTC अंक व जोड्यांचा अभ्यास खाली तयार आहे!'
-                    : 'Preceding Saturday result (250 - 77 - 359) analyzed. Solid Monday OTC digits and Jodis are formulated below!'}
-                </span>
-              </div>
-              <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-1.5 py-0.5 rounded">
-                {isMr ? 'सोमवार सज्ज' : 'Monday Ready'}
-              </span>
-            </div>
+          {/* Special Info Banner when viewing upcoming week */}
+          {viewingWeekIndex === effectiveHistory.length - 1 && (
+            (() => {
+              const upcomingDay = determineUpcomingDay();
+              const upcomingIdx = DAY_KEYS.indexOf(upcomingDay);
+              let prevDay: DayKey | null = null;
+              let prevData: { openPana: string; jodi: string; closePana: string } | null = null;
+
+              // 1. Check earlier in the active upcoming week
+              for (let i = upcomingIdx - 1; i >= 0; i--) {
+                const d = DAY_KEYS[i];
+                const cell = activeWeekRecord?.[d];
+                if (cell && isValidPlayedJodi(cell.jodi) && cell.openPana !== '***') {
+                  prevDay = d;
+                  prevData = cell;
+                  break;
+                }
+              }
+
+              // 2. If Monday (or no day played yet in upcoming week), check last completed day of preceding week (Sat for Kalyan, Fri for Rajdhani)
+              if (!prevData && viewingWeekIndex >= 1) {
+                const prevWeek = effectiveHistory[viewingWeekIndex - 1];
+                for (let i = DAY_KEYS.length - 1; i >= 0; i--) {
+                  const d = DAY_KEYS[i];
+                  const cell = prevWeek?.[d];
+                  if (cell && isValidPlayedJodi(cell.jodi) && cell.openPana !== '***') {
+                    prevDay = d;
+                    prevData = cell;
+                    break;
+                  }
+                }
+              }
+
+              if (!prevDay || !prevData) return null;
+
+              const dayName = DAY_NAMES[prevDay][language];
+              const nextDayName = DAY_NAMES[upcomingDay][language];
+
+              return (
+                <div className="mb-3 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs text-amber-300 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">🎯</span>
+                    <span>
+                      {isMr 
+                        ? `${dayName}चा अंतिम निकाल (${prevData.openPana} - ${prevData.jodi} - ${prevData.closePana}) वरून आगामी ${nextDayName}साठीचे ४ पक्के OTC अंक व जोड्यांचा अभ्यास खाली तयार आहे!`
+                        : `Preceding ${dayName} result (${prevData.openPana} - ${prevData.jodi} - ${prevData.closePana}) analyzed. Solid ${nextDayName} OTC digits and Jodis are formulated below!`}
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-1.5 py-0.5 rounded shrink-0">
+                    {isMr ? `${nextDayName} सज्ज` : `${nextDayName} Ready`}
+                  </span>
+                </div>
+              );
+            })()
           )}
 
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -399,9 +498,23 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
 
       {/* LIVE STATUS BANNER & WHATSAPP SHARE FOR SELECTED DAY */}
       {(() => {
-        const dayCell = latest ? latest[selectedDay] : null;
-        const isDeclared = dayCell && !dayCell.jodi.includes('*');
+        const dayCell = activeWeekRecord ? activeWeekRecord[selectedDay] : null;
+        const isClosedDay = dayCell && isMarketClosed(dayCell.jodi);
+        const isDeclared = dayCell && !dayCell.jodi.includes('*') && !isClosedDay;
         const isOpenOnly = dayCell && dayCell.openPana !== '***' && dayCell.closePana === '***';
+
+        if (isClosedDay) {
+          return (
+            <div className="p-3.5 bg-slate-900 border border-amber-500/30 rounded-2xl flex items-center gap-2.5 text-amber-300 text-xs">
+              <span>🏖️</span>
+              <span>
+                {isMr
+                  ? `${DAY_NAMES[selectedDay].mr} रोजी ${marketLabelMr} मार्केट बंद राहते (सुट्टी). सोमवारसाठी पक्के अंदाज पाहण्यासाठी 'सोमवार' निवडा.`
+                  : `${currentMarketInfo.name.en} is closed on ${DAY_NAMES[selectedDay].en}. Select Monday for the next draw forecast.`}
+              </span>
+            </div>
+          );
+        }
         
         if (isDeclared) {
           const o = parseInt(dayCell.jodi[0], 10);
@@ -454,17 +567,27 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 self-start sm:self-auto">
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                 <button
+                  type="button"
+                  onClick={() => setIsPhotoCardOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>{isMr ? 'HD फोटो कार्ड' : 'HD Photo Card'}</span>
+                </button>
+                <button
+                  type="button"
                   onClick={handleWhatsAppShare}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{isMr ? 'WhatsApp वर पाठवा' : 'Share WhatsApp'}</span>
                 </button>
                 <button
+                  type="button"
                   onClick={handleCopyShareCard}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer whitespace-nowrap"
                 >
                   {copiedShareCard ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-300" />}
                   <span>{copiedShareCard ? (isMr ? 'कॉपी झाले!' : 'Copied!') : (isMr ? 'कार्ड कॉपी करा' : 'Copy Card')}</span>
@@ -500,17 +623,27 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 self-start sm:self-auto">
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                 <button
+                  type="button"
+                  onClick={() => setIsPhotoCardOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>{isMr ? 'HD फोटो कार्ड' : 'HD Photo Card'}</span>
+                </button>
+                <button
+                  type="button"
                   onClick={handleWhatsAppShare}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{isMr ? 'WhatsApp वर पाठवा' : 'Share WhatsApp'}</span>
                 </button>
                 <button
+                  type="button"
                   onClick={handleCopyShareCard}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer whitespace-nowrap"
                 >
                   {copiedShareCard ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-300" />}
                   <span>{copiedShareCard ? (isMr ? 'कॉपी झाले!' : 'Copied!') : (isMr ? 'कार्ड कॉपी करा' : 'Copy Card')}</span>
@@ -537,17 +670,27 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
               <button
+                type="button"
+                onClick={() => setIsPhotoCardOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
+              >
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>{isMr ? 'HD फोटो कार्ड' : 'HD Photo Card'}</span>
+              </button>
+              <button
+                type="button"
                 onClick={handleWhatsAppShare}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer whitespace-nowrap"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{isMr ? 'WhatsApp वर शेअर करा' : 'Share on WhatsApp'}</span>
               </button>
               <button
+                type="button"
                 onClick={handleCopyShareCard}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all cursor-pointer whitespace-nowrap"
               >
                 {copiedShareCard ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-300" />}
                 <span>{copiedShareCard ? (isMr ? 'कॉपी झाले!' : 'Copied!') : (isMr ? 'अंदाज कॉपी करा' : 'Copy Card')}</span>
@@ -1008,6 +1151,34 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* HD WhatsApp Photo Card Modal */}
+      {isPhotoCardOpen && (
+        <PhotoCardModal
+          isOpen={isPhotoCardOpen}
+          onClose={() => setIsPhotoCardOpen(false)}
+          payload={{
+            market,
+            language,
+            weekStr: activeWeekRecord?.week || latest?.week || '',
+            day: selectedDay,
+            otcDigits: prediction.primaryOTC,
+            strongJodis: prediction.strongJodis,
+            supportJodis: prediction.supportJodis,
+            panas: [
+              ...prediction.singlePanas.map((s) => s.panas[0]).filter(Boolean),
+              ...prediction.doublePanas.map((d) => d.panas[0]).filter(Boolean),
+            ].slice(0, 8),
+            formulaLabel: prediction.formulaName,
+            declaredResult:
+              activeWeekRecord?.[selectedDay] &&
+              !activeWeekRecord[selectedDay].jodi.includes('*') &&
+              !isMarketClosed(activeWeekRecord[selectedDay].jodi)
+                ? `${activeWeekRecord[selectedDay].openPana}-${activeWeekRecord[selectedDay].jodi}-${activeWeekRecord[selectedDay].closePana}`
+                : undefined,
+          }}
+        />
+      )}
     </div>
   );
 };

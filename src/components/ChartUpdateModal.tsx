@@ -10,10 +10,13 @@ import {
   Clock, 
   Save, 
   Sparkles,
-  ExternalLink 
+  ExternalLink,
+  Cloud,
+  LogIn
 } from 'lucide-react';
 import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { DAY_NAMES, DAY_KEYS } from '../utils/matkaMath';
+import { useFirebaseApp } from '../contexts/FirebaseContext';
 
 interface ChartUpdateModalProps {
   isOpen: boolean;
@@ -21,6 +24,7 @@ interface ChartUpdateModalProps {
   language: Language;
   market?: MarketType;
   latestWeek?: WeekRecord;
+  history?: WeekRecord[];
   onHistoryUpdated: (newHistory: WeekRecord[]) => void;
 }
 
@@ -30,13 +34,16 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   language,
   market = 'kalyan',
   latestWeek,
+  history = [],
   onHistoryUpdated,
 }) => {
   const isMr = language === 'mr';
   const isNight = market === 'rajdhani_night';
   const marketInfo = MARKETS[market];
+  const { user, isAdmin, signInWithGoogle, syncWeekToCloud, syncRecentChartToCloud } = useFirebaseApp();
 
-  const [activeSubTab, setActiveSubTab] = useState<'auto' | 'manual'>('auto');
+  const [activeSubTab, setActiveSubTab] = useState<'auto' | 'manual' | 'cloud'>('auto');
+  const [isCloudSyncing, setIsCloudSyncing] = useState<boolean>(false);
 
   // Auto-fetch state
   const [fetchUrl, setFetchUrl] = useState<string>('https://dpboss.tax/');
@@ -51,11 +58,27 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Manual update state
-  const [selectedDay, setSelectedDay] = useState<DayKey>('thu');
-  const [weekString, setWeekString] = useState<string>(latestWeek?.week || '19-10-26 to 25-10-26');
+  const findFirstPendingDay = (w?: WeekRecord): DayKey => {
+    if (w) {
+      for (const d of DAY_KEYS) {
+        if (w[d] && w[d].jodi.includes('*')) return d;
+      }
+    }
+    return 'mon';
+  };
+
+  const [selectedDay, setSelectedDay] = useState<DayKey>(() => findFirstPendingDay(latestWeek));
+  const [weekString, setWeekString] = useState<string>(latestWeek?.week || '26-10-26 to 01-11-26');
   const [openPanaInput, setOpenPanaInput] = useState<string>('258');
   const [jodiInput, setJodiInput] = useState<string>('56');
   const [closePanaInput, setClosePanaInput] = useState<string>('150');
+
+  React.useEffect(() => {
+    if (latestWeek?.week) {
+      setWeekString(latestWeek.week);
+      setSelectedDay(findFirstPendingDay(latestWeek));
+    }
+  }, [latestWeek?.week, market]);
 
   // Saving state
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -162,10 +185,19 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
       const json = await res.json();
       if (json.success && json.history) {
         onHistoryUpdated(json.history);
+        let syncedCloud = false;
+        if (isAdmin && Array.isArray(json.history)) {
+          const targetIdx = json.history.findIndex((w: WeekRecord) => w.week === payload.week);
+          if (targetIdx >= 0) {
+            try {
+              syncedCloud = await syncWeekToCloud(market, json.history[targetIdx], targetIdx);
+            } catch {}
+          }
+        }
         setSaveSuccess(
           isMr 
-            ? `✓ ${DAY_NAMES[selectedDay].mr} चा निकाल (${payload.openPana}-${payload.jodi}-${payload.closePana}) चार्टमध्ये सेव्ह झाला!`
-            : `✓ Result for ${DAY_NAMES[selectedDay].en} saved to Kalyan Chart successfully!`
+            ? `✓ ${DAY_NAMES[selectedDay].mr} चा निकाल (${payload.openPana}-${payload.jodi}-${payload.closePana}) ${syncedCloud ? 'चार्ट व फायरबेस क्लाउडमध्ये' : 'चार्टमध्ये'} सेव्ह झाला!`
+            : `✓ Result for ${DAY_NAMES[selectedDay].en} saved${syncedCloud ? ' & synced to Cloud' : ''}!`
         );
         setTimeout(() => {
           setSaveSuccess(null);
@@ -231,7 +263,18 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
             }`}
           >
             <Edit3 className="w-4 h-4" />
-            <span>{isMr ? '२. मॅन्युअल निकाल नोंदणी' : '2. Manual Entry'}</span>
+            <span>{isMr ? '२. मॅन्युअल नोंद' : '2. Manual Entry'}</span>
+          </button>
+          <button
+            onClick={() => setActiveSubTab('cloud')}
+            className={`flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+              activeSubTab === 'cloud'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+            }`}
+          >
+            <Cloud className="w-4 h-4" />
+            <span>{isMr ? '३. फायरबेस क्लाउड सिंक' : '3. Cloud Sync'}</span>
           </button>
         </div>
 
@@ -520,6 +563,80 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                     : (isMr ? 'कल्याण चार्टमध्ये सेव्ह करा' : 'Save to Kalyan Chart')}
                 </span>
               </button>
+            </div>
+          )}
+
+          {/* SUBTAB 3: FIREBASE CLOUD SYNC */}
+          {activeSubTab === 'cloud' && (
+            <div className="space-y-4">
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+                <div className="text-sm font-bold text-white flex items-center gap-2">
+                  <Cloud className="w-4 h-4 text-indigo-400" />
+                  <span>
+                    {isMr
+                      ? `${marketInfo.name.mr} फायरबेस क्लाउड चार्ट सिंक`
+                      : `${marketInfo.name.en} Firebase Cloud Chart Sync`}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {isMr
+                    ? 'सर्व युजर्सना रिअल-टाईममध्ये अद्ययावत चार्ट दिसतो. चार्ट क्लाउडवर सुरक्षितपणे पुश करण्याचा अधिकार फक्त व्हेरिफाईड ॲडमिन खात्याला आहे.'
+                    : 'All users receive real-time cloud chart updates automatically. Writing chart updates to Firestore is restricted to the verified Admin account.'}
+                </p>
+
+                {!user ? (
+                  <button
+                    type="button"
+                    onClick={signInWithGoogle}
+                    className="w-full min-h-[44px] py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>{isMr ? 'ॲडमिन गुगल लॉगिन करा' : 'Sign in with Google (Admin)'}</span>
+                  </button>
+                ) : !isAdmin ? (
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                    {isMr
+                      ? `सध्या लॉगिन खाते: ${user.email}. क्लाउड चार्ट रीड-ओनली सिंक सक्रिय आहे (फक्त ॲडमिन खाते मुख्य चार्ट क्लाउडवर बदलू शकते).`
+                      : `Signed in as ${user.email}. Real-time cloud chart read sync is active.`}
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    <button
+                      type="button"
+                      disabled={isCloudSyncing || history.length === 0}
+                      onClick={async () => {
+                        setIsCloudSyncing(true);
+                        setSaveError(null);
+                        setSaveSuccess(null);
+                        try {
+                          const count = await syncRecentChartToCloud(market, history, 16);
+                          setSaveSuccess(
+                            isMr
+                              ? `✓ मागील ${count} आठवड्यांचा ${marketInfo.name.mr} चार्ट फायरबेस क्लाउडवर यशस्वीरित्या सिंक झाला!`
+                              : `✓ Synced ${count} recent weeks of ${marketInfo.name.en} to Firebase Cloud!`
+                          );
+                        } catch (err: any) {
+                          setSaveError(err?.message || 'Cloud sync failed.');
+                        } finally {
+                          setIsCloudSyncing(false);
+                        }
+                      }}
+                      className="w-full min-h-[44px] py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Cloud className="w-4 h-4" />
+                      <span>
+                        {isCloudSyncing
+                          ? isMr
+                            ? 'फायरबेस क्लाउडवर सिंक होत आहे...'
+                            : 'Syncing to Firebase Cloud...'
+                          : isMr
+                          ? 'मागील १६ आठवड्यांचा चार्ट क्लाउडवर सिंक करा'
+                          : 'Sync Recent 16 Weeks to Firebase Cloud'}
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

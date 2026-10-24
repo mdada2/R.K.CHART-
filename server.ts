@@ -123,15 +123,52 @@ app.post('/api/update-chart', (req, res) => {
     const raw = fs.readFileSync(filePath, 'utf8');
     const history = JSON.parse(raw);
 
+    const isServerRecordComplete = (rec: any): boolean => {
+      if (!rec) return false;
+      return ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'].every((d) => {
+        const c = rec[d];
+        if (!c) return false;
+        const upper = String(c.jodi || '').toUpperCase().trim();
+        if (upper === 'XX' || upper === '--' || upper === 'बंद' || upper === 'CLOSE' || upper === 'HOLIDAY') {
+          return true;
+        }
+        return !String(c.jodi).includes('*') && c.openPana !== '***' && c.closePana !== '***';
+      });
+    };
+
+    const computeNextWeekStr = (weekStr: string): string => {
+      const parts = String(weekStr || '').split(' to ');
+      if (parts.length === 2) {
+        const parsePart = (str: string) => {
+          const segs = str.trim().split('-');
+          if (segs.length === 3) {
+            return new Date(2000 + parseInt(segs[2], 10), parseInt(segs[1], 10) - 1, parseInt(segs[0], 10));
+          }
+          return null;
+        };
+        const d1 = parsePart(parts[0]);
+        const d2 = parsePart(parts[1]);
+        if (d1 && d2) {
+          d1.setDate(d1.getDate() + 7);
+          d2.setDate(d2.getDate() + 7);
+          const pad = (n: number) => String(n).padStart(2, '0');
+          const fmt = (d: Date) => `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${String(d.getFullYear()).slice(-2)}`;
+          return `${fmt(d1)} to ${fmt(d2)}`;
+        }
+      }
+      return weekStr;
+    };
+
     let targetRecord = history[history.length - 1];
-    if (week && targetRecord.week !== week) {
-      const found = history.find((w: any) => w.week === week);
+    const effectiveWeek = week || (isServerRecordComplete(targetRecord) ? computeNextWeekStr(targetRecord.week) : targetRecord.week);
+    if (effectiveWeek && targetRecord.week !== effectiveWeek) {
+      const found = history.find((w: any) => w.week === effectiveWeek);
       if (found) {
         targetRecord = found;
       } else {
         // Create a new week entry if week string is new
         targetRecord = {
-          week,
+          week: effectiveWeek,
           mon: { openPana: '***', jodi: '**', closePana: '***' },
           tue: { openPana: '***', jodi: '**', closePana: '***' },
           wed: { openPana: '***', jodi: '**', closePana: '***' },

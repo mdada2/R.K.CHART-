@@ -1,0 +1,270 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-Deny Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================
+    // Hardened Primitives & Identity Helpers
+    // =========================================================
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerifiedUser() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidMarketId(marketId) {
+      return marketId == 'kalyan' || marketId == 'rajdhani_night';
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        request.auth.token.email == "secretaryilada1425@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // =========================================================
+    // Validation Blueprints (Anti-Update-Gap)
+    // =========================================================
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['email', 'createdAt']) &&
+        data.keys().hasOnly(['email', 'createdAt']) &&
+        data.email is string &&
+        data.email.size() >= 3 &&
+        data.email.size() <= 254 &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidUser(data, userId) {
+      return data.keys().hasAll(['uid', 'email', 'displayName', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'preferredLanguage', 'preferredMarket', 'createdAt', 'updatedAt']) &&
+        data.uid is string &&
+        data.uid.size() >= 1 &&
+        data.uid.size() <= 128 &&
+        data.uid.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.uid == userId &&
+        data.uid == request.auth.uid &&
+        data.email is string &&
+        data.email.size() >= 3 &&
+        data.email.size() <= 254 &&
+        data.email == request.auth.token.email &&
+        data.displayName is string &&
+        data.displayName.size() >= 1 &&
+        data.displayName.size() <= 100 &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 500)) &&
+        (!('preferredLanguage' in data) || (data.preferredLanguage is string && data.preferredLanguage.size() <= 5 && (data.preferredLanguage == 'mr' || data.preferredLanguage == 'en'))) &&
+        (!('preferredMarket' in data) || (data.preferredMarket is string && data.preferredMarket.size() <= 20 && isValidMarketId(data.preferredMarket))) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidPassbookEntry(data, userId, entryId) {
+      return data.keys().hasAll(['id', 'userId', 'market', 'week', 'day', 'otcDigits', 'jodis', 'panas', 'note', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'userId', 'market', 'week', 'day', 'otcDigits', 'jodis', 'panas', 'note', 'createdAt', 'updatedAt']) &&
+        data.id is string &&
+        data.id.size() >= 1 &&
+        data.id.size() <= 128 &&
+        data.id.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.id == entryId &&
+        data.userId is string &&
+        data.userId.size() >= 1 &&
+        data.userId.size() <= 128 &&
+        data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.userId == userId &&
+        data.userId == request.auth.uid &&
+        data.market is string &&
+        data.market.size() <= 20 &&
+        isValidMarketId(data.market) &&
+        data.week is string &&
+        data.week.size() >= 5 &&
+        data.week.size() <= 40 &&
+        data.day is string &&
+        data.day.size() <= 5 &&
+        (data.day == 'mon' || data.day == 'tue' || data.day == 'wed' || data.day == 'thu' || data.day == 'fri' || data.day == 'sat') &&
+        data.otcDigits is list &&
+        data.otcDigits.size() >= 1 &&
+        data.otcDigits.size() <= 4 &&
+        data.otcDigits[0] is int &&
+        data.otcDigits[0] >= 0 &&
+        data.otcDigits[0] <= 9 &&
+        data.jodis is list &&
+        data.jodis.size() <= 8 &&
+        (data.jodis.size() == 0 || (data.jodis[0] is string && data.jodis[0].size() == 2)) &&
+        data.panas is list &&
+        data.panas.size() <= 6 &&
+        (data.panas.size() == 0 || (data.panas[0] is string && data.panas[0].size() == 3)) &&
+        data.note is string &&
+        data.note.size() <= 200 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidDayCell(cell) {
+      return cell is map &&
+        cell.keys().hasAll(['openPana', 'jodi', 'closePana']) &&
+        cell.keys().hasOnly(['openPana', 'jodi', 'closePana']) &&
+        cell.openPana is string &&
+        cell.openPana.size() >= 1 &&
+        cell.openPana.size() <= 5 &&
+        cell.jodi is string &&
+        cell.jodi.size() >= 1 &&
+        cell.jodi.size() <= 5 &&
+        cell.closePana is string &&
+        cell.closePana.size() >= 1 &&
+        cell.closePana.size() <= 5;
+    }
+
+    function isValidChartWeek(data, marketId) {
+      return data.keys().hasAll(['market', 'week', 'weekIndex', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'updatedAt']) &&
+        data.keys().hasOnly(['market', 'week', 'weekIndex', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'updatedAt']) &&
+        data.market is string &&
+        data.market.size() <= 20 &&
+        isValidMarketId(data.market) &&
+        data.market == marketId &&
+        data.week is string &&
+        data.week.size() >= 5 &&
+        data.week.size() <= 40 &&
+        data.weekIndex is int &&
+        data.weekIndex >= 0 &&
+        data.weekIndex <= 50000 &&
+        isValidDayCell(data.mon) &&
+        isValidDayCell(data.tue) &&
+        isValidDayCell(data.wed) &&
+        isValidDayCell(data.thu) &&
+        isValidDayCell(data.fri) &&
+        isValidDayCell(data.sat) &&
+        data.updatedAt is timestamp;
+    }
+
+    // =========================================================
+    // Collection Rules
+    // =========================================================
+
+    // 1. Admins Marker Collection
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list: if false;
+      allow create: if isVerifiedUser() &&
+        isValidId(adminId) &&
+        isValidAdmin(incoming()) &&
+        incoming().createdAt == request.time &&
+        isAdmin();
+      allow update, delete: if false;
+    }
+
+    // 2. Users Profile Collection (PII Strictly Isolated to Owner/Admin; No Blanket List)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if false;
+
+      allow create: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUser(incoming(), userId) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUser(incoming(), userId) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'preferredLanguage', 'preferredMarket', 'updatedAt']) ||
+          isAdmin()
+        );
+
+      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
+
+      // 3. Personal Guessing Passbook Subcollection (Master Gate + Owner Query Enforcer)
+      match /passbook/{entryId} {
+        allow get: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(entryId) &&
+          (resource == null || existing().userId == request.auth.uid);
+
+        allow list: if isOwner(userId) &&
+          existing().userId == request.auth.uid;
+
+        allow create: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(entryId) &&
+          isValidPassbookEntry(incoming(), userId, entryId) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time &&
+          exists(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(entryId) &&
+          isValidPassbookEntry(incoming(), userId, entryId) &&
+          incoming().id == existing().id &&
+          incoming().userId == existing().userId &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          exists(/databases/$(database)/documents/users/$(userId)) && (
+            incoming().diff(existing()).affectedKeys().hasOnly(['market', 'week', 'day', 'otcDigits', 'jodis', 'panas', 'note', 'updatedAt']) ||
+            isAdmin()
+          );
+
+        allow delete: if isOwner(userId) &&
+          isValidId(userId) &&
+          isValidId(entryId) &&
+          exists(/databases/$(database)/documents/users/$(userId));
+      }
+    }
+
+    // 4. Public Weekly Market Charts (Public Read Enforcing Market Boundary; Verified Admin Write)
+    match /charts/{marketId}/weeklyData/{weekId} {
+      allow get: if isValidMarketId(marketId) &&
+        isValidId(weekId) &&
+        (resource == null || existing().market == marketId);
+
+      allow list: if isValidMarketId(marketId) &&
+        existing().market == marketId;
+
+      allow create: if isVerifiedUser() &&
+        isValidMarketId(marketId) &&
+        isValidId(weekId) &&
+        isValidChartWeek(incoming(), marketId) &&
+        incoming().updatedAt == request.time &&
+        isAdmin();
+
+      allow update: if isVerifiedUser() &&
+        isValidMarketId(marketId) &&
+        isValidId(weekId) &&
+        isValidChartWeek(incoming(), marketId) &&
+        incoming().market == existing().market &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['week', 'weekIndex', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'updatedAt']) &&
+        isAdmin();
+
+      allow delete: if isVerifiedUser() &&
+        isValidMarketId(marketId) &&
+        isValidId(weekId) &&
+        isAdmin();
+    }
+  }
+}

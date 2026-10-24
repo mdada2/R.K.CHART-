@@ -123,3 +123,30 @@ export interface DigitFrequency {
   lastSeenDaysAgo: number;
   status: 'hot' | 'cold' | 'normal';
 }
+
+export interface PassbookEntry {
+  id: string;
+  userId: string;
+  market: MarketType;
+  week: string;
+  day: DayKey;
+  otcDigits: number[];
+  jodis: string[];
+  panas: string[];
+  note: string;
+  createdAtMs: number;
+  syncedToCloud?: boolean;
+}
+
+export interface PassbookEvaluation {
+  status: 'pending' | 'open_only' | 'jodi_pass' | 'pana_pass' | 'otc_pass' | 'miss' | 'closed';
+  actualOpenPana: string;
+  actualJodi: string;
+  actualClosePana: string;
+  matchedOtcDigits: number[];
+  matchedJodi: string | null;
+  matchedPanas: string[];
+  badgeTextMr: string;
+  badgeTextEn: string;
+}
+

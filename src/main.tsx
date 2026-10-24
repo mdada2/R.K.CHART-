@@ -1,5 +1,13 @@
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 import App from './App.tsx';
+import { FirebaseProvider } from './contexts/FirebaseContext.tsx';
 import './index.css';
 
-createRoot(document.getElementById('root')!).render(<App />);
+registerSW({ immediate: true });
+
+createRoot(document.getElementById('root')!).render(
+  <FirebaseProvider>
+    <App />
+  </FirebaseProvider>
+);

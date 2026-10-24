@@ -70,12 +70,54 @@ export function getNextWeekString(weekStr: string): string {
   return weekStr;
 }
 
+export function formatShortWeekRange(weekStr: string, isMr: boolean): string {
+  if (!weekStr) return '';
+  const parts = weekStr.split(' to ');
+  if (parts.length === 2) {
+    const shorten = (s: string) => {
+      const segs = s.trim().split('-');
+      return segs.length >= 2 ? `${segs[0]}-${segs[1]}` : s.trim();
+    };
+    return `${shorten(parts[0])} ${isMr ? 'ते' : 'to'} ${shorten(parts[1])}`;
+  }
+  return weekStr;
+}
+
 export function isWeekComplete(record?: WeekRecord): boolean {
   if (!record) return false;
   return DAY_KEYS.every(d => {
     const cell = record[d];
-    return cell && !cell.jodi.includes('*') && cell.openPana !== '***';
+    if (!cell) return false;
+    if (isMarketClosed(cell.jodi)) return true;
+    return !cell.jodi.includes('*') && cell.openPana !== '***' && cell.closePana !== '***';
   });
+}
+
+export function createEmptyWeekRecord(week: string, isNight: boolean = false): WeekRecord {
+  return {
+    week,
+    mon: { openPana: '***', jodi: '**', closePana: '***' },
+    tue: { openPana: '***', jodi: '**', closePana: '***' },
+    wed: { openPana: '***', jodi: '**', closePana: '***' },
+    thu: { openPana: '***', jodi: '**', closePana: '***' },
+    fri: { openPana: '***', jodi: '**', closePana: '***' },
+    sat: isNight
+      ? { openPana: '***', jodi: 'XX', closePana: '***' }
+      : { openPana: '***', jodi: '**', closePana: '***' },
+  };
+}
+
+export function getEffectiveHistory(
+  history: WeekRecord[],
+  market: 'kalyan' | 'rajdhani_night' = 'kalyan'
+): WeekRecord[] {
+  if (!history || history.length === 0) return [];
+  const latest = history[history.length - 1];
+  if (isWeekComplete(latest)) {
+    const nextWeekStr = getNextWeekString(latest.week);
+    return [...history, createEmptyWeekRecord(nextWeekStr, market === 'rajdhani_night')];
+  }
+  return history;
 }
 
 export function getCutAnk(ank: number): number {
