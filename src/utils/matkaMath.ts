@@ -107,15 +107,47 @@ export function createEmptyWeekRecord(week: string, isNight: boolean = false): W
   };
 }
 
+
+/** Parse the end-date portion of a "DD-MM-YY to DD-MM-YY" week string into a Date. */
+function parseWeekEndDate(weekStr: string): Date | null {
+  const parts = weekStr.split(' to ');
+  if (parts.length !== 2) return null;
+  const segs = parts[1].trim().split('-');
+  if (segs.length !== 3) return null;
+  const day   = parseInt(segs[0], 10);
+  const month = parseInt(segs[1], 10) - 1;
+  const year  = 2000 + parseInt(segs[2], 10);
+  return new Date(year, month, day);
+}
+
 export function getEffectiveHistory(
   history: WeekRecord[],
   market: 'kalyan' | 'rajdhani_night' = 'kalyan'
 ): WeekRecord[] {
   if (!history || history.length === 0) return [];
   const latest = history[history.length - 1];
+  const isNight = market === 'rajdhani_night';
+
+  // Rajdhani Night: append upcoming week once today (IST) is past the week end Friday
+  if (isNight) {
+    const endDate = parseWeekEndDate(latest.week);
+    if (endDate) {
+      const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      const todayIST = new Date(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate());
+      // Saturday (day after Friday end-date) triggers showing the new upcoming week
+      const boundary = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() + 1);
+      if (todayIST >= boundary) {
+        const nextWeekStr = getNextWeekString(latest.week);
+        return [...history, createEmptyWeekRecord(nextWeekStr, true)];
+      }
+    }
+    return history;
+  }
+
+  // Kalyan: data-completeness check (Saturday played = week done)
   if (isWeekComplete(latest)) {
     const nextWeekStr = getNextWeekString(latest.week);
-    return [...history, createEmptyWeekRecord(nextWeekStr, market === 'rajdhani_night')];
+    return [...history, createEmptyWeekRecord(nextWeekStr, false)];
   }
   return history;
 }
