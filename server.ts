@@ -419,6 +419,191 @@ app.all('/api/fetch-live', async (req, res) => {
 });
 
 
+
+// Endpoint 4: Bulk Week Panel/Jodi Chart Scraper
+app.all('/api/fetch-week-chart', async (req, res) => {
+  const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
+  const isNight = market === 'rajdhani_night';
+  const marketSlug = isNight ? 'rajdhani-night' : 'kalyan';
+  const panelUrl = `https://dpbossnet.me/panel-chart-record/${marketSlug}.php`;
+  const jodiUrl = `https://dpbossnet.me/jodi-chart-record/${marketSlug}.php`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+  try {
+    // 1. Try Panel Chart first (contains openPana, jodi, closePana for every day)
+    const response = await fetch(panelUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    const html = await response.text();
+    const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
+
+    if (rows && rows.length > 0) {
+      for (let r = rows.length - 1; r >= Math.max(0, rows.length - 5); r--) {
+        const row = rows[r];
+        const cells = Array.from(row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
+          .map((m) => m[1].replace(/<br\s*\/?>/gi, '').trim());
+
+        if (cells.length >= 10) {
+          const rawDateStr = cells[0].replace(/\s+/g, ' ');
+          const days = isNight
+            ? ['mon', 'tue', 'wed', 'thu', 'fri']
+            : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+          const weekData: any = {};
+          let ptr = 1;
+
+          for (const d of days) {
+            if (ptr + 2 < cells.length) {
+              const op = cells[ptr] || '***';
+              const jd = cells[ptr + 1] || '**';
+              const cp = cells[ptr + 2] || '***';
+              weekData[d] = {
+                openPana: op === '' ? '***' : op,
+                jodi: jd === '' ? '**' : jd,
+                closePana: cp === '' ? '***' : cp,
+              };
+              ptr += 3;
+            } else {
+              weekData[d] = { openPana: '***', jodi: '**', closePana: '***' };
+            }
+          }
+
+          if (isNight) {
+            weekData.sat = { openPana: '***', jodi: 'XX', closePana: '***' };
+          }
+
+          return res.json({
+            success: true,
+            found: true,
+            market,
+            sourceType: 'panel-chart',
+            rawDateStr,
+            weekData,
+            source: panelUrl,
+          });
+        }
+      }
+    }
+
+    // 2. Fallback to Jodi Chart if Panel Chart is unavailable
+    const jodiRes = await fetch(jodiUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+    const jodiHtml = await jodiRes.text();
+    const jodiRows = jodiHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
+
+    if (jodiRows && jodiRows.length > 0) {
+      const lastRow = jodiRows[jodiRows.length - 1];
+      const cells = Array.from(lastRow.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
+        .map((m) => m[1].trim());
+
+      const days = isNight
+        ? ['mon', 'tue', 'wed', 'thu', 'fri']
+        : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const weekData: any = {};
+
+      days.forEach((d, i) => {
+        const jd = cells[i] || '**';
+        weekData[d] = {
+          openPana: '***',
+          jodi: jd === '' ? '**' : jd,
+          closePana: '***',
+        };
+      });
+
+      if (isNight) {
+        weekData.sat = { openPana: '***', jodi: 'XX', closePana: '***' };
+      }
+
+      return res.json({
+        success: true,
+        found: true,
+        market,
+        sourceType: 'jodi-chart',
+        weekData,
+        source: jodiUrl,
+      });
+    }
+
+    return res.json({
+      success: false,
+      market,
+      message: 'वेबसाईटवरून आठवड्याचा चार्ट वाचता आला नाही.',
+    });
+  } catch (error: any) {
+    return res.json({
+      success: false,
+      market,
+      error: error.message || 'वेबसाईटशी संपर्क होऊ शकला नाही.',
+    });
+  }
+});
+
+// Endpoint 5: Save entire week at once (Bulk Week Update)
+app.post('/api/update-full-week', (req, res) => {
+  try {
+    const { market, week, weekData } = req.body;
+    if (!week || !weekData) {
+      return res.status(400).json({
+        success: false,
+        error: 'आठवडा आणि आठवड्याचा डेटा आवश्यक आहे.',
+      });
+    }
+
+    const marketId = market || 'kalyan';
+    const filePath = getDataFilePath(marketId);
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const history = JSON.parse(raw);
+
+    const isNight = marketId === 'rajdhani_night';
+    const sanitizeCell = (c: any) => ({
+      openPana: String(c?.openPana || '***').trim().slice(0, 5),
+      jodi: String(c?.jodi || '**').trim().slice(0, 5),
+      closePana: String(c?.closePana || '***').trim().slice(0, 5),
+    });
+
+    const fullRecord = {
+      week: String(week).trim(),
+      mon: sanitizeCell(weekData.mon),
+      tue: sanitizeCell(weekData.tue),
+      wed: sanitizeCell(weekData.wed),
+      thu: sanitizeCell(weekData.thu),
+      fri: sanitizeCell(weekData.fri),
+      sat: isNight
+        ? { openPana: '***', jodi: 'XX', closePana: '***' }
+        : sanitizeCell(weekData.sat),
+    };
+
+    const targetIdx = history.findIndex((w: any) => w.week === fullRecord.week);
+    if (targetIdx >= 0) {
+      history[targetIdx] = fullRecord;
+    } else {
+      history.push(fullRecord);
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(history, null, 2), 'utf8');
+
+    return res.json({
+      success: true,
+      message: `${fullRecord.week} चा पूर्ण आठवडा यशस्वीरित्या सेव्ह झाला!`,
+      weekRecord: fullRecord,
+      history,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'सर्व्हर त्रुटी: आठवडा सेव्ह करता आला नाही.',
+    });
+  }
+});
+
 // Mount Vite or serve static
 async function startServer() {
   if (process.env.NODE_ENV === 'production') {

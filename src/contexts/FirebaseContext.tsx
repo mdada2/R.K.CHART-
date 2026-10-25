@@ -43,6 +43,11 @@ interface FirebaseContextValue {
   deletePassbookEntry: (entryId: string) => Promise<void>;
   syncWeekToCloud: (market: MarketType, weekRecord: WeekRecord, weekIndex: number) => Promise<boolean>;
   syncRecentChartToCloud: (market: MarketType, history: WeekRecord[], count?: number) => Promise<number>;
+  syncAllMarketsToCloud: (
+    kalyanHistory: WeekRecord[],
+    rajdhaniHistory: WeekRecord[],
+    count?: number
+  ) => Promise<{ kalyan: number; rajdhani: number }>;
 }
 
 const FirebaseContext = createContext<FirebaseContextValue | null>(null);
@@ -514,6 +519,20 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     [user, isAdmin, syncWeekToCloud]
   );
 
+  const syncAllMarketsToCloud = useCallback(
+    async (
+      kalyanHistory: WeekRecord[],
+      rajdhaniHistory: WeekRecord[],
+      count: number = 12
+    ): Promise<{ kalyan: number; rajdhani: number }> => {
+      if (!user || !isAdmin) return { kalyan: 0, rajdhani: 0 };
+      const kCount = await syncRecentChartToCloud('kalyan', kalyanHistory, count);
+      const rCount = await syncRecentChartToCloud('rajdhani_night', rajdhaniHistory, count);
+      return { kalyan: kCount, rajdhani: rCount };
+    },
+    [user, isAdmin, syncRecentChartToCloud]
+  );
+
   const combinedEntries = useMemo(() => {
     if (user && user.emailVerified) {
       const cloudIds = new Set(cloudEntries.map((c) => c.id));
@@ -540,6 +559,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       deletePassbookEntry,
       syncWeekToCloud,
       syncRecentChartToCloud,
+      syncAllMarketsToCloud,
     }),
     [
       user,
@@ -557,6 +577,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       deletePassbookEntry,
       syncWeekToCloud,
       syncRecentChartToCloud,
+      syncAllMarketsToCloud,
     ]
   );
 

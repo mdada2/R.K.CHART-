@@ -222,6 +222,8 @@ export default function App() {
           market={market}
           latestWeek={effectiveLatestWeek}
           history={history}
+          kalyanHistory={kalyanRecords}
+          rajdhaniHistory={rajdhaniRecords}
           onHistoryUpdated={handleHistoryUpdate}
         />
       )}
