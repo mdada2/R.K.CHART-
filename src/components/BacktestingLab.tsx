@@ -13,7 +13,7 @@ import {
   Calendar,
   Clock
 } from 'lucide-react';
-import { DayKey, Language, WeekRecord, BacktestSummary, MarketType, MARKETS } from '../types';
+import { DayKey, Language, WeekRecord, BacktestSummary, MarketType, MARKETS, CalculationFormulaId } from '../types';
 import { DAY_NAMES, runBacktest } from '../utils/matkaMath';
 
 interface BacktestingLabProps {
@@ -32,7 +32,7 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
   const marketInfo = MARKETS[market];
 
   const [testCount, setTestCount] = useState<number>(30);
-  const [selectedFormula, setSelectedFormula] = useState<'master' | 'totalDiff' | 'weeklyLine' | 'frequency'>('master');
+  const [selectedFormula, setSelectedFormula] = useState<CalculationFormulaId>('master');
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<BacktestSummary | null>(() =>
     runBacktest(history, 30, 'master')
@@ -150,6 +150,7 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
               className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-emerald-500"
             >
               <option value="master">{isMr ? 'मास्टर संगम हायब्रीड (Master Ensemble)' : 'Master Ensemble'}</option>
+              <option value="lineFamily">{isMr ? 'खेळ लाईन व फॅमिली (Line & Family Trick)' : 'Line & Family Trick'}</option>
               <option value="totalDiff">{isMr ? 'चालू बेरीज-फरक ओटीसी (Total-Diff Trick)' : 'Total-Diff Trick'}</option>
               <option value="weeklyLine">{isMr ? 'आठवडी लाईन प्रोग्रेशन (Weekly Line)' : 'Weekly Line'}</option>
               <option value="frequency">{isMr ? 'वारंवारता व संभाव्यता (Frequency Due)' : 'Frequency Due'}</option>

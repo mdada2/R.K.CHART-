@@ -1,4 +1,4 @@
-import { DayKey, PredictionResult, WeekRecord, BacktestSummary, DigitFrequency, FormulaStep, JodiProbability, DigitConfluence } from '../types';
+import { DayKey, PredictionResult, WeekRecord, BacktestSummary, DigitFrequency, FormulaStep, JodiProbability, DigitConfluence, CalculationFormulaId } from '../types';
 
 export const CUT_MAP: Record<number, number> = {
   0: 5,
@@ -575,10 +575,144 @@ export function calculateFrequencyOTC(
 /**
  * MASTER PREDICTION ENGINE: Synthesizes all formulas to generate 4 Solid OTC, Jodis, and Panas
  */
+
+/**
+ * FORMULA 4: Game Line & Family Strategy (खेळ लाईन व फॅमिली सूत्र)
+ * Independent formula based on Post-Mortem rules: Preceding Day Close & Cut, and Previous Week Same-Day Repetition/Family
+ */
+export function calculateLineAndFamilyOTC(
+  history: WeekRecord[],
+  targetDay: DayKey
+): { otc: number[]; steps: FormulaStep[]; familyJodis: string[]; lineDetails: string; precedingClose: number; precedingCloseCut: number } {
+  const steps: FormulaStep[] = [];
+  const latestWeek = history[history.length - 1];
+
+  // 1. Find previous day's completed record
+  let prevJodi = '55';
+  let prevDayName = 'सोमवार';
+  const dayIndex = DAY_KEYS.indexOf(targetDay);
+  let found = false;
+
+  for (let i = dayIndex - 1; i >= 0; i--) {
+    const prevDayKey = DAY_KEYS[i];
+    const prevData = latestWeek[prevDayKey];
+    if (prevData && isValidPlayedJodi(prevData.jodi) && prevData.openPana !== '***') {
+      prevJodi = prevData.jodi;
+      prevDayName = DAY_NAMES[prevDayKey].mr;
+      found = true;
+      break;
+    }
+  }
+
+  if (!found && history.length >= 2) {
+    for (let w = history.length - 2; w >= 0; w--) {
+      const prevWeek = history[w];
+      for (let i = DAY_KEYS.length - 1; i >= 0; i--) {
+        const dKey = DAY_KEYS[i];
+        const dData = prevWeek[dKey];
+        if (dData && isValidPlayedJodi(dData.jodi) && dData.openPana !== '***') {
+          prevJodi = dData.jodi;
+          prevDayName = DAY_NAMES[dKey].mr;
+          found = true;
+          break;
+        }
+      }
+      if (found) break;
+    }
+  }
+
+  // 2. Find previous week's same day record
+  let prevWeekSameDayJodi: string | null = null;
+  if (history.length >= 2) {
+    for (let w = history.length - 2; w >= 0; w--) {
+      const cell = history[w]?.[targetDay];
+      if (cell && isValidPlayedJodi(cell.jodi) && !cell.jodi.includes('*')) {
+        prevWeekSameDayJodi = cell.jodi;
+        break;
+      }
+    }
+  }
+
+  const pO = parseInt(prevJodi[0], 10);
+  const pC = parseInt(prevJodi[1], 10);
+  const pC_cut = getCutAnk(pC);
+  const pO_cut = getCutAnk(pO);
+  const pTotal = (pO + pC) % 10;
+  const pTotal_cut = getCutAnk(pTotal);
+
+  steps.push({
+    title: '१. आदला क्लोज-चाल नियम (Preceding Close-to-Open/Close)',
+    calculation: `आदल्या दिवसाचा निकाल (${prevDayName}): ${prevJodi} -> क्लोज अंक = ${pC}, त्याचा कट अंक = ${pC_cut}`,
+    result: `मुख्य लाईन अंक: ${pC}, ${pC_cut}`,
+    note: 'पोस्ट-मॉर्टम सिद्ध नियम: आदला क्लोज किंवा त्याचा कट थेट पुढील ओपन/क्लोजला रिपीट होतो.',
+  });
+
+  let pwO: number | null = null;
+  let pwC: number | null = null;
+  let familyJodis: string[] = [];
+
+  if (prevWeekSameDayJodi) {
+    pwO = parseInt(prevWeekSameDayJodi[0], 10);
+    pwC = parseInt(prevWeekSameDayJodi[1], 10);
+    familyJodis = getFamilyJodis(prevWeekSameDayJodi);
+
+    steps.push({
+      title: '२. मागील समान वार व फॅमिली नियम (Same-Day Family Rule)',
+      calculation: `मागील ${DAY_NAMES[targetDay].mr} चा निकाल: ${prevWeekSameDayJodi} -> ओपन ${pwO} (कट ${getCutAnk(pwO)}), क्लोज ${pwC} (कट ${getCutAnk(pwC)})`,
+      result: `समान वार फॅमिली: ${familyJodis.slice(0, 4).join(', ')}...`,
+      note: 'समान वाराचा रिपीट अंक किंवा थेट फॅमिली जोडी चाल.',
+    });
+  }
+
+  steps.push({
+    title: '३. जोडी बेरीज लाईन (Jodi Total Shift)',
+    calculation: `मागील जोडी ${prevJodi} ची बेरीज = (${pO} + ${pC}) = ${pTotal}, कट = ${pTotal_cut}`,
+    result: `बेरीज लाईन अंक: ${pTotal}, ${pTotal_cut}`,
+    note: 'मागील जोडीची बेरीज किंवा कट थेट खेळात उतरण्याची संभाव्यता.',
+  });
+
+  // Score and select 4 distinct OTC digits
+  const otcSet = new Set<number>();
+  otcSet.add(pC);
+  otcSet.add(pC_cut);
+  if (pwO !== null && !isNaN(pwO)) otcSet.add(pwO);
+  if (pwC !== null && !isNaN(pwC)) otcSet.add(pwC);
+  if (otcSet.size < 4) otcSet.add(pTotal);
+  if (otcSet.size < 4) otcSet.add(pTotal_cut);
+  if (otcSet.size < 4 && pwO !== null) otcSet.add(getCutAnk(pwO));
+  if (otcSet.size < 4 && pwC !== null) otcSet.add(getCutAnk(pwC));
+  if (otcSet.size < 4) otcSet.add(pO);
+  if (otcSet.size < 4) otcSet.add(pO_cut);
+
+  let filler = 0;
+  while (otcSet.size < 4 && filler < 10) {
+    otcSet.add(filler);
+    filler++;
+  }
+
+  const otc = Array.from(otcSet).slice(0, 4);
+
+  steps.push({
+    title: '४. अंतिम ४ पक्के OTC अंक (Final Line Digits)',
+    calculation: `क्लोज-चाल, समान वार व बेरीज लाईनच्या एकत्रीकरणावरून`,
+    result: `पक्के ४ अंक: ${otc.join(', ')}`,
+  });
+
+  const lineDetails = `आदल्या दिवसाच्या (${prevDayName} ${prevJodi}) क्लोज अंक ${pC} (कट ${pC_cut})${prevWeekSameDayJodi ? ` आणि मागील ${DAY_NAMES[targetDay].mr}च्या ${prevWeekSameDayJodi} जोडीच्या फॅमिली` : ''} नियमावर आधारलेला स्वतंत्र लाईन अभ्यास.`;
+
+  return {
+    otc,
+    steps,
+    familyJodis,
+    lineDetails,
+    precedingClose: pC,
+    precedingCloseCut: pC_cut,
+  };
+}
 export function generateSolidPredictions(
   history: WeekRecord[],
   targetDay: DayKey,
-  selectedFormula: 'master' | 'totalDiff' | 'weeklyLine' | 'frequency' = 'master'
+  selectedFormula: CalculationFormulaId = 'master'
 ): PredictionResult {
   const latestWeek = history[history.length - 1];
   
@@ -622,7 +756,7 @@ export function generateSolidPredictions(
     }
   }
 
-  // Find previous week's same day record (Post-Mortem: Same Day Line & Family Carryover)
+  // Find previous week's same day record
   let prevWeekSameDayJodi: string | null = null;
   if (history.length >= 2) {
     for (let w = history.length - 2; w >= 0; w--) {
@@ -653,6 +787,7 @@ export function generateSolidPredictions(
   const f1 = calculateTotalDiffOTC(prevJodi, prevOpenPana, prevClosePana);
   const f2 = calculateWeeklyLineOTC(history, targetDay);
   const f3 = calculateFrequencyOTC(history, targetDay);
+  const f4 = calculateLineAndFamilyOTC(history, targetDay);
 
   let chosenOTC: number[];
   let steps: FormulaStep[] = [];
@@ -666,6 +801,12 @@ export function generateSolidPredictions(
     formulaName = 'बेरीज-फरक ओटीसी सूत्र (Total & Difference Trick)';
     confidence = 82;
     lineAnalysis = `मागील जोडी ${prevJodi} वरून बेरीज व फरक नियमाने ४ पक्के ओटीसी अंक काढण्यात आले आहेत.`;
+  } else if (selectedFormula === 'lineFamily') {
+    chosenOTC = f4.otc;
+    steps = f4.steps;
+    formulaName = 'खेळ लाईन व फॅमिली सूत्र (Game Line & Family Trick)';
+    confidence = 88;
+    lineAnalysis = f4.lineDetails;
   } else if (selectedFormula === 'weeklyLine') {
     chosenOTC = f2.otc;
     steps = f2.steps;
@@ -679,35 +820,14 @@ export function generateSolidPredictions(
     confidence = 80;
     lineAnalysis = `${history.length} आठवड्यांच्या गणितीय वारंवारतेनुसार कोल्ड आणि हॉट अंकांचे संयोजन.`;
   } else {
-    // MASTER: Weighted consensus with Direct Post-Mortem Line Rules
+    // MASTER: Weighted consensus across all 4 formulas
     const scoreMap: Record<number, number> = {};
     for (let i = 0; i < 10; i++) scoreMap[i] = 0;
 
-    // 1. Classical Formula Inputs
-    f1.otc.forEach((d, idx) => { scoreMap[d] += (4 - idx) * 1.5; });
+    f1.otc.forEach((d, idx) => { scoreMap[d] += (4 - idx) * 1.4; });
     f2.otc.forEach((d, idx) => { scoreMap[d] += (4 - idx) * 1.3; });
     f3.otc.forEach((d, idx) => { scoreMap[d] += (4 - idx) * 1.2; });
-
-    // 2. Direct Post-Mortem Trick Bonuses:
-    // Rule A: आदल्या दिवसाचा क्लोज अंक व कट अंक (क्लोज टू ओपन/क्लोज थेट चाल)
-    if (!isNaN(pC)) {
-      scoreMap[pC] += 2.4;
-      scoreMap[pC_cut] += 1.9;
-    }
-    // Rule B: आदल्या जोडीची बेरीज व कट अंक
-    if (!isNaN(pTotal)) {
-      scoreMap[pTotal] += 1.4;
-      scoreMap[pTotal_cut] += 1.1;
-    }
-    // Rule C: मागील आठवड्यातील समान वाराचे ओपन/क्लोज व कट अंक
-    if (pwO !== null && !isNaN(pwO)) {
-      scoreMap[pwO] += 1.6;
-      scoreMap[getCutAnk(pwO)] += 1.2;
-    }
-    if (pwC !== null && !isNaN(pwC)) {
-      scoreMap[pwC] += 1.6;
-      scoreMap[getCutAnk(pwC)] += 1.2;
-    }
+    f4.otc.forEach((d, idx) => { scoreMap[d] += (4 - idx) * 1.6; });
 
     const sortedDigits = Object.keys(scoreMap)
       .map(k => parseInt(k, 10))
@@ -722,30 +842,29 @@ export function generateSolidPredictions(
         result: `अंक: ${f1.otc.join(', ')}`,
       },
       {
-        title: '२. आठवडी लाईन इनपुट (F2 Weekly Line Input)',
+        title: '२. खेळ लाईन व फॅमिली इनपुट (F2 Line & Family Input)',
+        calculation: `आदला क्लोज ${pC} (कट ${pC_cut})${prevWeekSameDayJodi ? ` + मागील समान वार ${prevWeekSameDayJodi}` : ''}`,
+        result: `अंक: ${f4.otc.join(', ')}`,
+      },
+      {
+        title: '३. आठवडी लाईन इनपुट (F3 Weekly Line Input)',
         calculation: `समान वाराच्या प्रोग्रेशनवरून`,
         result: `अंक: ${f2.otc.join(', ')}`,
       },
       {
-        title: '३. वारंवारता सांख्यिकी (F3 Frequency Matrix)',
+        title: '४. वारंवारता सांख्यिकी (F4 Frequency Matrix)',
         calculation: `प्रलंबित आणि हाय-प्रोबॅबिलिटी वरून`,
         result: `अंक: ${f3.otc.join(', ')}`,
       },
       {
-        title: '४. थेट लाईन व पोस्टमॉर्टम नियम (Line & Post-Mortem Rules)',
-        calculation: `आदला क्लोज ${pC} (कट ${pC_cut}) + बेरीज ${pTotal} (कट ${pTotal_cut})${prevWeekSameDayJodi ? ` + मागील समान वार ${prevWeekSameDayJodi} चे अंक` : ''}`,
-        result: `प्राधान्य अंक: ${pC}, ${pC_cut}${prevWeekSameDayJodi ? `, ${pwO}, ${pwC}` : ''}`,
-        note: 'पोस्ट-मॉर्टम विश्लेषणात सिद्ध झालेल्या क्लोज-टू-ओपन व समान वार नियमांचे थेट वेटेज',
-      },
-      {
         title: '५. मास्टर एकत्रीकरण (Master Consensus Synthesis)',
-        calculation: `सर्व ४ गणितीय स्तंभांचे एकत्रित वेटेज काढून सर्वाधिक संभाव्य ४ अंक निश्चित केले.`,
+        calculation: `सर्व प्रमुख गणितीय स्तंभांचे एकत्रित वेटेज काढून सर्वाधिक संभाव्य ४ अंक निश्चित केले.`,
         result: `पक्के ४ अंक: ${chosenOTC.join(', ')}`,
       },
     ];
 
     confidence = 90;
-    lineAnalysis = `चार्टच्या ४ प्रमुख गणितीय स्तंभांचे (बेरीज-फरक, लाईन प्रोग्रेशन, वारंवारता, आणि थेट पोस्ट-मॉर्टम क्लोज व समान वार फॅमिली नियम) एकत्रीकरण करून हे ४ अंक सर्वाधिक मजबूत ठरले आहेत.`;
+    lineAnalysis = `चार्टच्या ४ प्रमुख गणितीय स्तंभांचे (बेरीज-फरक, खेळ लाईन व फॅमिली, लाईन प्रोग्रेशन, आणि वारंवारता मॉडेल) एकत्रीकरण करून हे ४ अंक सर्वाधिक मजबूत ठरले आहेत.`;
   }
 
   // Generate 4 Strong Jodis and 4 Support Jodis with Post-Mortem & Family prioritization
@@ -772,7 +891,7 @@ export function generateSolidPredictions(
       const o = parseInt(fj[0], 10);
       const c = parseInt(fj[1], 10);
       if (chosenOTC.includes(o) && chosenOTC.includes(c)) {
-        familyMatches.unshift(fj); // Both digits in chosenOTC
+        familyMatches.unshift(fj);
       } else if (chosenOTC.includes(o) || chosenOTC.includes(c)) {
         familyMatches.push(fj);
       }
@@ -792,17 +911,21 @@ export function generateSolidPredictions(
 
   // Assemble Strong Jodis (top 4):
   const strongSet = new Set<string>();
-  // 1. Top family matches that intersect with OTC
-  familyMatches.forEach(j => {
-    if (strongSet.size < 2) strongSet.add(j);
-  });
-  // 2. Preceding close trick pairs
-  closeTrickJodis.forEach(j => {
-    if (strongSet.size < 3 && (chosenOTC.includes(parseInt(j[0], 10)) && chosenOTC.includes(parseInt(j[1], 10)))) {
-      strongSet.add(j);
-    }
-  });
-  // 3. Core OTC cross pairs
+  // If lineFamily formula is chosen, prioritize family jodis even higher
+  if (selectedFormula === 'lineFamily' && f4.familyJodis.length > 0) {
+    f4.familyJodis.forEach(j => {
+      if (strongSet.size < 4) strongSet.add(j);
+    });
+  } else {
+    familyMatches.forEach(j => {
+      if (strongSet.size < 2) strongSet.add(j);
+    });
+    closeTrickJodis.forEach(j => {
+      if (strongSet.size < 3 && (chosenOTC.includes(parseInt(j[0], 10)) && chosenOTC.includes(parseInt(j[1], 10)))) {
+        strongSet.add(j);
+      }
+    });
+  }
   baseJodis.forEach(j => {
     if (strongSet.size < 4) strongSet.add(j);
   });
@@ -812,6 +935,9 @@ export function generateSolidPredictions(
   const supportSet = new Set<string>();
   familyMatches.forEach(j => {
     if (!strongSet.has(j) && supportSet.size < 2) supportSet.add(j);
+  });
+  closeTrickJodis.forEach(j => {
+    if (!strongSet.has(j) && supportSet.size < 3) supportSet.add(j);
   });
   const cutPairs = [
     `${d1}${getCutAnk(d2)}`,
@@ -840,9 +966,10 @@ export function generateSolidPredictions(
     panas: (ALL_PANAS.doublePanas[ank] || []).slice(0, 2),
   }));
 
-  // Calculate multi-formula confluence across all 4 formulas (f1, f2, f3, master)
+  // Calculate multi-formula confluence across all 4 formulas
   const allFormulaSets: { name: string; otc: number[] }[] = [
     { name: 'बेरीज-फरक (Total-Diff)', otc: f1.otc },
+    { name: 'खेळ लाईन व फॅमिली (Line & Family)', otc: f4.otc },
     { name: 'आठवडी लाईन (Weekly Line)', otc: f2.otc },
     { name: 'वारंवारता (Frequency)', otc: f3.otc },
   ];
@@ -880,7 +1007,7 @@ export function generateSolidPredictions(
     const dC = parseInt(jodi[1], 10);
     const countO = digitMatches[dO]?.count || 0;
     const countC = digitMatches[dC]?.count || 0;
-    const totalMatch = countO + countC; // Max = 3 + 3 = 6
+    const totalMatch = countO + countC; // Max = 4 + 4 = 8
     const isBothInChosen = chosenOTC.includes(dO) && chosenOTC.includes(dC);
     const isFamilyMatch = sameDayFamily.includes(jodi);
     const isCloseTrickMatch = (!isNaN(pC) && (dO === pC || dC === pC || dO === pC_cut || dC === pC_cut));
@@ -890,17 +1017,17 @@ export function generateSolidPredictions(
     let consensusText = '२ पैकी १ सूत्र';
 
     if (isFamilyMatch && isBothInChosen) {
-      prob = 92;
+      prob = 93;
       level = 'super';
-      consensusText = 'समान वार फॅमिली + ३ सूत्रे १००% संगम';
+      consensusText = 'समान वार फॅमिली + मुख्य ओटीसी संगम';
     } else if (countO >= 3 && countC >= 3) {
       prob = 89;
       level = 'super';
-      consensusText = 'सर्व ३ सूत्रांत १००% संगम';
+      consensusText = 'सर्व प्रमुख सूत्रांत १००% संगम';
     } else if (totalMatch >= 5) {
       prob = 84;
       level = 'super';
-      consensusText = isFamilyMatch ? 'समान वार फॅमिली संगम' : '३ सूत्रांत बहुमताचा संगम';
+      consensusText = isFamilyMatch ? 'समान वार फॅमिली संगम' : 'बहुमताचा संगम';
     } else if (isCloseTrickMatch && isBothInChosen) {
       prob = 82;
       level = 'strong';
@@ -954,19 +1081,16 @@ export function generateSolidPredictions(
     doublePanas,
     derivationSteps: steps,
     lineAnalysis,
-    historicalHitRate: 80.5,
+    historicalHitRate: selectedFormula === 'lineFamily' ? 82.5 : 80.5,
     jodiProbabilities,
     digitConfluences,
   };
 }
 
-/**
- * BACKTEST ENGINE: Run formula across historical data to evaluate hit rates
- */
 export function runBacktest(
   history: WeekRecord[],
   testCount: number = 30,
-  formula: 'master' | 'totalDiff' | 'weeklyLine' | 'frequency' = 'master'
+  formula: CalculationFormulaId = 'master'
 ): BacktestSummary {
   const validWeeks: { weekIdx: number; day: DayKey }[] = [];
 

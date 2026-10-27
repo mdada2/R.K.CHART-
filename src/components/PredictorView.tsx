@@ -20,7 +20,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { PhotoCardModal } from './PhotoCardModal';
-import { DayKey, Language, MarketType, PredictionResult, WeekRecord, MARKETS } from '../types';
+import { DayKey, Language, MarketType, PredictionResult, WeekRecord, MARKETS, CalculationFormulaId } from '../types';
 import { 
   DAY_NAMES, 
   DAY_KEYS, 
@@ -79,7 +79,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   const determineUpcomingDay = (): DayKey => findNextOpenDay(activeWeekRecord || latest);
 
   const [selectedDay, setSelectedDay] = useState<DayKey>(() => findNextOpenDay(latest));
-  const [selectedFormula, setSelectedFormula] = useState<'master' | 'totalDiff' | 'weeklyLine' | 'frequency'>('master');
+  const [selectedFormula, setSelectedFormula] = useState<CalculationFormulaId>('master');
 
   // Reset to upcoming week & next open day when market or effectiveHistory length changes
   useEffect(() => {
@@ -467,12 +467,13 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
             {isMr ? '२. अंदाज पद्धत / सूत्र निवडा (Calculation Formula):' : '2. Calculation Formula:'}
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
             {[
-              { id: 'master', label: isMr ? 'मास्टर संगम हायब्रीड' : 'Master Consensus (All Combined)', desc: isMr ? 'तिन्ही सूत्रांचे एकत्रित वेटेज' : 'Weighted ensemble' },
+              { id: 'master', label: isMr ? 'मास्टर संगम हायब्रीड' : 'Master Consensus', desc: isMr ? 'सर्व सूत्रांचे एकत्रित वेटेज' : 'Weighted ensemble' },
+              { id: 'lineFamily', label: isMr ? 'खेळ लाईन व फॅमिली' : 'Line & Family Trick', desc: isMr ? 'आदला क्लोज/कट व समान वार फॅमिली' : 'Preceding close & same-day family' },
               { id: 'totalDiff', label: isMr ? 'चालू बेरीज-फरक' : 'Total & Difference Trick', desc: isMr ? 'मागील दिवसाची बेरीज व फरक' : 'Previous day carry-over' },
               { id: 'weeklyLine', label: isMr ? 'आठवडी लाईन त्रिक' : 'Weekly Line Progression', desc: isMr ? 'समान वाराचा साप्ताहिक पॅटर्न' : 'Same-day step shift' },
-              { id: 'frequency', label: isMr ? 'वारंवारता व संभाव्यता' : 'Frequency & Due Ank', desc: isMr ? 'कोल्ड आणि हॉट अंकांचे मॉडेल' : 'Poisson overdue & momentum' },
+              { id: 'frequency', label: isMr ? 'वारंवारता व संभाव्यता' : 'Frequency & Due Ank', desc: isMr ? 'कोल्ड आणि हॉट अंकांचे मॉडेल' : 'Cold & hot digit model' },
             ].map((f) => {
               const active = selectedFormula === f.id;
               return (
@@ -1105,7 +1106,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-amber-400" />
             <h4 className="text-sm font-bold text-white">
-              {isMr ? 'कसे काढले हे पक्के ४ अंक? (गणितीय पायऱ्या)' : 'How Were These 4 Digits Calculated? (Step-by-Step Derivation)'}
+              {isMr ? 'खेळ लाईन व फॅमिली विश्लेषण' : 'Game Line & Family Analysis'}
             </h4>
           </div>
           {showDerivation ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}

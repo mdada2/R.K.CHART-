@@ -73,6 +73,8 @@ export interface DigitConfluence {
   formulaNames: string[];
 }
 
+export type CalculationFormulaId = 'master' | 'lineFamily' | 'totalDiff' | 'weeklyLine' | 'frequency';
+
 export interface PredictionResult {
   targetDay: DayKey;
   targetWeek: string;
