@@ -9007,5 +9007,38 @@
       "jodi": "91",
       "closePana": "236"
     }
+  },
+  {
+    "week": "26-10-26 to 01-11-26",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "358",
+      "jodi": "63",
+      "closePana": "238"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
   }
 ]

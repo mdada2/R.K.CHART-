@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, 
   RefreshCw, 
@@ -18,7 +18,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
-import { DAY_NAMES, DAY_KEYS } from '../utils/matkaMath';
+import { DAY_NAMES, DAY_KEYS, getEffectiveHistory } from '../utils/matkaMath';
 import { useFirebaseApp } from '../contexts/FirebaseContext';
 
 interface ChartUpdateModalProps {
@@ -82,16 +82,22 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     return 'mon';
   };
 
-  const [selectedDay, setSelectedDay] = useState<DayKey>(() => findFirstPendingDay(latestWeek));
-  const [weekString, setWeekString] = useState<string>(latestWeek?.week || '26-10-26 to 01-11-26');
+  const effectiveHistory = useMemo(
+    () => getEffectiveHistory(history || [], market),
+    [history, market]
+  );
+  const activeInitialWeek = latestWeek || (effectiveHistory.length > 0 ? effectiveHistory[effectiveHistory.length - 1] : undefined);
+
+  const [selectedDay, setSelectedDay] = useState<DayKey>(() => findFirstPendingDay(activeInitialWeek));
+  const [weekString, setWeekString] = useState<string>(activeInitialWeek?.week || '26-10-26 to 01-11-26');
   const [openPanaInput, setOpenPanaInput] = useState<string>('258');
   const [jodiInput, setJodiInput] = useState<string>('56');
   const [closePanaInput, setClosePanaInput] = useState<string>('150');
 
   // Bulk Week Scanner state
-  const [bulkWeekString, setBulkWeekString] = useState<string>(latestWeek?.week || '');
+  const [bulkWeekString, setBulkWeekString] = useState<string>(activeInitialWeek?.week || '');
   const [bulkWeekData, setBulkWeekData] = useState<Record<DayKey, { openPana: string; jodi: string; closePana: string }>>(() => {
-    const rec = latestWeek || (history.length > 0 ? history[history.length - 1] : null);
+    const rec = activeInitialWeek;
     return {
       mon: { openPana: rec?.mon?.openPana || '***', jodi: rec?.mon?.jodi || '**', closePana: rec?.mon?.closePana || '***' },
       tue: { openPana: rec?.tue?.openPana || '***', jodi: rec?.tue?.jodi || '**', closePana: rec?.tue?.closePana || '***' },
@@ -114,22 +120,23 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (latestWeek?.week) {
-      setWeekString(latestWeek.week);
-      setSelectedDay(findFirstPendingDay(latestWeek));
-      setBulkWeekString(latestWeek.week);
+    const currentActive = effectiveHistory[effectiveHistory.length - 1] || latestWeek;
+    if (currentActive?.week) {
+      setWeekString(currentActive.week);
+      setSelectedDay(findFirstPendingDay(currentActive));
+      setBulkWeekString(currentActive.week);
       setBulkWeekData({
-        mon: { openPana: latestWeek.mon?.openPana || '***', jodi: latestWeek.mon?.jodi || '**', closePana: latestWeek.mon?.closePana || '***' },
-        tue: { openPana: latestWeek.tue?.openPana || '***', jodi: latestWeek.tue?.jodi || '**', closePana: latestWeek.tue?.closePana || '***' },
-        wed: { openPana: latestWeek.wed?.openPana || '***', jodi: latestWeek.wed?.jodi || '**', closePana: latestWeek.wed?.closePana || '***' },
-        thu: { openPana: latestWeek.thu?.openPana || '***', jodi: latestWeek.thu?.jodi || '**', closePana: latestWeek.thu?.closePana || '***' },
-        fri: { openPana: latestWeek.fri?.openPana || '***', jodi: latestWeek.fri?.jodi || '**', closePana: latestWeek.fri?.closePana || '***' },
+        mon: { openPana: currentActive.mon?.openPana || '***', jodi: currentActive.mon?.jodi || '**', closePana: currentActive.mon?.closePana || '***' },
+        tue: { openPana: currentActive.tue?.openPana || '***', jodi: currentActive.tue?.jodi || '**', closePana: currentActive.tue?.closePana || '***' },
+        wed: { openPana: currentActive.wed?.openPana || '***', jodi: currentActive.wed?.jodi || '**', closePana: currentActive.wed?.closePana || '***' },
+        thu: { openPana: currentActive.thu?.openPana || '***', jodi: currentActive.thu?.jodi || '**', closePana: currentActive.thu?.closePana || '***' },
+        fri: { openPana: currentActive.fri?.openPana || '***', jodi: currentActive.fri?.jodi || '**', closePana: currentActive.fri?.closePana || '***' },
         sat: isNight
           ? { openPana: '***', jodi: 'XX', closePana: '***' }
-          : { openPana: latestWeek.sat?.openPana || '***', jodi: latestWeek.sat?.jodi || '**', closePana: latestWeek.sat?.closePana || '***' },
+          : { openPana: currentActive.sat?.openPana || '***', jodi: currentActive.sat?.jodi || '**', closePana: currentActive.sat?.closePana || '***' },
       });
     }
-  }, [latestWeek?.week, market]);
+  }, [effectiveHistory, market, latestWeek?.week]);
 
   // Handle Web Fetching (Single Today)
   const handleFetchFromWeb = async () => {
@@ -356,8 +363,8 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setSaveSuccess(null);
 
     try {
-      const effectiveKalyan = kalyanHistory && kalyanHistory.length > 0 ? kalyanHistory : history;
-      const effectiveRajdhani = rajdhaniHistory && rajdhaniHistory.length > 0 ? rajdhaniHistory : history;
+      const effectiveKalyan = kalyanHistory && kalyanHistory.length > 0 ? kalyanHistory : effectiveHistory;
+      const effectiveRajdhani = rajdhaniHistory && rajdhaniHistory.length > 0 ? rajdhaniHistory : effectiveHistory;
 
       const res = await syncAllMarketsToCloud(effectiveKalyan, effectiveRajdhani, 16);
       setSaveSuccess(
@@ -649,7 +656,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                       onChange={(e) => {
                         const target = e.target.value;
                         setBulkWeekString(target);
-                        const found = history.find((w) => w.week === target);
+                        const found = effectiveHistory.find((w) => w.week === target);
                         if (found) {
                           setBulkWeekData({
                             mon: { openPana: found.mon?.openPana || '***', jodi: found.mon?.jodi || '**', closePana: found.mon?.closePana || '***' },
@@ -665,9 +672,9 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                       }}
                       className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-500 font-mono"
                     >
-                      {history.slice(-8).reverse().map((w) => (
+                      {effectiveHistory.slice(-10).reverse().map((w, idx) => (
                         <option key={w.week} value={w.week}>
-                          {w.week}
+                          {w.week} {idx === 0 ? (isMr ? '✨ (चालू आठवडा)' : '✨ (Current Week)') : ''}
                         </option>
                       ))}
                     </select>
@@ -932,10 +939,33 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-slate-500" />
-                    <span>{isMr ? 'आठवडा:' : 'Week:'} <strong className="text-slate-200 font-mono">{weekString}</strong></span>
+                    <span>{isMr ? 'आठवडा:' : 'Week:'}</span>
+                    <select
+                      value={weekString}
+                      onChange={(e) => {
+                        const target = e.target.value;
+                        setWeekString(target);
+                        const found = effectiveHistory.find((w) => w.week === target);
+                        if (found) {
+                          const newDay = findFirstPendingDay(found);
+                          setSelectedDay(newDay);
+                          const cell = found[newDay] || { openPana: '***', jodi: '**', closePana: '***' };
+                          setOpenPanaInput(cell.openPana !== '***' ? cell.openPana : '');
+                          setJodiInput(cell.jodi !== '**' && cell.jodi !== 'XX' ? cell.jodi : '');
+                          setClosePanaInput(cell.closePana !== '***' ? cell.closePana : '');
+                        }
+                      }}
+                      className="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded px-2 py-1 focus:outline-none focus:border-amber-500 font-mono"
+                    >
+                      {effectiveHistory.slice(-10).reverse().map((w, idx) => (
+                        <option key={w.week} value={w.week}>
+                          {w.week} {idx === 0 ? (isMr ? '✨ (चालू आठवडा)' : '✨ (Current Week)') : ''}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-slate-500" />

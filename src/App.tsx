@@ -175,7 +175,7 @@ export default function App() {
 
         {activeTab === 'chart' && (
           <ChartExplorer
-            history={history}
+            history={effectiveHistory}
             language={language}
             market={market}
           />
@@ -221,9 +221,9 @@ export default function App() {
           language={language}
           market={market}
           latestWeek={effectiveLatestWeek}
-          history={history}
-          kalyanHistory={kalyanRecords}
-          rajdhaniHistory={rajdhaniRecords}
+          history={effectiveHistory}
+          kalyanHistory={getEffectiveHistory(kalyanRecords, 'kalyan')}
+          rajdhaniHistory={getEffectiveHistory(rajdhaniRecords, 'rajdhani_night')}
           onHistoryUpdated={handleHistoryUpdate}
         />
       )}

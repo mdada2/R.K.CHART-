@@ -120,36 +120,74 @@ function parseWeekEndDate(weekStr: string): Date | null {
   return new Date(year, month, day);
 }
 
+/**
+ * Automatically creates and advances upcoming weeks:
+ * 1. If all played days of the current week are complete (Saturday for Kalyan, Friday for Rajdhani Night).
+ * 2. OR if the calendar date (in IST) has crossed into the weekend / new week:
+ *    - For Rajdhani Night: End date is Friday. Saturday morning (Friday + 1 day) or later triggers the new week.
+ *    - For Kalyan Day: End date is Sunday. Sunday (endDate) or later triggers the new week.
+ * 3. Supports advancing up to the active calendar week so any missing weeks are seamlessly bridged.
+ */
 export function getEffectiveHistory(
   history: WeekRecord[],
   market: 'kalyan' | 'rajdhani_night' = 'kalyan'
 ): WeekRecord[] {
   if (!history || history.length === 0) return [];
-  const latest = history[history.length - 1];
   const isNight = market === 'rajdhani_night';
+  const result = [...history];
 
-  // Rajdhani Night: append upcoming week once today (IST) is past the week end Friday
-  if (isNight) {
-    const endDate = parseWeekEndDate(latest.week);
-    if (endDate) {
-      const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      const todayIST = new Date(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate());
-      // Saturday (day after Friday end-date) triggers showing the new upcoming week
-      const boundary = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() + 1);
-      if (todayIST >= boundary) {
-        const nextWeekStr = getNextWeekString(latest.week);
-        return [...history, createEmptyWeekRecord(nextWeekStr, true)];
+  const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  const todayIST = new Date(nowIST.getFullYear(), nowIST.getMonth(), nowIST.getDate());
+
+  let maxForward = 4; // Prevent any unbounded loop
+  while (maxForward > 0) {
+    const latest = result[result.length - 1];
+    let shouldAdvance = false;
+
+    if (isNight) {
+      // Rajdhani Night: Mon to Fri
+      if (isWeekComplete(latest)) {
+        shouldAdvance = true;
+      } else {
+        const endDate = parseWeekEndDate(latest.week);
+        if (endDate) {
+          // Saturday is endDate + 1
+          const boundary = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() + 1);
+          if (todayIST >= boundary) {
+            shouldAdvance = true;
+          }
+        }
+      }
+    } else {
+      // Kalyan Day: Mon to Sat (ends on Sunday in week date format)
+      if (isWeekComplete(latest)) {
+        shouldAdvance = true;
+      } else {
+        const endDate = parseWeekEndDate(latest.week);
+        if (endDate) {
+          // Kalyan week string ends on Sunday (e.g. 25-10-26).
+          // Once Sunday arrives (or Monday), the played week is finished and next week is active!
+          if (todayIST >= endDate) {
+            shouldAdvance = true;
+          }
+        }
       }
     }
-    return history;
+
+    if (shouldAdvance) {
+      const nextWeekStr = getNextWeekString(latest.week);
+      // Ensure we don't accidentally duplicate
+      if (result.some((r) => r.week === nextWeekStr)) {
+        break;
+      }
+      result.push(createEmptyWeekRecord(nextWeekStr, isNight));
+      maxForward--;
+    } else {
+      break;
+    }
   }
 
-  // Kalyan: data-completeness check (Saturday played = week done)
-  if (isWeekComplete(latest)) {
-    const nextWeekStr = getNextWeekString(latest.week);
-    return [...history, createEmptyWeekRecord(nextWeekStr, false)];
-  }
-  return history;
+  return result;
 }
 
 export function getCutAnk(ank: number): number {
