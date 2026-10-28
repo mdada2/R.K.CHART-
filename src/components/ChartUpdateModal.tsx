@@ -273,7 +273,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setBulkScanError(null);
 
     try {
-      const res = await fetch(`/api/fetch-week-chart?market=${market}`);
+      const res = await fetch(`/api/fetch-week-chart?market=${market}&week=${encodeURIComponent(bulkWeekString)}`);
       const json = await res.json();
 
       if (json.success && json.weekData) {
@@ -281,11 +281,22 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
           const next = { ...prev };
           const days: DayKey[] = isNight ? ['mon', 'tue', 'wed', 'thu', 'fri'] : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
           days.forEach((d) => {
-            if (json.weekData[d]) {
+            const incoming = json.weekData[d];
+            if (!incoming) return;
+
+            const hasIncomingJodi = incoming.jodi && incoming.jodi !== '**' && !incoming.jodi.includes('*') && incoming.jodi !== 'XX';
+            const hasIncomingPana = incoming.openPana && incoming.openPana !== '***';
+
+            if (hasIncomingJodi) {
               next[d] = {
-                openPana: json.weekData[d].openPana || prev[d].openPana,
-                jodi: json.weekData[d].jodi || prev[d].jodi,
-                closePana: json.weekData[d].closePana || prev[d].closePana,
+                openPana: (hasIncomingPana ? incoming.openPana : (next[d].openPana !== '***' ? next[d].openPana : '***')),
+                jodi: incoming.jodi,
+                closePana: (incoming.closePana && incoming.closePana !== '***' ? incoming.closePana : (next[d].closePana !== '***' ? next[d].closePana : '***')),
+              };
+            } else if (hasIncomingPana) {
+              next[d] = {
+                ...next[d],
+                openPana: incoming.openPana,
               };
             }
           });
@@ -294,12 +305,13 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
 
         const marketName = isNight ? (isMr ? 'राजधानी नाईट' : 'Rajdhani Night') : (isMr ? 'कल्याण' : 'Kalyan');
         setBulkScanMessage(
-          isMr
-            ? `✓ dpboss पॅनल चार्टवरून ${marketName}चा संपूर्ण आठवडा (${json.rawDateStr || ''}) यशस्वीरित्या स्कॅन व फेच झाला!`
-            : `✓ Full week for ${marketName} (${json.rawDateStr || ''}) successfully scanned from DPBoss!`
+          json.message ||
+          (isMr
+            ? `✓ dpboss पॅनल चार्टवरून ${marketName}चा आठवडा (${json.rawDateStr || bulkWeekString}) यशस्वीरित्या स्कॅन व फेच झाला!`
+            : `✓ Week (${json.rawDateStr || bulkWeekString}) successfully scanned from DPBoss!`)
         );
       } else {
-        setBulkScanError(json.message || (isMr ? 'वेबसाईटवरून आठवडा वाचता आला नाही.' : 'Failed to scan week.'));
+        setBulkScanError(json.message || json.error || (isMr ? 'वेबसाईटवरून आठवडा वाचता आला नाही.' : 'Failed to scan week.'));
       }
     } catch (err: any) {
       setBulkScanError(err.message || (isMr ? 'सर्व्हरशी संपर्क होऊ शकला नाही.' : 'Network error.'));

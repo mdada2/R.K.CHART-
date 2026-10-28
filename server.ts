@@ -282,7 +282,7 @@ function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): {
 app.all('/api/fetch-live', async (req, res) => {
   const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
   const customUrl = (req.body && req.body.customUrl) || (req.query && req.query.customUrl) as string;
-  const targetUrl = customUrl || 'https://dpboss.tax/';
+  const targetUrl = customUrl || 'https://dpbossnet.me/';
   const requestedDay = (req.body && req.body.dayKey) || (req.query && req.query.dayKey) as string;
   const { dayKey: targetDayKey, isSunday, isMarketClosed } = getISTMarketInfo(market, requestedDay);
 
@@ -420,122 +420,198 @@ app.all('/api/fetch-live', async (req, res) => {
 
 
 
+// Helper: Check if row date string from DPBoss matches requested week string
+function doesRowMatchWeek(rowDateStr: string, requestedWeekStr: string): boolean {
+  if (!rowDateStr || !requestedWeekStr) return false;
+  const cleanRow = rowDateStr.replace(/\s+/g, ' ').trim();
+  const cleanReq = requestedWeekStr.replace(/\s+/g, ' ').trim();
+  const reqStart = cleanReq.split(' to ')[0]?.trim();
+  if (!reqStart) return false;
+  const [reqDay, reqMonth] = reqStart.split('-');
+  const rowStart = cleanRow.split(/\s*to\s*/i)[0]?.trim();
+  if (!rowStart) return false;
+  const rowParts = rowStart.split(/[\/\-]/);
+  const [rowDay, rowMonth] = rowParts;
+  return reqDay === rowDay && reqMonth === rowMonth;
+}
+
 // Endpoint 4: Bulk Week Panel/Jodi Chart Scraper
 app.all('/api/fetch-week-chart', async (req, res) => {
   const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
+  const requestedWeek = ((req.body && req.body.week) || (req.query && req.query.week) as string) || '';
   const isNight = market === 'rajdhani_night';
   const marketSlug = isNight ? 'rajdhani-night' : 'kalyan';
+  const marketName = isNight ? 'राजधानी नाईट' : 'कल्याण';
   const panelUrl = `https://dpbossnet.me/panel-chart-record/${marketSlug}.php`;
   const jodiUrl = `https://dpbossnet.me/jodi-chart-record/${marketSlug}.php`;
+  const liveUrl = 'https://dpbossnet.me/';
+
+  const days: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat')[] = isNight 
+    ? ['mon', 'tue', 'wed', 'thu', 'fri'] 
+    : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+  // Read local historical file to preserve already recorded results for this week
+  const filePath = getDataFilePath(market);
+  let localWeekRecord: any = null;
+  try {
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const history = JSON.parse(raw);
+    if (requestedWeek) {
+      localWeekRecord = history.find((w: any) => w.week === requestedWeek);
+    } else if (history.length > 0) {
+      localWeekRecord = history[history.length - 1];
+    }
+  } catch {}
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   try {
-    // 1. Try Panel Chart first (contains openPana, jodi, closePana for every day)
-    const response = await fetch(panelUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml',
-      },
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
+    // 1. Try Panel Chart match
+    let panelMatchFound = false;
+    let panelWeekData: any = {};
+    let panelRawDateStr = '';
 
-    const html = await response.text();
-    const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
-
-    if (rows && rows.length > 0) {
-      for (let r = rows.length - 1; r >= Math.max(0, rows.length - 5); r--) {
-        const row = rows[r];
-        const cells = Array.from(row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
-          .map((m) => m[1].replace(/<br\s*\/?>/gi, '').trim());
-
-        if (cells.length >= 10) {
-          const rawDateStr = cells[0].replace(/\s+/g, ' ');
-          const days = isNight
-            ? ['mon', 'tue', 'wed', 'thu', 'fri']
-            : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-          const weekData: any = {};
-          let ptr = 1;
-
-          for (const d of days) {
-            if (ptr + 2 < cells.length) {
-              const op = cells[ptr] || '***';
-              const jd = cells[ptr + 1] || '**';
-              const cp = cells[ptr + 2] || '***';
-              weekData[d] = {
-                openPana: op === '' ? '***' : op,
-                jodi: jd === '' ? '**' : jd,
-                closePana: cp === '' ? '***' : cp,
-              };
-              ptr += 3;
-            } else {
-              weekData[d] = { openPana: '***', jodi: '**', closePana: '***' };
-            }
-          }
-
-          if (isNight) {
-            weekData.sat = { openPana: '***', jodi: 'XX', closePana: '***' };
-          }
-
-          return res.json({
-            success: true,
-            found: true,
-            market,
-            sourceType: 'panel-chart',
-            rawDateStr,
-            weekData,
-            source: panelUrl,
-          });
-        }
-      }
-    }
-
-    // 2. Fallback to Jodi Chart if Panel Chart is unavailable
-    const jodiRes = await fetch(jodiUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
-    const jodiHtml = await jodiRes.text();
-    const jodiRows = jodiHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
-
-    if (jodiRows && jodiRows.length > 0) {
-      const lastRow = jodiRows[jodiRows.length - 1];
-      const cells = Array.from(lastRow.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
-        .map((m) => m[1].trim());
-
-      const days = isNight
-        ? ['mon', 'tue', 'wed', 'thu', 'fri']
-        : ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-      const weekData: any = {};
-
-      days.forEach((d, i) => {
-        const jd = cells[i] || '**';
-        weekData[d] = {
-          openPana: '***',
-          jodi: jd === '' ? '**' : jd,
-          closePana: '***',
-        };
+    try {
+      const response = await fetch(panelUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml',
+        },
+        signal: controller.signal,
       });
 
-      if (isNight) {
-        weekData.sat = { openPana: '***', jodi: 'XX', closePana: '***' };
-      }
+      const html = await response.text();
+      const rows = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
 
+      if (rows && rows.length > 0) {
+        for (let r = rows.length - 1; r >= Math.max(0, rows.length - 15); r--) {
+          const row = rows[r];
+          const cells = Array.from(row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
+            .map((m) => m[1].replace(/<br\s*\/?>/gi, '').trim());
+
+          if (cells.length >= 10) {
+            const rawDateStr = cells[0].replace(/\s+/g, ' ');
+            if (requestedWeek && doesRowMatchWeek(rawDateStr, requestedWeek)) {
+              let ptr = 1;
+              for (const d of days) {
+                if (ptr + 2 < cells.length) {
+                  const op = cells[ptr] || '***';
+                  const jd = cells[ptr + 1] || '**';
+                  const cp = cells[ptr + 2] || '***';
+                  panelWeekData[d] = {
+                    openPana: op === '' ? '***' : op,
+                    jodi: jd === '' ? '**' : jd,
+                    closePana: cp === '' ? '***' : cp,
+                  };
+                  ptr += 3;
+                } else {
+                  panelWeekData[d] = { openPana: '***', jodi: '**', closePana: '***' };
+                }
+              }
+              if (isNight) {
+                panelWeekData.sat = { openPana: '***', jodi: 'XX', closePana: '***' };
+              }
+              panelRawDateStr = rawDateStr;
+              panelMatchFound = true;
+              break;
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn('Panel chart fetch error/timeout:', err.message);
+    }
+
+    if (panelMatchFound) {
+      clearTimeout(timeoutId);
       return res.json({
         success: true,
         found: true,
-        market,
-        sourceType: 'jodi-chart',
-        weekData,
-        source: jodiUrl,
+        sourceType: 'panel-chart',
+        rawDateStr: panelRawDateStr,
+        weekData: panelWeekData,
+        source: panelUrl,
+        message: `✓ DPBoss पॅनल चार्टवरून ${marketName}चा आठवडा (${panelRawDateStr}) यशस्वीरित्या स्कॅन व फेच झाला!`,
       });
     }
 
+    // 2. Active Current Week Multi-Source Synthesis
+    const synthesizedData: any = {
+      mon: { openPana: localWeekRecord?.mon?.openPana || '***', jodi: localWeekRecord?.mon?.jodi || '**', closePana: localWeekRecord?.mon?.closePana || '***' },
+      tue: { openPana: localWeekRecord?.tue?.openPana || '***', jodi: localWeekRecord?.tue?.jodi || '**', closePana: localWeekRecord?.tue?.closePana || '***' },
+      wed: { openPana: localWeekRecord?.wed?.openPana || '***', jodi: localWeekRecord?.wed?.jodi || '**', closePana: localWeekRecord?.wed?.closePana || '***' },
+      thu: { openPana: localWeekRecord?.thu?.openPana || '***', jodi: localWeekRecord?.thu?.jodi || '**', closePana: localWeekRecord?.thu?.closePana || '***' },
+      fri: { openPana: localWeekRecord?.fri?.openPana || '***', jodi: localWeekRecord?.fri?.jodi || '**', closePana: localWeekRecord?.fri?.closePana || '***' },
+      sat: isNight
+        ? { openPana: '***', jodi: 'XX', closePana: '***' }
+        : { openPana: localWeekRecord?.sat?.openPana || '***', jodi: localWeekRecord?.sat?.jodi || '**', closePana: localWeekRecord?.sat?.closePana || '***' },
+    };
+
+    // A. Fetch recent jodis from jodi-chart
+    try {
+      const jodiRes = await fetch(jodiUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const jodiHtml = await jodiRes.text();
+      const jodiRows = jodiHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi);
+
+      if (jodiRows && jodiRows.length > 0) {
+        const lastRow = jodiRows[jodiRows.length - 1];
+        const cells = Array.from(lastRow.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi))
+          .map((m) => m[1].replace(/<br\s*\/?>/gi, '').trim());
+
+        days.forEach((d, i) => {
+          const jd = cells[i] || '';
+          if (/^\d{2}$/.test(jd)) {
+            synthesizedData[d].jodi = jd;
+          }
+        });
+      }
+    } catch {}
+
+    // B. Scrape today's live draw from DPBoss homepage
+    try {
+      const liveRes = await fetch(liveUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      const liveHtml = await liveRes.text();
+      const marketKeyword = isNight ? 'RAJDHANI\\s+NIGHT' : 'KALYAN';
+      const exactFullRegex = new RegExp(`<h[1-6][^>]*>\\s*${marketKeyword}\\s*<\\/h[1-6]>\\s*<span>\\s*(\\d{3})\\s*-\\s*(\\d{2})\\s*-\\s*(\\d{3})\\s*<\\/span>`, 'i');
+      const liveMatch = liveHtml.match(exactFullRegex);
+
+      if (liveMatch) {
+        const { dayKey: todayKey } = getISTMarketInfo(market);
+        if (todayKey && synthesizedData[todayKey]) {
+          synthesizedData[todayKey] = {
+            openPana: liveMatch[1],
+            jodi: liveMatch[2],
+            closePana: liveMatch[3],
+          };
+        }
+      }
+    } catch {}
+
+    clearTimeout(timeoutId);
+
+    const marathiDayNames: Record<string, string> = {
+      mon: 'सोमवार', tue: 'मंगळवार', wed: 'बुधवार', thu: 'गुरूवार', fri: 'शुक्रवार', sat: 'शनिवार'
+    };
+    const activeDaysFilled = days.filter((d) => {
+      const c = synthesizedData[d];
+      return c && c.jodi !== '**' && !c.jodi.includes('*') && c.jodi !== 'XX';
+    }).map((d) => `${marathiDayNames[d] || d} (${synthesizedData[d].jodi})`);
+
     return res.json({
-      success: false,
-      market,
-      message: 'वेबसाईटवरून आठवड्याचा चार्ट वाचता आला नाही.',
+      success: true,
+      found: true,
+      isCurrentWeek: true,
+      sourceType: 'current-week-live',
+      rawDateStr: requestedWeek || 'चालू आठवडा',
+      weekData: synthesizedData,
+      message: activeDaysFilled.length > 0
+        ? `✓ चालू आठवड्यातील खेळलेले निकाल यशस्वीरित्या स्कॅन झाले: ${activeDaysFilled.join(', ')}`
+        : `✓ चालू आठवड्यासाठी डेटा तयार आहे. निकाल मॅन्युअली किंवा १-क्लिक अपडेट करा.`,
     });
   } catch (error: any) {
     return res.json({
