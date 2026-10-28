@@ -20,6 +20,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { PhotoCardModal } from './PhotoCardModal';
+import { ExpertConfluenceHub } from './ExpertConfluenceHub';
 import { DayKey, Language, MarketType, PredictionResult, WeekRecord, MARKETS, CalculationFormulaId } from '../types';
 import { 
   DAY_NAMES, 
@@ -952,6 +953,14 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* EXPERT CONSENSUS & CONFLUENCE HUB */}
+      <ExpertConfluenceHub
+        history={historyForPrediction}
+        targetDay={selectedDay}
+        market={market}
+        language={language}
+      />
 
       {/* CORE RESULT 3: SINGLE & DOUBLE PANAS (पाना / पत्ती) */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5">

@@ -9012,7 +9012,7 @@
     "week": "26-10-26 to 01-11-26",
     "mon": {
       "openPana": "***",
-      "jodi": "**",
+      "jodi": "68",
       "closePana": "***"
     },
     "tue": {
@@ -9021,9 +9021,9 @@
       "closePana": "238"
     },
     "wed": {
-      "openPana": "***",
-      "jodi": "**",
-      "closePana": "***"
+      "openPana": "178",
+      "jodi": "64",
+      "closePana": "130"
     },
     "thu": {
       "openPana": "***",
