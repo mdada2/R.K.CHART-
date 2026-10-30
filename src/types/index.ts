@@ -1,4 +1,4 @@
-export type MarketType = 'kalyan' | 'rajdhani_night';
+export type MarketType = 'kalyan' | 'rajdhani_night' | 'manipur';
 
 export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
@@ -30,6 +30,15 @@ export const MARKETS: Record<MarketType, MarketInfo> = {
     closeTime: 'रात्री ११:४५',
     daysActive: ['mon', 'tue', 'wed', 'thu', 'fri'],
     totalWeeksLabel: '535 आठवडे (2016-2026)',
+  },
+  manipur: {
+    id: 'manipur',
+    name: { mr: 'मणीपुर (Manipur)', en: 'Manipur' },
+    tagline: { mr: 'दुपारचे लोकप्रिय मार्केट (सोम-शनि)', en: 'Popular Day Market (Mon-Sat)' },
+    openTime: 'दुपारी ०३:२०',
+    closeTime: 'संध्याकाळी ०५:२०',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+    totalWeeksLabel: '208 आठवडे (2022-2026)',
   },
 };
 

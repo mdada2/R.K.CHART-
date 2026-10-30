@@ -11,7 +11,7 @@ import { BacktestingLab } from './components/BacktestingLab';
 import { EducationalGuide } from './components/EducationalGuide';
 import { ChartUpdateModal } from './components/ChartUpdateModal';
 import { OfflineIndicator } from './components/PWAInstallButton';
-import { kalyanHistory, rajdhaniNightHistory } from './data/historicalData';
+import { kalyanHistory, rajdhaniNightHistory, manipurHistory } from './data/historicalData';
 import { Language, MarketType, WeekRecord } from './types';
 import { getEffectiveHistory } from './utils/matkaMath';
 import { mergeBaseAndCloudHistory, useFirebaseApp } from './contexts/FirebaseContext';
@@ -32,7 +32,7 @@ export default function App() {
   const [market, setMarket] = useState<MarketType>('kalyan');
   const [activeTab, setActiveTab] = useState<string>('predictor');
 
-  const { cloudKalyanWeeks, cloudRajdhaniWeeks } = useFirebaseApp();
+  const { cloudKalyanWeeks, cloudRajdhaniWeeks, cloudManipurWeeks } = useFirebaseApp();
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -70,6 +70,7 @@ export default function App() {
   // Base historical state per market (updated by server API or local JSON)
   const [kalyanBaseRecords, setKalyanBaseRecords] = useState<WeekRecord[]>(kalyanHistory);
   const [rajdhaniBaseRecords, setRajdhaniBaseRecords] = useState<WeekRecord[]>(rajdhaniNightHistory);
+  const [manipurBaseRecords, setManipurBaseRecords] = useState<WeekRecord[]>(manipurHistory);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
 
   // Merge real-time Firestore cloud weeks onto base history
@@ -81,10 +82,20 @@ export default function App() {
     () => mergeBaseAndCloudHistory(rajdhaniBaseRecords, cloudRajdhaniWeeks),
     [rajdhaniBaseRecords, cloudRajdhaniWeeks]
   );
+  const manipurRecords = useMemo(
+    () => mergeBaseAndCloudHistory(manipurBaseRecords, cloudManipurWeeks),
+    [manipurBaseRecords, cloudManipurWeeks]
+  );
 
   // Active history based on chosen market
-  const history = market === 'rajdhani_night' ? rajdhaniRecords : kalyanRecords;
+  const history =
+    market === 'rajdhani_night'
+      ? rajdhaniRecords
+      : market === 'manipur'
+      ? manipurRecords
+      : kalyanRecords;
   const isNight = market === 'rajdhani_night';
+  const isManipur = market === 'manipur';
 
   // Fetch updated history from server on mount / market switch if available
   useEffect(() => {
@@ -95,6 +106,8 @@ export default function App() {
         if (isMounted && data.success && Array.isArray(data.history) && data.history.length > 0) {
           if (market === 'rajdhani_night') {
             setRajdhaniBaseRecords(data.history);
+          } else if (market === 'manipur') {
+            setManipurBaseRecords(data.history);
           } else {
             setKalyanBaseRecords(data.history);
           }
@@ -111,6 +124,8 @@ export default function App() {
   const handleHistoryUpdate = (newHistory: WeekRecord[]) => {
     if (market === 'rajdhani_night') {
       setRajdhaniBaseRecords(newHistory);
+    } else if (market === 'manipur') {
+      setManipurBaseRecords(newHistory);
     } else {
       setKalyanBaseRecords(newHistory);
     }
@@ -168,6 +183,7 @@ export default function App() {
           <PersonalPassbookView
             kalyanHistory={kalyanRecords}
             rajdhaniHistory={rajdhaniRecords}
+            manipurHistory={manipurRecords}
             language={language}
             activeMarket={market}
           />
@@ -224,6 +240,7 @@ export default function App() {
           history={effectiveHistory}
           kalyanHistory={getEffectiveHistory(kalyanRecords, 'kalyan')}
           rajdhaniHistory={getEffectiveHistory(rajdhaniRecords, 'rajdhani_night')}
+          manipurHistory={getEffectiveHistory(manipurRecords, 'manipur')}
           onHistoryUpdated={handleHistoryUpdate}
         />
       )}
@@ -240,6 +257,10 @@ export default function App() {
                 ? language === 'mr'
                   ? 'राजधानी नाईट अंक गणित & चार्ट अभ्यास'
                   : 'Rajdhani Night Ganit & Chart Study'
+                : isManipur
+                ? language === 'mr'
+                  ? 'मणीपुर अंक गणित & चार्ट अभ्यास'
+                  : 'Manipur Ganit & Chart Study'
                 : language === 'mr'
                 ? 'कल्याण अंक गणित & जोडी चार्ट अभ्यास'
                 : 'Kalyan Ank Ganit & Jodi Chart Study'}

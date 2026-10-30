@@ -26,8 +26,10 @@ export const EducationalGuide: React.FC<EducationalGuideProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {isNight 
+                {market === 'rajdhani_night' 
                   ? (isMr ? 'राजधानी नाईट: अंक गणित व चार्ट अभ्यास मार्गदर्शक' : 'Rajdhani Night: Ank Ganit & Chart Study Guide')
+                  : market === 'manipur'
+                  ? (isMr ? 'मणीपुर: अंक गणित व चार्ट अभ्यास मार्गदर्शक' : 'Manipur: Ank Ganit & Chart Study Guide')
                   : (isMr ? 'कल्याण: अंक गणित व चार्ट अभ्यास मार्गदर्शक' : 'Kalyan: Ank Ganit & Chart Study Guide')}
               </h2>
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30">
@@ -40,26 +42,28 @@ export const EducationalGuide: React.FC<EducationalGuideProps> = ({
           </div>
         </div>
         <p className="text-sm text-slate-700 dark:text-slate-300 mt-2 leading-relaxed">
-          {isNight
+          {market === 'rajdhani_night'
             ? (isMr
                 ? 'राजधानी नाईट हा भारतातील लोकप्रिय रात्रीचा चार्ट आहे. या मार्गदर्शकात राजधानी नाईटचे खास नियम (सोमवार ते शुक्रवार सलग ५ दिवस, शनिवार-रविवार सुट्टी), ड्रॉ वेळा, आणि अंक गणित, पाना, कट अंक व लाईन-त्रिक पद्धतींचे संपूर्ण शास्त्र विशद केले आहे.'
                 : 'Rajdhani Night is a premier night-time numerical matrix. This guide details its specific schedule (Mon-Fri active, Sat-Sun off), draw timings, and the mathematical methods of Open, Close, Jodi, Pana, Cut Numbers, and Line Progression.')
+            : market === 'manipur'
+            ? (isMr
+                ? 'मणीपुर हा भारतातील लोकप्रिय दुपारचा पॅनल चार्ट आहे (https://satta1.net/manipur-panel-chart.php). या मार्गदर्शकात मणीपुरचे वेळापत्रक (सोमवार ते शनिवार सलग ६ दिवस, रविवार सुट्टी), ड्रॉ वेळा (दुपारी ०३:२० ते संध्याकाळी ०५:२०), आणि अंक गणित, पाना, कट अंक व लाईन-त्रिक पद्धतींचे संपूर्ण शास्त्र विशद केले आहे.'
+                : 'Manipur is a popular day-time panel chart (sourced from satta1.net). This guide details its schedule (Mon-Sat active, Sun off), draw timings (03:20 PM to 05:20 PM), and mathematical line methods.')
             : (isMr
                 ? 'कल्याण जोडी आणि पॅनल चार्ट हा भारतीय अंक गणिताचा एक पारंपारिक संख्यात्मक तक्ता आहे. या मार्गदर्शकात ओपन, क्लोज, जोडी, पाना, कट अंक आणि लाईन-त्रिक पद्धतींचे संपूर्ण शास्त्र विशद केले आहे.'
                 : 'The Kalyan Jodi and Panel Chart is an Indian numerical matrix. This reference guide explains Open, Close, Jodi, Pana, Cut Numbers, and Line-Trick analysis through mathematics and combinatorics.')}
         </p>
       </div>
 
-      {/* Chapter 1: Market Specific Schedule & Rules (Kalyan vs Rajdhani Night) */}
+      {/* Chapter 1: Market Specific Schedule & Rules (Kalyan vs Rajdhani Night vs Manipur) */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4 transition-colors">
         <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <span className="w-6 h-6 rounded-md bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-xs">
             १
           </span>
           <span>
-            {isNight 
-              ? (isMr ? 'राजधानी नाईटचे वेळापत्रक व महत्त्वाचे नियम' : 'Rajdhani Night Schedule & Rules') 
-              : (isMr ? 'कल्याणचे वेळापत्रक व महत्त्वाचे नियम' : 'Kalyan Schedule & Rules')}
+            {marketInfo.name[language]} {isMr ? 'वेळापत्रक व महत्त्वाचे नियम' : 'Schedule & Rules'}
           </span>
         </h3>
 
@@ -118,11 +122,11 @@ export const EducationalGuide: React.FC<EducationalGuideProps> = ({
               ) : (
                 isMr ? (
                   <>
-                    कल्याणमध्ये <strong>शनिवार चालू असतो व फक्त रविवार सुट्टी</strong> असते. त्यामुळे आगामी सोमवारच्या ४ ओटीसी अंकांचा अभ्यास हा <strong>शनिवारच्या अंतिम निकालावरून (Saturday Close)</strong> काढला जातो.
+                    {market === 'manipur' ? 'मणीपुर' : 'कल्याण'}मध्ये <strong>शनिवार चालू असतो व फक्त रविवार सुट्टी</strong> असते. त्यामुळे आगामी सोमवारच्या ४ ओटीसी अंकांचा अभ्यास हा <strong>शनिवारच्या अंतिम निकालावरून (Saturday Close)</strong> काढला जातो.
                   </>
                 ) : (
                   <>
-                    In Kalyan, <strong>Saturday is an active playing day</strong> (only Sunday is off). Monday's 4 OTC predictions are calculated using <strong>Saturday's closing outcome</strong>.
+                    In {market === 'manipur' ? 'Manipur' : 'Kalyan'}, <strong>Saturday is an active playing day</strong> (only Sunday is off). Monday's 4 OTC predictions are calculated using <strong>Saturday's closing outcome</strong>.
                   </>
                 )
               )}

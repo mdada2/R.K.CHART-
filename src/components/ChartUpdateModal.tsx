@@ -30,6 +30,7 @@ interface ChartUpdateModalProps {
   history?: WeekRecord[];
   kalyanHistory?: WeekRecord[];
   rajdhaniHistory?: WeekRecord[];
+  manipurHistory?: WeekRecord[];
   onHistoryUpdated: (newHistory: WeekRecord[]) => void;
 }
 
@@ -42,6 +43,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   history = [],
   kalyanHistory = [],
   rajdhaniHistory = [],
+  manipurHistory = [],
   onHistoryUpdated,
 }) => {
   const isMr = language === 'mr';
@@ -61,7 +63,9 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   const [isMasterSyncing, setIsMasterSyncing] = useState<boolean>(false);
 
   // Auto-fetch state
-  const [fetchUrl, setFetchUrl] = useState<string>('https://dpboss.tax/');
+  const [fetchUrl, setFetchUrl] = useState<string>(
+    market === 'manipur' ? 'https://satta1.net/' : 'https://dpboss.tax/'
+  );
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isPartialResult, setIsPartialResult] = useState<boolean>(false);
   const [fetchedData, setFetchedData] = useState<{
@@ -71,6 +75,10 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
   } | null>(null);
   const [fetchMessage, setFetchMessage] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFetchUrl(market === 'manipur' ? 'https://satta1.net/' : 'https://dpboss.tax/');
+  }, [market]);
 
   // Manual update state
   const findFirstPendingDay = (w?: WeekRecord): DayKey => {
@@ -161,7 +169,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
         setOpenPanaInput(json.data.openPana);
         setJodiInput(json.data.jodi);
         setClosePanaInput(json.data.closePana);
-        const currentMarketTitle = isNight ? (isMr ? 'राजधानी नाईट' : 'Rajdhani Night') : (isMr ? 'कल्याण' : 'Kalyan');
+        const currentMarketTitle = marketInfo.name[language];
         setFetchMessage(isMr ? `वेबसाईटवरून ${currentMarketTitle} निकाल यशस्वीरित्या फेच झाला!` : `Live result for ${currentMarketTitle} successfully fetched from website!`);
       } else if (json.message) {
         setFetchError(json.message);
@@ -303,7 +311,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
           return next;
         });
 
-        const marketName = isNight ? (isMr ? 'राजधानी नाईट' : 'Rajdhani Night') : (isMr ? 'कल्याण' : 'Kalyan');
+        const marketName = marketInfo.name[language];
         setBulkScanMessage(
           json.message ||
           (isMr

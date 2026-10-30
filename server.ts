@@ -13,10 +13,14 @@ const portFromArg = portArgIndex !== -1 ? Number(process.argv[portArgIndex + 1])
 const PORT = portFromArg || Number(process.env.PORT) || 3000;
 const KALYAN_DATA_FILE_PATH = path.resolve(process.cwd(), 'src/data/kalyanHistorical.json');
 const RAJDHANI_DATA_FILE_PATH = path.resolve(process.cwd(), 'src/data/rajdhaniNightHistorical.json');
+const MANIPUR_DATA_FILE_PATH = path.resolve(process.cwd(), 'src/data/manipurHistorical.json');
 
 function getDataFilePath(market?: string): string {
   if (market === 'rajdhani_night') {
     return RAJDHANI_DATA_FILE_PATH;
+  }
+  if (market === 'manipur') {
+    return MANIPUR_DATA_FILE_PATH;
   }
   return KALYAN_DATA_FILE_PATH;
 }
@@ -252,8 +256,9 @@ function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): {
 
     return { dayKey, isSunday, isMarketClosed, isDrawWindow };
   } else {
+    // Day market: Manipur runs Mon - Sat, open ~15:20 (03:20 PM) to ~17:20 (05:20 PM)
     // Kalyan Day runs Mon - Sat, open ~16:50 (04:50 PM) to ~18:50 (06:50 PM)
-    const drawStartMinutes = 16 * 60 + 50; // 16:50 (04:50 PM)
+    const drawStartMinutes = market === 'manipur' ? 15 * 60 + 20 : 16 * 60 + 50;
     const isDrawWindow = totalMinutes >= drawStartMinutes;
     const isMarketClosed = weekday === 'Sun';
 
@@ -281,13 +286,13 @@ function getISTMarketInfo(market: string = 'kalyan', requestedDay?: string): {
 // Endpoint 3: Live Web Result Fetcher
 app.all('/api/fetch-live', async (req, res) => {
   const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
+  const isNight = market === 'rajdhani_night';
+  const isManipur = market === 'manipur';
+  const marketName = isNight ? 'राजधानी नाईट' : isManipur ? 'मणीपुर' : 'कल्याण';
   const customUrl = (req.body && req.body.customUrl) || (req.query && req.query.customUrl) as string;
-  const targetUrl = customUrl || 'https://dpbossnet.me/';
+  const targetUrl = customUrl || (isManipur ? 'https://satta1.net/' : 'https://dpbossnet.me/');
   const requestedDay = (req.body && req.body.dayKey) || (req.query && req.query.dayKey) as string;
   const { dayKey: targetDayKey, isSunday, isMarketClosed } = getISTMarketInfo(market, requestedDay);
-
-  const isNight = market === 'rajdhani_night';
-  const marketName = isNight ? 'राजधानी नाईट' : 'कल्याण';
 
   if (!targetDayKey) {
     return res.json({
@@ -303,16 +308,65 @@ app.all('/api/fetch-live', async (req, res) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-    const response = await fetch(targetUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/json',
-      },
-      signal: controller.signal,
-    });
+    let html = '';
+    try {
+      const response = await fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/json',
+        },
+        signal: controller.signal,
+      });
+      if (response.ok) html = await response.text();
+    } catch {}
+
+    if (!html) {
+      try {
+        const { execSync } = await import('child_process');
+        html = execSync(`curl.exe -4 -s -m 8 "${targetUrl}"`, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+      } catch {}
+    }
     clearTimeout(timeoutId);
 
-    const html = await response.text();
+    if (isManipur) {
+      const manipurFull = html.match(/Manipur[\s\S]*?(\d{3})\s*[-–]\s*(\d{2})\s*[-–]\s*(\d{3})/i);
+      if (manipurFull) {
+        return res.json({
+          success: true,
+          found: true,
+          market,
+          source: targetUrl,
+          isPartial: false,
+          dayKey: targetDayKey,
+          statusText: `${marketName}: पूर्ण निकाल जाहीर (Open & Close Declared)`,
+          data: {
+            dayKey: targetDayKey,
+            openPana: manipurFull[1],
+            jodi: manipurFull[2],
+            closePana: manipurFull[3],
+          },
+        });
+      }
+
+      const manipurOpen = html.match(/Manipur[\s\S]*?(\d{3})\s*[-–]\s*(\d{1})/i);
+      if (manipurOpen) {
+        return res.json({
+          success: true,
+          found: true,
+          market,
+          source: targetUrl,
+          isPartial: true,
+          dayKey: targetDayKey,
+          statusText: `${marketName}: फक्त ओपन निकाल जाहीर (Close Pending)`,
+          data: {
+            dayKey: targetDayKey,
+            openPana: manipurOpen[1],
+            jodi: `${manipurOpen[2]}*`,
+            closePana: '***',
+          },
+        });
+      }
+    }
 
     const marketKeyword = isNight ? 'RAJDHANI\\s+NIGHT' : 'KALYAN';
 
@@ -440,8 +494,9 @@ app.all('/api/fetch-week-chart', async (req, res) => {
   const market = ((req.body && req.body.market) || (req.query && req.query.market) as string) || 'kalyan';
   const requestedWeek = ((req.body && req.body.week) || (req.query && req.query.week) as string) || '';
   const isNight = market === 'rajdhani_night';
+  const isManipur = market === 'manipur';
   const marketSlug = isNight ? 'rajdhani-night' : 'kalyan';
-  const marketName = isNight ? 'राजधानी नाईट' : 'कल्याण';
+  const marketName = isNight ? 'राजधानी नाईट' : isManipur ? 'मणीपुर' : 'कल्याण';
   const panelUrl = `https://dpbossnet.me/panel-chart-record/${marketSlug}.php`;
   const jodiUrl = `https://dpbossnet.me/jodi-chart-record/${marketSlug}.php`;
   const liveUrl = 'https://dpbossnet.me/';
@@ -467,7 +522,78 @@ app.all('/api/fetch-week-chart', async (req, res) => {
   const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   try {
-    // 1. Try Panel Chart match
+    // 0. Special scraper for Manipur from satta1.net/manipur-panel-chart.php
+    if (isManipur) {
+      const manipurUrl = 'https://satta1.net/manipur-panel-chart.php';
+      let html = '';
+      try {
+        const response = await fetch(manipurUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+          signal: controller.signal,
+        });
+        if (response.ok) html = await response.text();
+      } catch {}
+
+      if (!html) {
+        try {
+          const { execSync } = await import('child_process');
+          html = execSync(`curl.exe -4 -s -m 10 "${manipurUrl}"`, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+        } catch {}
+      }
+
+      if (html) {
+        const trMatches = html.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi) || [];
+        for (let i = trMatches.length - 1; i >= 0; i--) {
+          const tr = trMatches[i];
+          if (!tr.includes('id="date"')) continue;
+          const dateMatch = tr.match(/<td\s+id=["']date["']>([\s\S]*?)<\/td>/i);
+          if (!dateMatch) continue;
+          const rawDateStr = dateMatch[1].replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
+          const weekStr = rawDateStr.replace(/\s*to\s*/i, ' to ');
+
+          const isMatch = requestedWeek ? doesRowMatchWeek(weekStr, requestedWeek) : true;
+          if (isMatch) {
+            const tdMatches = Array.from(tr.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)).map((m) => m[1]);
+            const dayCells = tdMatches.slice(1);
+            const cleanP = (v: string) => {
+              if (!v) return '***';
+              const t = v.replace(/<[^>]*>/g, '').replace(/[\r\n\s]/g, '').trim();
+              return !t || t.includes('*') ? '***' : t.slice(0, 3);
+            };
+            const cleanJ = (v: string) => {
+              if (!v) return '**';
+              const t = v.replace(/<[^>]*>/g, '').replace(/[\r\n\s]/g, '').trim();
+              return !t || t.includes('*') ? '**' : t.slice(0, 2);
+            };
+
+            const weekData: any = {};
+            const dKeys: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat')[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            for (let d = 0; d < 6; d++) {
+              const dName = dKeys[d];
+              const bIdx = d * 3;
+              weekData[dName] = {
+                openPana: cleanP(dayCells[bIdx]),
+                jodi: cleanJ(dayCells[bIdx + 1]),
+                closePana: cleanP(dayCells[bIdx + 2]),
+              };
+            }
+
+            clearTimeout(timeoutId);
+            return res.json({
+              success: true,
+              found: true,
+              sourceType: 'satta1-panel-chart',
+              rawDateStr: weekStr,
+              weekData,
+              source: manipurUrl,
+              message: `✓ Satta1 पॅनल चार्टवरून मणीपुरचा आठवडा (${weekStr}) यशस्वीरित्या स्कॅन व फेच झाला!`,
+            });
+          }
+        }
+      }
+    }
+
+    // 1. Try Panel Chart match (Kalyan / Rajdhani Night)
     let panelMatchFound = false;
     let panelWeekData: any = {};
     let panelRawDateStr = '';

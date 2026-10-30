@@ -102,8 +102,10 @@ export const FrequencyAnalytics: React.FC<FrequencyAnalyticsProps> = ({
           <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Flame className="w-5 h-5 text-amber-500 dark:text-amber-400" />
             <span>
-              {isNight 
+              {market === 'rajdhani_night' 
                 ? (isMr ? 'राजधानी नाईट: वारंवारता सांख्यिकी व हॉट/कोल्ड अंक' : 'Rajdhani Night: Frequency Statistics & Hot/Cold Digits')
+                : market === 'manipur'
+                ? (isMr ? 'मणीपुर: वारंवारता सांख्यिकी व हॉट/कोल्ड अंक' : 'Manipur: Frequency Statistics & Hot/Cold Digits')
                 : (isMr ? 'कल्याण: वारंवारता सांख्यिकी व हॉट/कोल्ड अंक' : 'Kalyan: Frequency Statistics & Hot/Cold Digits')}
             </span>
           </h2>

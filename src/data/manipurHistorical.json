@@ -1,0 +1,6866 @@
+[
+  {
+    "week": "07-11-22 to 12-11-22",
+    "mon": {
+      "openPana": "178",
+      "jodi": "64",
+      "closePana": "158"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "25",
+      "closePana": "230"
+    },
+    "wed": {
+      "openPana": "135",
+      "jodi": "94",
+      "closePana": "590"
+    },
+    "thu": {
+      "openPana": "369",
+      "jodi": "83",
+      "closePana": "445"
+    },
+    "fri": {
+      "openPana": "235",
+      "jodi": "02",
+      "closePana": "660"
+    },
+    "sat": {
+      "openPana": "890",
+      "jodi": "72",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "14-11-22 to 19-11-22",
+    "mon": {
+      "openPana": "367",
+      "jodi": "65",
+      "closePana": "456"
+    },
+    "tue": {
+      "openPana": "880",
+      "jodi": "64",
+      "closePana": "248"
+    },
+    "wed": {
+      "openPana": "149",
+      "jodi": "42",
+      "closePana": "480"
+    },
+    "thu": {
+      "openPana": "356",
+      "jodi": "49",
+      "closePana": "568"
+    },
+    "fri": {
+      "openPana": "890",
+      "jodi": "74",
+      "closePana": "130"
+    },
+    "sat": {
+      "openPana": "259",
+      "jodi": "68",
+      "closePana": "378"
+    }
+  },
+  {
+    "week": "21-11-22 to 26-11-22",
+    "mon": {
+      "openPana": "357",
+      "jodi": "57",
+      "closePana": "458"
+    },
+    "tue": {
+      "openPana": "270",
+      "jodi": "98",
+      "closePana": "459"
+    },
+    "wed": {
+      "openPana": "124",
+      "jodi": "78",
+      "closePana": "260"
+    },
+    "thu": {
+      "openPana": "349",
+      "jodi": "61",
+      "closePana": "678"
+    },
+    "fri": {
+      "openPana": "480",
+      "jodi": "23",
+      "closePana": "120"
+    },
+    "sat": {
+      "openPana": "338",
+      "jodi": "42",
+      "closePana": "589"
+    }
+  },
+  {
+    "week": "28-11-22 to 03-11-22",
+    "mon": {
+      "openPana": "200",
+      "jodi": "26",
+      "closePana": "367"
+    },
+    "tue": {
+      "openPana": "770",
+      "jodi": "46",
+      "closePana": "123"
+    },
+    "wed": {
+      "openPana": "177",
+      "jodi": "56",
+      "closePana": "457"
+    },
+    "thu": {
+      "openPana": "256",
+      "jodi": "31",
+      "closePana": "560"
+    },
+    "fri": {
+      "openPana": "578",
+      "jodi": "08",
+      "closePana": "369"
+    },
+    "sat": {
+      "openPana": "358",
+      "jodi": "64",
+      "closePana": "248"
+    }
+  },
+  {
+    "week": "05-12-22 to 10-12-22",
+    "mon": {
+      "openPana": "490",
+      "jodi": "31",
+      "closePana": "236"
+    },
+    "tue": {
+      "openPana": "578",
+      "jodi": "09",
+      "closePana": "379"
+    },
+    "wed": {
+      "openPana": "299",
+      "jodi": "09",
+      "closePana": "135"
+    },
+    "thu": {
+      "openPana": "349",
+      "jodi": "60",
+      "closePana": "668"
+    },
+    "fri": {
+      "openPana": "478",
+      "jodi": "93",
+      "closePana": "670"
+    },
+    "sat": {
+      "openPana": "146",
+      "jodi": "13",
+      "closePana": "120"
+    }
+  },
+  {
+    "week": "12-12-22 to 17-12-22",
+    "mon": {
+      "openPana": "689",
+      "jodi": "30",
+      "closePana": "136"
+    },
+    "tue": {
+      "openPana": "340",
+      "jodi": "71",
+      "closePana": "245"
+    },
+    "wed": {
+      "openPana": "778",
+      "jodi": "29",
+      "closePana": "469"
+    },
+    "thu": {
+      "openPana": "480",
+      "jodi": "25",
+      "closePana": "780"
+    },
+    "fri": {
+      "openPana": "379",
+      "jodi": "95",
+      "closePana": "500"
+    },
+    "sat": {
+      "openPana": "126",
+      "jodi": "99",
+      "closePana": "289"
+    }
+  },
+  {
+    "week": "19-12-22 to 24-12-22",
+    "mon": {
+      "openPana": "159",
+      "jodi": "54",
+      "closePana": "356"
+    },
+    "tue": {
+      "openPana": "688",
+      "jodi": "23",
+      "closePana": "346"
+    },
+    "wed": {
+      "openPana": "270",
+      "jodi": "99",
+      "closePana": "225"
+    },
+    "thu": {
+      "openPana": "459",
+      "jodi": "80",
+      "closePana": "127"
+    },
+    "fri": {
+      "openPana": "779",
+      "jodi": "33",
+      "closePana": "490"
+    },
+    "sat": {
+      "openPana": "358",
+      "jodi": "63",
+      "closePana": "779"
+    }
+  },
+  {
+    "week": "26-12-22 to 31-12-22",
+    "mon": {
+      "openPana": "559",
+      "jodi": "91",
+      "closePana": "380"
+    },
+    "tue": {
+      "openPana": "459",
+      "jodi": "81",
+      "closePana": "245"
+    },
+    "wed": {
+      "openPana": "234",
+      "jodi": "96",
+      "closePana": "790"
+    },
+    "thu": {
+      "openPana": "356",
+      "jodi": "40",
+      "closePana": "299"
+    },
+    "fri": {
+      "openPana": "440",
+      "jodi": "80",
+      "closePana": "578"
+    },
+    "sat": {
+      "openPana": "259",
+      "jodi": "63",
+      "closePana": "490"
+    }
+  },
+  {
+    "week": "02-01-23 to 07-01-23",
+    "mon": {
+      "openPana": "460",
+      "jodi": "07",
+      "closePana": "269"
+    },
+    "tue": {
+      "openPana": "149",
+      "jodi": "49",
+      "closePana": "450"
+    },
+    "wed": {
+      "openPana": "556",
+      "jodi": "67",
+      "closePana": "250"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "09-01-23 to 14-01-23",
+    "mon": {
+      "openPana": "490",
+      "jodi": "38",
+      "closePana": "224"
+    },
+    "tue": {
+      "openPana": "189",
+      "jodi": "88",
+      "closePana": "378"
+    },
+    "wed": {
+      "openPana": "557",
+      "jodi": "78",
+      "closePana": "350"
+    },
+    "thu": {
+      "openPana": "126",
+      "jodi": "94",
+      "closePana": "356"
+    },
+    "fri": {
+      "openPana": "458",
+      "jodi": "79",
+      "closePana": "568"
+    },
+    "sat": {
+      "openPana": "889",
+      "jodi": "50",
+      "closePana": "280"
+    }
+  },
+  {
+    "week": "16-01-23 to 21-01-23",
+    "mon": {
+      "openPana": "128",
+      "jodi": "87",
+      "closePana": "269"
+    },
+    "tue": {
+      "openPana": "446",
+      "jodi": "42",
+      "closePana": "237"
+    },
+    "wed": {
+      "openPana": "770",
+      "jodi": "40",
+      "closePana": "190"
+    },
+    "thu": {
+      "openPana": "699",
+      "jodi": "43",
+      "closePana": "580"
+    },
+    "fri": {
+      "openPana": "778",
+      "jodi": "29",
+      "closePana": "270"
+    },
+    "sat": {
+      "openPana": "570",
+      "jodi": "08",
+      "closePana": "189"
+    }
+  },
+  {
+    "week": "23-01-23 to 28-01-23",
+    "mon": {
+      "openPana": "190",
+      "jodi": "03",
+      "closePana": "247"
+    },
+    "tue": {
+      "openPana": "347",
+      "jodi": "48",
+      "closePana": "990"
+    },
+    "wed": {
+      "openPana": "135",
+      "jodi": "95",
+      "closePana": "456"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "789",
+      "jodi": "47",
+      "closePana": "124"
+    },
+    "sat": {
+      "openPana": "237",
+      "jodi": "27",
+      "closePana": "890"
+    }
+  },
+  {
+    "week": "30-01-23 to 04-01-23",
+    "mon": {
+      "openPana": "468",
+      "jodi": "87",
+      "closePana": "223"
+    },
+    "tue": {
+      "openPana": "567",
+      "jodi": "86",
+      "closePana": "240"
+    },
+    "wed": {
+      "openPana": "150",
+      "jodi": "68",
+      "closePana": "440"
+    },
+    "thu": {
+      "openPana": "569",
+      "jodi": "00",
+      "closePana": "118"
+    },
+    "fri": {
+      "openPana": "350",
+      "jodi": "81",
+      "closePana": "678"
+    },
+    "sat": {
+      "openPana": "248",
+      "jodi": "48",
+      "closePana": "477"
+    }
+  },
+  {
+    "week": "06-02-23 to 11-02-23",
+    "mon": {
+      "openPana": "127",
+      "jodi": "00",
+      "closePana": "280"
+    },
+    "tue": {
+      "openPana": "147",
+      "jodi": "29",
+      "closePana": "478"
+    },
+    "wed": {
+      "openPana": "399",
+      "jodi": "82",
+      "closePana": "570"
+    },
+    "thu": {
+      "openPana": "237",
+      "jodi": "24",
+      "closePana": "248"
+    },
+    "fri": {
+      "openPana": "349",
+      "jodi": "68",
+      "closePana": "558"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "40",
+      "closePana": "145"
+    }
+  },
+  {
+    "week": "13-02-23 to 18-02-23",
+    "mon": {
+      "openPana": "568",
+      "jodi": "99",
+      "closePana": "559"
+    },
+    "tue": {
+      "openPana": "468",
+      "jodi": "87",
+      "closePana": "340"
+    },
+    "wed": {
+      "openPana": "180",
+      "jodi": "94",
+      "closePana": "446"
+    },
+    "thu": {
+      "openPana": "577",
+      "jodi": "96",
+      "closePana": "457"
+    },
+    "fri": {
+      "openPana": "235",
+      "jodi": "03",
+      "closePana": "148"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "20-02-23 to 25-02-23",
+    "mon": {
+      "openPana": "357",
+      "jodi": "52",
+      "closePana": "660"
+    },
+    "tue": {
+      "openPana": "235",
+      "jodi": "08",
+      "closePana": "134"
+    },
+    "wed": {
+      "openPana": "470",
+      "jodi": "18",
+      "closePana": "369"
+    },
+    "thu": {
+      "openPana": "168",
+      "jodi": "53",
+      "closePana": "670"
+    },
+    "fri": {
+      "openPana": "356",
+      "jodi": "41",
+      "closePana": "245"
+    },
+    "sat": {
+      "openPana": "238",
+      "jodi": "38",
+      "closePana": "378"
+    }
+  },
+  {
+    "week": "27-02-23 to 04-02-23",
+    "mon": {
+      "openPana": "590",
+      "jodi": "44",
+      "closePana": "789"
+    },
+    "tue": {
+      "openPana": "467",
+      "jodi": "43",
+      "closePana": "445"
+    },
+    "wed": {
+      "openPana": "246",
+      "jodi": "27",
+      "closePana": "377"
+    },
+    "thu": {
+      "openPana": "169",
+      "jodi": "67",
+      "closePana": "278"
+    },
+    "fri": {
+      "openPana": "457",
+      "jodi": "61",
+      "closePana": "669"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "44",
+      "closePana": "770"
+    }
+  },
+  {
+    "week": "06-03-23 to 11-03-23",
+    "mon": {
+      "openPana": "123",
+      "jodi": "61",
+      "closePana": "579"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "440",
+      "jodi": "83",
+      "closePana": "247"
+    },
+    "fri": {
+      "openPana": "356",
+      "jodi": "41",
+      "closePana": "335"
+    },
+    "sat": {
+      "openPana": "237",
+      "jodi": "29",
+      "closePana": "180"
+    }
+  },
+  {
+    "week": "13-03-23 to 18-03-23",
+    "mon": {
+      "openPana": "178",
+      "jodi": "62",
+      "closePana": "570"
+    },
+    "tue": {
+      "openPana": "339",
+      "jodi": "27",
+      "closePana": "340"
+    },
+    "wed": {
+      "openPana": "277",
+      "jodi": "60",
+      "closePana": "460"
+    },
+    "thu": {
+      "openPana": "477",
+      "jodi": "80",
+      "closePana": "190"
+    },
+    "fri": {
+      "openPana": "238",
+      "jodi": "30",
+      "closePana": "668"
+    },
+    "sat": {
+      "openPana": "567",
+      "jodi": "88",
+      "closePana": "369"
+    }
+  },
+  {
+    "week": "20-03-23 to 25-03-23",
+    "mon": {
+      "openPana": "370",
+      "jodi": "04",
+      "closePana": "239"
+    },
+    "tue": {
+      "openPana": "457",
+      "jodi": "66",
+      "closePana": "358"
+    },
+    "wed": {
+      "openPana": "238",
+      "jodi": "30",
+      "closePana": "190"
+    },
+    "thu": {
+      "openPana": "569",
+      "jodi": "02",
+      "closePana": "255"
+    },
+    "fri": {
+      "openPana": "178",
+      "jodi": "61",
+      "closePana": "470"
+    },
+    "sat": {
+      "openPana": "440",
+      "jodi": "86",
+      "closePana": "349"
+    }
+  },
+  {
+    "week": "27-03-23 to 01-04-23",
+    "mon": {
+      "openPana": "117",
+      "jodi": "93",
+      "closePana": "689"
+    },
+    "tue": {
+      "openPana": "230",
+      "jodi": "54",
+      "closePana": "356"
+    },
+    "wed": {
+      "openPana": "568",
+      "jodi": "93",
+      "closePana": "779"
+    },
+    "thu": {
+      "openPana": "238",
+      "jodi": "35",
+      "closePana": "456"
+    },
+    "fri": {
+      "openPana": "390",
+      "jodi": "20",
+      "closePana": "136"
+    },
+    "sat": {
+      "openPana": "679",
+      "jodi": "29",
+      "closePana": "199"
+    }
+  },
+  {
+    "week": "03-04-23 to 08-04-23",
+    "mon": {
+      "openPana": "445",
+      "jodi": "39",
+      "closePana": "469"
+    },
+    "tue": {
+      "openPana": "678",
+      "jodi": "10",
+      "closePana": "127"
+    },
+    "wed": {
+      "openPana": "115",
+      "jodi": "74",
+      "closePana": "257"
+    },
+    "thu": {
+      "openPana": "459",
+      "jodi": "86",
+      "closePana": "349"
+    },
+    "fri": {
+      "openPana": "235",
+      "jodi": "01",
+      "closePana": "560"
+    },
+    "sat": {
+      "openPana": "370",
+      "jodi": "06",
+      "closePana": "277"
+    }
+  },
+  {
+    "week": "10-04-23 to 15-04-23",
+    "mon": {
+      "openPana": "569",
+      "jodi": "02",
+      "closePana": "147"
+    },
+    "tue": {
+      "openPana": "158",
+      "jodi": "41",
+      "closePana": "579"
+    },
+    "wed": {
+      "openPana": "478",
+      "jodi": "98",
+      "closePana": "260"
+    },
+    "thu": {
+      "openPana": "266",
+      "jodi": "49",
+      "closePana": "568"
+    },
+    "fri": {
+      "openPana": "569",
+      "jodi": "09",
+      "closePana": "135"
+    },
+    "sat": {
+      "openPana": "125",
+      "jodi": "88",
+      "closePana": "477"
+    }
+  },
+  {
+    "week": "17-04-23 to 22-04-23",
+    "mon": {
+      "openPana": "357",
+      "jodi": "50",
+      "closePana": "190"
+    },
+    "tue": {
+      "openPana": "469",
+      "jodi": "94",
+      "closePana": "680"
+    },
+    "wed": {
+      "openPana": "278",
+      "jodi": "71",
+      "closePana": "678"
+    },
+    "thu": {
+      "openPana": "680",
+      "jodi": "41",
+      "closePana": "227"
+    },
+    "fri": {
+      "openPana": "589",
+      "jodi": "29",
+      "closePana": "360"
+    },
+    "sat": {
+      "openPana": "156",
+      "jodi": "21",
+      "closePana": "489"
+    }
+  },
+  {
+    "week": "24-04-23 to 29-04-23",
+    "mon": {
+      "openPana": "235",
+      "jodi": "07",
+      "closePana": "250"
+    },
+    "tue": {
+      "openPana": "123",
+      "jodi": "60",
+      "closePana": "668"
+    },
+    "wed": {
+      "openPana": "448",
+      "jodi": "67",
+      "closePana": "340"
+    },
+    "thu": {
+      "openPana": "570",
+      "jodi": "28",
+      "closePana": "224"
+    },
+    "fri": {
+      "openPana": "340",
+      "jodi": "76",
+      "closePana": "178"
+    },
+    "sat": {
+      "openPana": "447",
+      "jodi": "57",
+      "closePana": "133"
+    }
+  },
+  {
+    "week": "01-05-23 to 06-05-23",
+    "mon": {
+      "openPana": "778",
+      "jodi": "23",
+      "closePana": "238"
+    },
+    "tue": {
+      "openPana": "480",
+      "jodi": "26",
+      "closePana": "150"
+    },
+    "wed": {
+      "openPana": "489",
+      "jodi": "17",
+      "closePana": "377"
+    },
+    "thu": {
+      "openPana": "458",
+      "jodi": "76",
+      "closePana": "240"
+    },
+    "fri": {
+      "openPana": "370",
+      "jodi": "04",
+      "closePana": "257"
+    },
+    "sat": {
+      "openPana": "368",
+      "jodi": "76",
+      "closePana": "169"
+    }
+  },
+  {
+    "week": "08-05-23 to 13-05-23",
+    "mon": {
+      "openPana": "235",
+      "jodi": "02",
+      "closePana": "570"
+    },
+    "tue": {
+      "openPana": "468",
+      "jodi": "87",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "156",
+      "jodi": "29",
+      "closePana": "289"
+    },
+    "thu": {
+      "openPana": "169",
+      "jodi": "65",
+      "closePana": "230"
+    },
+    "fri": {
+      "openPana": "134",
+      "jodi": "86",
+      "closePana": "349"
+    },
+    "sat": {
+      "openPana": "346",
+      "jodi": "37",
+      "closePana": "467"
+    }
+  },
+  {
+    "week": "15-05-23 to 20-05-23",
+    "mon": {
+      "openPana": "567",
+      "jodi": "86",
+      "closePana": "150"
+    },
+    "tue": {
+      "openPana": "249",
+      "jodi": "56",
+      "closePana": "358"
+    },
+    "wed": {
+      "openPana": "369",
+      "jodi": "80",
+      "closePana": "370"
+    },
+    "thu": {
+      "openPana": "116",
+      "jodi": "85",
+      "closePana": "780"
+    },
+    "fri": {
+      "openPana": "680",
+      "jodi": "41",
+      "closePana": "678"
+    },
+    "sat": {
+      "openPana": "489",
+      "jodi": "14",
+      "closePana": "590"
+    }
+  },
+  {
+    "week": "22-05-23 to 28-05-23",
+    "mon": {
+      "openPana": "278",
+      "jodi": "71",
+      "closePana": "227"
+    },
+    "tue": {
+      "openPana": "368",
+      "jodi": "78",
+      "closePana": "125"
+    },
+    "wed": {
+      "openPana": "458",
+      "jodi": "73",
+      "closePana": "346"
+    },
+    "thu": {
+      "openPana": "134",
+      "jodi": "88",
+      "closePana": "567"
+    },
+    "fri": {
+      "openPana": "289",
+      "jodi": "97",
+      "closePana": "115"
+    },
+    "sat": {
+      "openPana": "224",
+      "jodi": "80",
+      "closePana": "370"
+    }
+  },
+  {
+    "week": "29-05-23 to 03-06-23",
+    "mon": {
+      "openPana": "224",
+      "jodi": "80",
+      "closePana": "479"
+    },
+    "tue": {
+      "openPana": "480",
+      "jodi": "26",
+      "closePana": "880"
+    },
+    "wed": {
+      "openPana": "350",
+      "jodi": "88",
+      "closePana": "279"
+    },
+    "thu": {
+      "openPana": "178",
+      "jodi": "62",
+      "closePana": "570"
+    },
+    "fri": {
+      "openPana": "569",
+      "jodi": "00",
+      "closePana": "389"
+    },
+    "sat": {
+      "openPana": "660",
+      "jodi": "25",
+      "closePana": "690"
+    }
+  },
+  {
+    "week": "05-06-23 to 11-06-23",
+    "mon": {
+      "openPana": "168",
+      "jodi": "58",
+      "closePana": "369"
+    },
+    "tue": {
+      "openPana": "449",
+      "jodi": "77",
+      "closePana": "269"
+    },
+    "wed": {
+      "openPana": "580",
+      "jodi": "36",
+      "closePana": "790"
+    },
+    "thu": {
+      "openPana": "266",
+      "jodi": "41",
+      "closePana": "146"
+    },
+    "fri": {
+      "openPana": "670",
+      "jodi": "35",
+      "closePana": "447"
+    },
+    "sat": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "279"
+    }
+  },
+  {
+    "week": "12-06-23 to 18-06-23",
+    "mon": {
+      "openPana": "669",
+      "jodi": "15",
+      "closePana": "258"
+    },
+    "tue": {
+      "openPana": "357",
+      "jodi": "59",
+      "closePana": "379"
+    },
+    "wed": {
+      "openPana": "177",
+      "jodi": "59",
+      "closePana": "478"
+    },
+    "thu": {
+      "openPana": "467",
+      "jodi": "70",
+      "closePana": "235"
+    },
+    "fri": {
+      "openPana": "690",
+      "jodi": "54",
+      "closePana": "112"
+    },
+    "sat": {
+      "openPana": "359",
+      "jodi": "78",
+      "closePana": "567"
+    }
+  },
+  {
+    "week": "19-06-23 to 25-06-23",
+    "mon": {
+      "openPana": "250",
+      "jodi": "75",
+      "closePana": "780"
+    },
+    "tue": {
+      "openPana": "568",
+      "jodi": "91",
+      "closePana": "335"
+    },
+    "wed": {
+      "openPana": "379",
+      "jodi": "97",
+      "closePana": "223"
+    },
+    "thu": {
+      "openPana": "360",
+      "jodi": "91",
+      "closePana": "489"
+    },
+    "fri": {
+      "openPana": "125",
+      "jodi": "87",
+      "closePana": "340"
+    },
+    "sat": {
+      "openPana": "449",
+      "jodi": "73",
+      "closePana": "670"
+    }
+  },
+  {
+    "week": "26-06-23 to 02-07-23",
+    "mon": {
+      "openPana": "690",
+      "jodi": "59",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "166",
+      "jodi": "38",
+      "closePana": "468"
+    },
+    "wed": {
+      "openPana": "269",
+      "jodi": "78",
+      "closePana": "567"
+    },
+    "thu": {
+      "openPana": "159",
+      "jodi": "51",
+      "closePana": "137"
+    },
+    "fri": {
+      "openPana": "250",
+      "jodi": "75",
+      "closePana": "456"
+    },
+    "sat": {
+      "openPana": "560",
+      "jodi": "15",
+      "closePana": "348"
+    }
+  },
+  {
+    "week": "03-07-23 to 09-07-23",
+    "mon": {
+      "openPana": "390",
+      "jodi": "21",
+      "closePana": "489"
+    },
+    "tue": {
+      "openPana": "289",
+      "jodi": "98",
+      "closePana": "800"
+    },
+    "wed": {
+      "openPana": "590",
+      "jodi": "49",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "337",
+      "jodi": "33",
+      "closePana": "238"
+    },
+    "fri": {
+      "openPana": "459",
+      "jodi": "83",
+      "closePana": "490"
+    },
+    "sat": {
+      "openPana": "670",
+      "jodi": "33",
+      "closePana": "599"
+    }
+  },
+  {
+    "week": "10-07-23 to 16-07-23",
+    "mon": {
+      "openPana": "170",
+      "jodi": "85",
+      "closePana": "348"
+    },
+    "tue": {
+      "openPana": "580",
+      "jodi": "38",
+      "closePana": "189"
+    },
+    "wed": {
+      "openPana": "269",
+      "jodi": "72",
+      "closePana": "778"
+    },
+    "thu": {
+      "openPana": "238",
+      "jodi": "39",
+      "closePana": "379"
+    },
+    "fri": {
+      "openPana": "459",
+      "jodi": "83",
+      "closePana": "490"
+    },
+    "sat": {
+      "openPana": "358",
+      "jodi": "64",
+      "closePana": "770"
+    }
+  },
+  {
+    "week": "17-07-23 to 23-07-23",
+    "mon": {
+      "openPana": "469",
+      "jodi": "94",
+      "closePana": "158"
+    },
+    "tue": {
+      "openPana": "558",
+      "jodi": "86",
+      "closePana": "259"
+    },
+    "wed": {
+      "openPana": "350",
+      "jodi": "89",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "567",
+      "jodi": "85",
+      "closePana": "889"
+    },
+    "fri": {
+      "openPana": "399",
+      "jodi": "16",
+      "closePana": "114"
+    },
+    "sat": {
+      "openPana": "236",
+      "jodi": "16",
+      "closePana": "358"
+    }
+  },
+  {
+    "week": "24-07-23 to 30-07-23",
+    "mon": {
+      "openPana": "337",
+      "jodi": "32",
+      "closePana": "480"
+    },
+    "tue": {
+      "openPana": "146",
+      "jodi": "12",
+      "closePana": "589"
+    },
+    "wed": {
+      "openPana": "560",
+      "jodi": "19",
+      "closePana": "568"
+    },
+    "thu": {
+      "openPana": "390",
+      "jodi": "24",
+      "closePana": "770"
+    },
+    "fri": {
+      "openPana": "249",
+      "jodi": "55",
+      "closePana": "168"
+    },
+    "sat": {
+      "openPana": "167",
+      "jodi": "41",
+      "closePana": "380"
+    }
+  },
+  {
+    "week": "31-07-23 to 05-08-23",
+    "mon": {
+      "openPana": "489",
+      "jodi": "16",
+      "closePana": "466"
+    },
+    "tue": {
+      "openPana": "890",
+      "jodi": "71",
+      "closePana": "236"
+    },
+    "wed": {
+      "openPana": "460",
+      "jodi": "00",
+      "closePana": "136"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "97",
+      "closePana": "359"
+    },
+    "fri": {
+      "openPana": "228",
+      "jodi": "23",
+      "closePana": "670"
+    },
+    "sat": {
+      "openPana": "557",
+      "jodi": "79",
+      "closePana": "270"
+    }
+  },
+  {
+    "week": "07-08-23 to 12-08-23",
+    "mon": {
+      "openPana": "379",
+      "jodi": "98",
+      "closePana": "567"
+    },
+    "tue": {
+      "openPana": "156",
+      "jodi": "28",
+      "closePana": "369"
+    },
+    "wed": {
+      "openPana": "778",
+      "jodi": "22",
+      "closePana": "480"
+    },
+    "thu": {
+      "openPana": "278",
+      "jodi": "73",
+      "closePana": "346"
+    },
+    "fri": {
+      "openPana": "688",
+      "jodi": "25",
+      "closePana": "258"
+    },
+    "sat": {
+      "openPana": "347",
+      "jodi": "40",
+      "closePana": "389"
+    }
+  },
+  {
+    "week": "14-08-23 to 19-08-23",
+    "mon": {
+      "openPana": "260",
+      "jodi": "81",
+      "closePana": "560"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "159",
+      "jodi": "54",
+      "closePana": "680"
+    },
+    "thu": {
+      "openPana": "344",
+      "jodi": "17",
+      "closePana": "467"
+    },
+    "fri": {
+      "openPana": "235",
+      "jodi": "03",
+      "closePana": "157"
+    },
+    "sat": {
+      "openPana": "448",
+      "jodi": "63",
+      "closePana": "346"
+    }
+  },
+  {
+    "week": "21-08-23 to 26-08-23",
+    "mon": {
+      "openPana": "256",
+      "jodi": "39",
+      "closePana": "559"
+    },
+    "tue": {
+      "openPana": "245",
+      "jodi": "17",
+      "closePana": "458"
+    },
+    "wed": {
+      "openPana": "125",
+      "jodi": "80",
+      "closePana": "235"
+    },
+    "thu": {
+      "openPana": "348",
+      "jodi": "50",
+      "closePana": "389"
+    },
+    "fri": {
+      "openPana": "349",
+      "jodi": "60",
+      "closePana": "569"
+    },
+    "sat": {
+      "openPana": "467",
+      "jodi": "72",
+      "closePana": "129"
+    }
+  },
+  {
+    "week": "28-08-23 to 02-09-23",
+    "mon": {
+      "openPana": "247",
+      "jodi": "33",
+      "closePana": "346"
+    },
+    "tue": {
+      "openPana": "568",
+      "jodi": "90",
+      "closePana": "677"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "129",
+      "jodi": "24",
+      "closePana": "789"
+    },
+    "fri": {
+      "openPana": "460",
+      "jodi": "02",
+      "closePana": "156"
+    },
+    "sat": {
+      "openPana": "599",
+      "jodi": "34",
+      "closePana": "158"
+    }
+  },
+  {
+    "week": "04-09-23 to 09-09-23",
+    "mon": {
+      "openPana": "245",
+      "jodi": "16",
+      "closePana": "150"
+    },
+    "tue": {
+      "openPana": "330",
+      "jodi": "61",
+      "closePana": "470"
+    },
+    "wed": {
+      "openPana": "456",
+      "jodi": "56",
+      "closePana": "349"
+    },
+    "thu": {
+      "openPana": "560",
+      "jodi": "10",
+      "closePana": "145"
+    },
+    "fri": {
+      "openPana": "369",
+      "jodi": "87",
+      "closePana": "890"
+    },
+    "sat": {
+      "openPana": "123",
+      "jodi": "63",
+      "closePana": "238"
+    }
+  },
+  {
+    "week": "11-09-23 to 16-09-23",
+    "mon": {
+      "openPana": "570",
+      "jodi": "24",
+      "closePana": "356"
+    },
+    "tue": {
+      "openPana": "334",
+      "jodi": "03",
+      "closePana": "256"
+    },
+    "wed": {
+      "openPana": "125",
+      "jodi": "86",
+      "closePana": "268"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "94",
+      "closePana": "789"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "880",
+      "jodi": "69",
+      "closePana": "180"
+    }
+  },
+  {
+    "week": "18-09-23 to 23-09-23",
+    "mon": {
+      "openPana": "260",
+      "jodi": "84",
+      "closePana": "149"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "20",
+      "closePana": "145"
+    },
+    "wed": {
+      "openPana": "369",
+      "jodi": "88",
+      "closePana": "800"
+    },
+    "thu": {
+      "openPana": "480",
+      "jodi": "23",
+      "closePana": "166"
+    },
+    "fri": {
+      "openPana": "280",
+      "jodi": "02",
+      "closePana": "570"
+    },
+    "sat": {
+      "openPana": "159",
+      "jodi": "58",
+      "closePana": "567"
+    }
+  },
+  {
+    "week": "25-09-23 to 30-09-23",
+    "mon": {
+      "openPana": "578",
+      "jodi": "00",
+      "closePana": "569"
+    },
+    "tue": {
+      "openPana": "220",
+      "jodi": "44",
+      "closePana": "347"
+    },
+    "wed": {
+      "openPana": "470",
+      "jodi": "10",
+      "closePana": "235"
+    },
+    "thu": {
+      "openPana": "160",
+      "jodi": "72",
+      "closePana": "570"
+    },
+    "fri": {
+      "openPana": "267",
+      "jodi": "59",
+      "closePana": "126"
+    },
+    "sat": {
+      "openPana": "140",
+      "jodi": "57",
+      "closePana": "179"
+    }
+  },
+  {
+    "week": "02-10-23 to 07-10-23",
+    "mon": {
+      "openPana": "349",
+      "jodi": "69",
+      "closePana": "478"
+    },
+    "tue": {
+      "openPana": "569",
+      "jodi": "06",
+      "closePana": "268"
+    },
+    "wed": {
+      "openPana": "136",
+      "jodi": "07",
+      "closePana": "377"
+    },
+    "thu": {
+      "openPana": "389",
+      "jodi": "03",
+      "closePana": "599"
+    },
+    "fri": {
+      "openPana": "469",
+      "jodi": "97",
+      "closePana": "124"
+    },
+    "sat": {
+      "openPana": "249",
+      "jodi": "51",
+      "closePana": "489"
+    }
+  },
+  {
+    "week": "09-10-23 to 14-10-23",
+    "mon": {
+      "openPana": "770",
+      "jodi": "47",
+      "closePana": "458"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "27",
+      "closePana": "340"
+    },
+    "wed": {
+      "openPana": "128",
+      "jodi": "19",
+      "closePana": "144"
+    },
+    "thu": {
+      "openPana": "240",
+      "jodi": "67",
+      "closePana": "890"
+    },
+    "fri": {
+      "openPana": "460",
+      "jodi": "09",
+      "closePana": "577"
+    },
+    "sat": {
+      "openPana": "346",
+      "jodi": "33",
+      "closePana": "229"
+    }
+  },
+  {
+    "week": "16-10-23 to 21-10-23",
+    "mon": {
+      "openPana": "560",
+      "jodi": "19",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "369",
+      "jodi": "82",
+      "closePana": "778"
+    },
+    "wed": {
+      "openPana": "790",
+      "jodi": "64",
+      "closePana": "400"
+    },
+    "thu": {
+      "openPana": "248",
+      "jodi": "44",
+      "closePana": "167"
+    },
+    "fri": {
+      "openPana": "127",
+      "jodi": "03",
+      "closePana": "355"
+    },
+    "sat": {
+      "openPana": "467",
+      "jodi": "74",
+      "closePana": "248"
+    }
+  },
+  {
+    "week": "23-10-23 to 28-10-23",
+    "mon": {
+      "openPana": "236",
+      "jodi": "10",
+      "closePana": "280"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "490",
+      "jodi": "36",
+      "closePana": "349"
+    },
+    "thu": {
+      "openPana": "178",
+      "jodi": "67",
+      "closePana": "368"
+    },
+    "fri": {
+      "openPana": "458",
+      "jodi": "74",
+      "closePana": "167"
+    },
+    "sat": {
+      "openPana": "557",
+      "jodi": "73",
+      "closePana": "238"
+    }
+  },
+  {
+    "week": "30-10-23 to 04-11-23",
+    "mon": {
+      "openPana": "123",
+      "jodi": "63",
+      "closePana": "490"
+    },
+    "tue": {
+      "openPana": "779",
+      "jodi": "39",
+      "closePana": "568"
+    },
+    "wed": {
+      "openPana": "340",
+      "jodi": "74",
+      "closePana": "680"
+    },
+    "thu": {
+      "openPana": "235",
+      "jodi": "08",
+      "closePana": "224"
+    },
+    "fri": {
+      "openPana": "555",
+      "jodi": "59",
+      "closePana": "180"
+    },
+    "sat": {
+      "openPana": "245",
+      "jodi": "17",
+      "closePana": "368"
+    }
+  },
+  {
+    "week": "06-11-23 to 11-11-23",
+    "mon": {
+      "openPana": "256",
+      "jodi": "30",
+      "closePana": "569"
+    },
+    "tue": {
+      "openPana": "380",
+      "jodi": "15",
+      "closePana": "267"
+    },
+    "wed": {
+      "openPana": "588",
+      "jodi": "12",
+      "closePana": "480"
+    },
+    "thu": {
+      "openPana": "780",
+      "jodi": "57",
+      "closePana": "449"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "13-11-23 to 18-11-23",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "20-11-23 to 25-11-23",
+    "mon": {
+      "openPana": "359",
+      "jodi": "74",
+      "closePana": "149"
+    },
+    "tue": {
+      "openPana": "460",
+      "jodi": "00",
+      "closePana": "235"
+    },
+    "wed": {
+      "openPana": "278",
+      "jodi": "70",
+      "closePana": "136"
+    },
+    "thu": {
+      "openPana": "160",
+      "jodi": "74",
+      "closePana": "248"
+    },
+    "fri": {
+      "openPana": "770",
+      "jodi": "40",
+      "closePana": "190"
+    },
+    "sat": {
+      "openPana": "260",
+      "jodi": "81",
+      "closePana": "399"
+    }
+  },
+  {
+    "week": "27-11-23 to 02-12-23",
+    "mon": {
+      "openPana": "240",
+      "jodi": "66",
+      "closePana": "178"
+    },
+    "tue": {
+      "openPana": "126",
+      "jodi": "91",
+      "closePana": "470"
+    },
+    "wed": {
+      "openPana": "158",
+      "jodi": "48",
+      "closePana": "260"
+    },
+    "thu": {
+      "openPana": "349",
+      "jodi": "62",
+      "closePana": "660"
+    },
+    "fri": {
+      "openPana": "359",
+      "jodi": "70",
+      "closePana": "190"
+    },
+    "sat": {
+      "openPana": "590",
+      "jodi": "40",
+      "closePana": "479"
+    }
+  },
+  {
+    "week": "04-12-23 to 09-12-23",
+    "mon": {
+      "openPana": "256",
+      "jodi": "38",
+      "closePana": "260"
+    },
+    "tue": {
+      "openPana": "890",
+      "jodi": "71",
+      "closePana": "290"
+    },
+    "wed": {
+      "openPana": "580",
+      "jodi": "39",
+      "closePana": "379"
+    },
+    "thu": {
+      "openPana": "267",
+      "jodi": "54",
+      "closePana": "130"
+    },
+    "fri": {
+      "openPana": "335",
+      "jodi": "12",
+      "closePana": "679"
+    },
+    "sat": {
+      "openPana": "344",
+      "jodi": "18",
+      "closePana": "279"
+    }
+  },
+  {
+    "week": "11-12-23 to 16-12-23",
+    "mon": {
+      "openPana": "128",
+      "jodi": "14",
+      "closePana": "347"
+    },
+    "tue": {
+      "openPana": "499",
+      "jodi": "27",
+      "closePana": "124"
+    },
+    "wed": {
+      "openPana": "670",
+      "jodi": "34",
+      "closePana": "590"
+    },
+    "thu": {
+      "openPana": "246",
+      "jodi": "23",
+      "closePana": "689"
+    },
+    "fri": {
+      "openPana": "348",
+      "jodi": "53",
+      "closePana": "788"
+    },
+    "sat": {
+      "openPana": "359",
+      "jodi": "77",
+      "closePana": "467"
+    }
+  },
+  {
+    "week": "18-12-23 to 23-12-23",
+    "mon": {
+      "openPana": "239",
+      "jodi": "41",
+      "closePana": "560"
+    },
+    "tue": {
+      "openPana": "458",
+      "jodi": "70",
+      "closePana": "569"
+    },
+    "wed": {
+      "openPana": "280",
+      "jodi": "06",
+      "closePana": "358"
+    },
+    "thu": {
+      "openPana": "367",
+      "jodi": "62",
+      "closePana": "570"
+    },
+    "fri": {
+      "openPana": "159",
+      "jodi": "53",
+      "closePana": "120"
+    },
+    "sat": {
+      "openPana": "568",
+      "jodi": "97",
+      "closePana": "566"
+    }
+  },
+  {
+    "week": "25-12-23 to 30-12-23",
+    "mon": {
+      "openPana": "380",
+      "jodi": "15",
+      "closePana": "690"
+    },
+    "tue": {
+      "openPana": "167",
+      "jodi": "41",
+      "closePana": "489"
+    },
+    "wed": {
+      "openPana": "335",
+      "jodi": "19",
+      "closePana": "234"
+    },
+    "thu": {
+      "openPana": "169",
+      "jodi": "69",
+      "closePana": "577"
+    },
+    "fri": {
+      "openPana": "290",
+      "jodi": "13",
+      "closePana": "139"
+    },
+    "sat": {
+      "openPana": "880",
+      "jodi": "66",
+      "closePana": "349"
+    }
+  },
+  {
+    "week": "01-01-24 to 06-01-24",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "580",
+      "jodi": "32",
+      "closePana": "246"
+    },
+    "wed": {
+      "openPana": "178",
+      "jodi": "68",
+      "closePana": "477"
+    },
+    "thu": {
+      "openPana": "239",
+      "jodi": "48",
+      "closePana": "116"
+    },
+    "fri": {
+      "openPana": "167",
+      "jodi": "47",
+      "closePana": "467"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "08-01-24 to 13-01-24",
+    "mon": {
+      "openPana": "590",
+      "jodi": "44",
+      "closePana": "356"
+    },
+    "tue": {
+      "openPana": "680",
+      "jodi": "45",
+      "closePana": "267"
+    },
+    "wed": {
+      "openPana": "889",
+      "jodi": "55",
+      "closePana": "249"
+    },
+    "thu": {
+      "openPana": "145",
+      "jodi": "04",
+      "closePana": "699"
+    },
+    "fri": {
+      "openPana": "349",
+      "jodi": "63",
+      "closePana": "490"
+    },
+    "sat": {
+      "openPana": "234",
+      "jodi": "98",
+      "closePana": "116"
+    }
+  },
+  {
+    "week": "15-01-24 to 20-01-24",
+    "mon": {
+      "openPana": "450",
+      "jodi": "91",
+      "closePana": "399"
+    },
+    "tue": {
+      "openPana": "237",
+      "jodi": "27",
+      "closePana": "368"
+    },
+    "wed": {
+      "openPana": "127",
+      "jodi": "06",
+      "closePana": "790"
+    },
+    "thu": {
+      "openPana": "660",
+      "jodi": "22",
+      "closePana": "147"
+    },
+    "fri": {
+      "openPana": "134",
+      "jodi": "82",
+      "closePana": "570"
+    },
+    "sat": {
+      "openPana": "348",
+      "jodi": "56",
+      "closePana": "240"
+    }
+  },
+  {
+    "week": "22-01-24 to 27-01-24",
+    "mon": {
+      "openPana": "259",
+      "jodi": "69",
+      "closePana": "199"
+    },
+    "tue": {
+      "openPana": "347",
+      "jodi": "42",
+      "closePana": "237"
+    },
+    "wed": {
+      "openPana": "170",
+      "jodi": "88",
+      "closePana": "459"
+    },
+    "thu": {
+      "openPana": "550",
+      "jodi": "06",
+      "closePana": "790"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "889",
+      "jodi": "53",
+      "closePana": "689"
+    }
+  },
+  {
+    "week": "29-01-24 to 03-02-24",
+    "mon": {
+      "openPana": "460",
+      "jodi": "04",
+      "closePana": "149"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "22",
+      "closePana": "246"
+    },
+    "wed": {
+      "openPana": "688",
+      "jodi": "26",
+      "closePana": "150"
+    },
+    "thu": {
+      "openPana": "260",
+      "jodi": "88",
+      "closePana": "134"
+    },
+    "fri": {
+      "openPana": "467",
+      "jodi": "77",
+      "closePana": "340"
+    },
+    "sat": {
+      "openPana": "990",
+      "jodi": "84",
+      "closePana": "248"
+    }
+  },
+  {
+    "week": "05-02-24 to 11-02-24",
+    "mon": {
+      "openPana": "478",
+      "jodi": "90",
+      "closePana": "389"
+    },
+    "tue": {
+      "openPana": "133",
+      "jodi": "71",
+      "closePana": "470"
+    },
+    "wed": {
+      "openPana": "160",
+      "jodi": "70",
+      "closePana": "280"
+    },
+    "thu": {
+      "openPana": "356",
+      "jodi": "41",
+      "closePana": "128"
+    },
+    "fri": {
+      "openPana": "600",
+      "jodi": "63",
+      "closePana": "256"
+    },
+    "sat": {
+      "openPana": "367",
+      "jodi": "69",
+      "closePana": "469"
+    }
+  },
+  {
+    "week": "12-02-24 to 18-02-24",
+    "mon": {
+      "openPana": "590",
+      "jodi": "43",
+      "closePana": "689"
+    },
+    "tue": {
+      "openPana": "268",
+      "jodi": "62",
+      "closePana": "480"
+    },
+    "wed": {
+      "openPana": "160",
+      "jodi": "79",
+      "closePana": "568"
+    },
+    "thu": {
+      "openPana": "236",
+      "jodi": "17",
+      "closePana": "250"
+    },
+    "fri": {
+      "openPana": "890",
+      "jodi": "75",
+      "closePana": "159"
+    },
+    "sat": {
+      "openPana": "190",
+      "jodi": "05",
+      "closePana": "168"
+    }
+  },
+  {
+    "week": "19-02-24 to 25-02-24",
+    "mon": {
+      "openPana": "790",
+      "jodi": "61",
+      "closePana": "489"
+    },
+    "tue": {
+      "openPana": "235",
+      "jodi": "09",
+      "closePana": "117"
+    },
+    "wed": {
+      "openPana": "370",
+      "jodi": "05",
+      "closePana": "690"
+    },
+    "thu": {
+      "openPana": "559",
+      "jodi": "99",
+      "closePana": "234"
+    },
+    "fri": {
+      "openPana": "145",
+      "jodi": "07",
+      "closePana": "890"
+    },
+    "sat": {
+      "openPana": "789",
+      "jodi": "42",
+      "closePana": "336"
+    }
+  },
+  {
+    "week": "26-02-24 to 03-03-24",
+    "mon": {
+      "openPana": "678",
+      "jodi": "13",
+      "closePana": "120"
+    },
+    "tue": {
+      "openPana": "468",
+      "jodi": "82",
+      "closePana": "679"
+    },
+    "wed": {
+      "openPana": "788",
+      "jodi": "32",
+      "closePana": "570"
+    },
+    "thu": {
+      "openPana": "460",
+      "jodi": "09",
+      "closePana": "126"
+    },
+    "fri": {
+      "openPana": "190",
+      "jodi": "09",
+      "closePana": "360"
+    },
+    "sat": {
+      "openPana": "580",
+      "jodi": "30",
+      "closePana": "136"
+    }
+  },
+  {
+    "week": "04-03-24 to 10-03-24",
+    "mon": {
+      "openPana": "134",
+      "jodi": "89",
+      "closePana": "270"
+    },
+    "tue": {
+      "openPana": "388",
+      "jodi": "97",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "490",
+      "jodi": "39",
+      "closePana": "568"
+    },
+    "thu": {
+      "openPana": "247",
+      "jodi": "35",
+      "closePana": "348"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "129",
+      "jodi": "23",
+      "closePana": "670"
+    }
+  },
+  {
+    "week": "11-03-24 to 17-03-24",
+    "mon": {
+      "openPana": "126",
+      "jodi": "93",
+      "closePana": "670"
+    },
+    "tue": {
+      "openPana": "168",
+      "jodi": "55",
+      "closePana": "690"
+    },
+    "wed": {
+      "openPana": "269",
+      "jodi": "79",
+      "closePana": "180"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "91",
+      "closePana": "290"
+    },
+    "fri": {
+      "openPana": "159",
+      "jodi": "58",
+      "closePana": "260"
+    },
+    "sat": {
+      "openPana": "260",
+      "jodi": "80",
+      "closePana": "235"
+    }
+  },
+  {
+    "week": "18-03-24 to 24-03-24",
+    "mon": {
+      "openPana": "234",
+      "jodi": "97",
+      "closePana": "250"
+    },
+    "tue": {
+      "openPana": "279",
+      "jodi": "81",
+      "closePana": "678"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "65",
+      "closePana": "456"
+    },
+    "thu": {
+      "openPana": "990",
+      "jodi": "80",
+      "closePana": "136"
+    },
+    "fri": {
+      "openPana": "578",
+      "jodi": "04",
+      "closePana": "338"
+    },
+    "sat": {
+      "openPana": "129",
+      "jodi": "21",
+      "closePana": "470"
+    }
+  },
+  {
+    "week": "25-03-24 to 31-03-24",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "134",
+      "jodi": "86",
+      "closePana": "259"
+    },
+    "wed": {
+      "openPana": "367",
+      "jodi": "61",
+      "closePana": "489"
+    },
+    "thu": {
+      "openPana": "356",
+      "jodi": "40",
+      "closePana": "460"
+    },
+    "fri": {
+      "openPana": "149",
+      "jodi": "46",
+      "closePana": "123"
+    },
+    "sat": {
+      "openPana": "466",
+      "jodi": "68",
+      "closePana": "459"
+    }
+  },
+  {
+    "week": "01-04-24 to 07-04-24",
+    "mon": {
+      "openPana": "256",
+      "jodi": "39",
+      "closePana": "135"
+    },
+    "tue": {
+      "openPana": "578",
+      "jodi": "01",
+      "closePana": "470"
+    },
+    "wed": {
+      "openPana": "480",
+      "jodi": "28",
+      "closePana": "350"
+    },
+    "thu": {
+      "openPana": "156",
+      "jodi": "21",
+      "closePana": "245"
+    },
+    "fri": {
+      "openPana": "778",
+      "jodi": "26",
+      "closePana": "178"
+    },
+    "sat": {
+      "openPana": "159",
+      "jodi": "51",
+      "closePana": "588"
+    }
+  },
+  {
+    "week": "08-04-24 to 14-04-24",
+    "mon": {
+      "openPana": "119",
+      "jodi": "17",
+      "closePana": "160"
+    },
+    "tue": {
+      "openPana": "390",
+      "jodi": "29",
+      "closePana": "568"
+    },
+    "wed": {
+      "openPana": "660",
+      "jodi": "23",
+      "closePana": "139"
+    },
+    "thu": {
+      "openPana": "299",
+      "jodi": "03",
+      "closePana": "490"
+    },
+    "fri": {
+      "openPana": "124",
+      "jodi": "79",
+      "closePana": "478"
+    },
+    "sat": {
+      "openPana": "345",
+      "jodi": "28",
+      "closePana": "260"
+    }
+  },
+  {
+    "week": "15-04-24 to 21-04-24",
+    "mon": {
+      "openPana": "179",
+      "jodi": "77",
+      "closePana": "368"
+    },
+    "tue": {
+      "openPana": "123",
+      "jodi": "64",
+      "closePana": "356"
+    },
+    "wed": {
+      "openPana": "290",
+      "jodi": "16",
+      "closePana": "150"
+    },
+    "thu": {
+      "openPana": "789",
+      "jodi": "49",
+      "closePana": "577"
+    },
+    "fri": {
+      "openPana": "599",
+      "jodi": "35",
+      "closePana": "267"
+    },
+    "sat": {
+      "openPana": "360",
+      "jodi": "94",
+      "closePana": "680"
+    }
+  },
+  {
+    "week": "22-04-24 to 28-04-24",
+    "mon": {
+      "openPana": "489",
+      "jodi": "11",
+      "closePana": "227"
+    },
+    "tue": {
+      "openPana": "379",
+      "jodi": "97",
+      "closePana": "179"
+    },
+    "wed": {
+      "openPana": "578",
+      "jodi": "00",
+      "closePana": "460"
+    },
+    "thu": {
+      "openPana": "245",
+      "jodi": "16",
+      "closePana": "367"
+    },
+    "fri": {
+      "openPana": "169",
+      "jodi": "68",
+      "closePana": "567"
+    },
+    "sat": {
+      "openPana": "788",
+      "jodi": "36",
+      "closePana": "880"
+    }
+  },
+  {
+    "week": "29-04-24 to 05-05-24",
+    "mon": {
+      "openPana": "156",
+      "jodi": "27",
+      "closePana": "269"
+    },
+    "tue": {
+      "openPana": "235",
+      "jodi": "07",
+      "closePana": "160"
+    },
+    "wed": {
+      "openPana": "126",
+      "jodi": "94",
+      "closePana": "347"
+    },
+    "thu": {
+      "openPana": "570",
+      "jodi": "21",
+      "closePana": "128"
+    },
+    "fri": {
+      "openPana": "459",
+      "jodi": "81",
+      "closePana": "137"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "44",
+      "closePana": "680"
+    }
+  },
+  {
+    "week": "06-05-24 to 12-05-24",
+    "mon": {
+      "openPana": "240",
+      "jodi": "64",
+      "closePana": "789"
+    },
+    "tue": {
+      "openPana": "447",
+      "jodi": "54",
+      "closePana": "167"
+    },
+    "wed": {
+      "openPana": "569",
+      "jodi": "05",
+      "closePana": "348"
+    },
+    "thu": {
+      "openPana": "134",
+      "jodi": "88",
+      "closePana": "260"
+    },
+    "fri": {
+      "openPana": "370",
+      "jodi": "00",
+      "closePana": "235"
+    },
+    "sat": {
+      "openPana": "239",
+      "jodi": "40",
+      "closePana": "145"
+    }
+  },
+  {
+    "week": "13-05-24 to 19-05-24",
+    "mon": {
+      "openPana": "123",
+      "jodi": "69",
+      "closePana": "360"
+    },
+    "tue": {
+      "openPana": "340",
+      "jodi": "77",
+      "closePana": "467"
+    },
+    "wed": {
+      "openPana": "400",
+      "jodi": "42",
+      "closePana": "147"
+    },
+    "thu": {
+      "openPana": "235",
+      "jodi": "09",
+      "closePana": "450"
+    },
+    "fri": {
+      "openPana": "238",
+      "jodi": "31",
+      "closePana": "579"
+    },
+    "sat": {
+      "openPana": "277",
+      "jodi": "66",
+      "closePana": "349"
+    }
+  },
+  {
+    "week": "20-05-24 to 26-05-24",
+    "mon": {
+      "openPana": "440",
+      "jodi": "83",
+      "closePana": "148"
+    },
+    "tue": {
+      "openPana": "368",
+      "jodi": "75",
+      "closePana": "267"
+    },
+    "wed": {
+      "openPana": "136",
+      "jodi": "09",
+      "closePana": "577"
+    },
+    "thu": {
+      "openPana": "489",
+      "jodi": "12",
+      "closePana": "156"
+    },
+    "fri": {
+      "openPana": "130",
+      "jodi": "48",
+      "closePana": "125"
+    },
+    "sat": {
+      "openPana": "780",
+      "jodi": "56",
+      "closePana": "358"
+    }
+  },
+  {
+    "week": "27-05-24 to 02-06-24",
+    "mon": {
+      "openPana": "168",
+      "jodi": "52",
+      "closePana": "237"
+    },
+    "tue": {
+      "openPana": "256",
+      "jodi": "31",
+      "closePana": "128"
+    },
+    "wed": {
+      "openPana": "557",
+      "jodi": "79",
+      "closePana": "469"
+    },
+    "thu": {
+      "openPana": "145",
+      "jodi": "01",
+      "closePana": "560"
+    },
+    "fri": {
+      "openPana": "488",
+      "jodi": "01",
+      "closePana": "236"
+    },
+    "sat": {
+      "openPana": "360",
+      "jodi": "93",
+      "closePana": "779"
+    }
+  },
+  {
+    "week": "03-06-24 to 09-06-24",
+    "mon": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "990"
+    },
+    "tue": {
+      "openPana": "359",
+      "jodi": "72",
+      "closePana": "237"
+    },
+    "wed": {
+      "openPana": "679",
+      "jodi": "27",
+      "closePana": "467"
+    },
+    "thu": {
+      "openPana": "347",
+      "jodi": "49",
+      "closePana": "135"
+    },
+    "fri": {
+      "openPana": "250",
+      "jodi": "77",
+      "closePana": "368"
+    },
+    "sat": {
+      "openPana": "588",
+      "jodi": "11",
+      "closePana": "344"
+    }
+  },
+  {
+    "week": "10-06-24 to 16-06-24",
+    "mon": {
+      "openPana": "670",
+      "jodi": "33",
+      "closePana": "238"
+    },
+    "tue": {
+      "openPana": "159",
+      "jodi": "50",
+      "closePana": "460"
+    },
+    "wed": {
+      "openPana": "358",
+      "jodi": "62",
+      "closePana": "246"
+    },
+    "thu": {
+      "openPana": "225",
+      "jodi": "95",
+      "closePana": "168"
+    },
+    "fri": {
+      "openPana": "238",
+      "jodi": "35",
+      "closePana": "366"
+    },
+    "sat": {
+      "openPana": "680",
+      "jodi": "47",
+      "closePana": "458"
+    }
+  },
+  {
+    "week": "17-06-24 to 23-06-24",
+    "mon": {
+      "openPana": "479",
+      "jodi": "06",
+      "closePana": "790"
+    },
+    "tue": {
+      "openPana": "344",
+      "jodi": "17",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "115",
+      "jodi": "74",
+      "closePana": "248"
+    },
+    "thu": {
+      "openPana": "456",
+      "jodi": "53",
+      "closePana": "238"
+    },
+    "fri": {
+      "openPana": "133",
+      "jodi": "73",
+      "closePana": "580"
+    },
+    "sat": {
+      "openPana": "459",
+      "jodi": "80",
+      "closePana": "190"
+    }
+  },
+  {
+    "week": "24-06-24 to 30-06-24",
+    "mon": {
+      "openPana": "560",
+      "jodi": "12",
+      "closePana": "237"
+    },
+    "tue": {
+      "openPana": "266",
+      "jodi": "45",
+      "closePana": "348"
+    },
+    "wed": {
+      "openPana": "156",
+      "jodi": "25",
+      "closePana": "780"
+    },
+    "thu": {
+      "openPana": "389",
+      "jodi": "02",
+      "closePana": "570"
+    },
+    "fri": {
+      "openPana": "169",
+      "jodi": "66",
+      "closePana": "268"
+    },
+    "sat": {
+      "openPana": "450",
+      "jodi": "96",
+      "closePana": "114"
+    }
+  },
+  {
+    "week": "01-07-24 to 07-07-24",
+    "mon": {
+      "openPana": "345",
+      "jodi": "20",
+      "closePana": "136"
+    },
+    "tue": {
+      "openPana": "269",
+      "jodi": "76",
+      "closePana": "178"
+    },
+    "wed": {
+      "openPana": "449",
+      "jodi": "71",
+      "closePana": "588"
+    },
+    "thu": {
+      "openPana": "288",
+      "jodi": "85",
+      "closePana": "456"
+    },
+    "fri": {
+      "openPana": "138",
+      "jodi": "23",
+      "closePana": "490"
+    },
+    "sat": {
+      "openPana": "570",
+      "jodi": "29",
+      "closePana": "270"
+    }
+  },
+  {
+    "week": "08-07-24 to 14-07-24",
+    "mon": {
+      "openPana": "266",
+      "jodi": "48",
+      "closePana": "134"
+    },
+    "tue": {
+      "openPana": "670",
+      "jodi": "32",
+      "closePana": "147"
+    },
+    "wed": {
+      "openPana": "479",
+      "jodi": "06",
+      "closePana": "457"
+    },
+    "thu": {
+      "openPana": "340",
+      "jodi": "76",
+      "closePana": "899"
+    },
+    "fri": {
+      "openPana": "557",
+      "jodi": "79",
+      "closePana": "126"
+    },
+    "sat": {
+      "openPana": "479",
+      "jodi": "80",
+      "closePana": "389"
+    }
+  },
+  {
+    "week": "15-07-24 to 21-07-24",
+    "mon": {
+      "openPana": "570",
+      "jodi": "26",
+      "closePana": "268"
+    },
+    "tue": {
+      "openPana": "479",
+      "jodi": "03",
+      "closePana": "346"
+    },
+    "wed": {
+      "openPana": "125",
+      "jodi": "84",
+      "closePana": "590"
+    },
+    "thu": {
+      "openPana": "226",
+      "jodi": "08",
+      "closePana": "477"
+    },
+    "fri": {
+      "openPana": "459",
+      "jodi": "82",
+      "closePana": "110"
+    },
+    "sat": {
+      "openPana": "135",
+      "jodi": "94",
+      "closePana": "257"
+    }
+  },
+  {
+    "week": "22-07-24 to 28-07-24",
+    "mon": {
+      "openPana": "256",
+      "jodi": "39",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "370",
+      "jodi": "04",
+      "closePana": "130"
+    },
+    "wed": {
+      "openPana": "116",
+      "jodi": "84",
+      "closePana": "789"
+    },
+    "thu": {
+      "openPana": "678",
+      "jodi": "18",
+      "closePana": "369"
+    },
+    "fri": {
+      "openPana": "458",
+      "jodi": "75",
+      "closePana": "249"
+    },
+    "sat": {
+      "openPana": "589",
+      "jodi": "28",
+      "closePana": "189"
+    }
+  },
+  {
+    "week": "29-07-24 to 04-08-24",
+    "mon": {
+      "openPana": "370",
+      "jodi": "03",
+      "closePana": "670"
+    },
+    "tue": {
+      "openPana": "880",
+      "jodi": "64",
+      "closePana": "167"
+    },
+    "wed": {
+      "openPana": "136",
+      "jodi": "00",
+      "closePana": "479"
+    },
+    "thu": {
+      "openPana": "568",
+      "jodi": "93",
+      "closePana": "247"
+    },
+    "fri": {
+      "openPana": "158",
+      "jodi": "40",
+      "closePana": "460"
+    },
+    "sat": {
+      "openPana": "380",
+      "jodi": "14",
+      "closePana": "356"
+    }
+  },
+  {
+    "week": "05-08-24 to 11-08-24",
+    "mon": {
+      "openPana": "279",
+      "jodi": "80",
+      "closePana": "569"
+    },
+    "tue": {
+      "openPana": "447",
+      "jodi": "54",
+      "closePana": "158"
+    },
+    "wed": {
+      "openPana": "590",
+      "jodi": "48",
+      "closePana": "369"
+    },
+    "thu": {
+      "openPana": "168",
+      "jodi": "58",
+      "closePana": "567"
+    },
+    "fri": {
+      "openPana": "236",
+      "jodi": "16",
+      "closePana": "150"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "45",
+      "closePana": "249"
+    }
+  },
+  {
+    "week": "12-08-24 to 18-08-24",
+    "mon": {
+      "openPana": "235",
+      "jodi": "01",
+      "closePana": "588"
+    },
+    "tue": {
+      "openPana": "178",
+      "jodi": "61",
+      "closePana": "380"
+    },
+    "wed": {
+      "openPana": "267",
+      "jodi": "53",
+      "closePana": "157"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "459",
+      "jodi": "86",
+      "closePana": "240"
+    },
+    "sat": {
+      "openPana": "250",
+      "jodi": "70",
+      "closePana": "578"
+    }
+  },
+  {
+    "week": "19-08-24 to 25-08-24",
+    "mon": {
+      "openPana": "126",
+      "jodi": "98",
+      "closePana": "125"
+    },
+    "tue": {
+      "openPana": "670",
+      "jodi": "32",
+      "closePana": "589"
+    },
+    "wed": {
+      "openPana": "147",
+      "jodi": "24",
+      "closePana": "257"
+    },
+    "thu": {
+      "openPana": "234",
+      "jodi": "94",
+      "closePana": "239"
+    },
+    "fri": {
+      "openPana": "359",
+      "jodi": "79",
+      "closePana": "135"
+    },
+    "sat": {
+      "openPana": "590",
+      "jodi": "42",
+      "closePana": "778"
+    }
+  },
+  {
+    "week": "26-08-24 to 01-09-24",
+    "mon": {
+      "openPana": "389",
+      "jodi": "01",
+      "closePana": "579"
+    },
+    "tue": {
+      "openPana": "236",
+      "jodi": "17",
+      "closePana": "467"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "62",
+      "closePana": "138"
+    },
+    "thu": {
+      "openPana": "667",
+      "jodi": "96",
+      "closePana": "169"
+    },
+    "fri": {
+      "openPana": "480",
+      "jodi": "29",
+      "closePana": "225"
+    },
+    "sat": {
+      "openPana": "890",
+      "jodi": "73",
+      "closePana": "346"
+    }
+  },
+  {
+    "week": "02-09-24 to 08-09-24",
+    "mon": {
+      "openPana": "259",
+      "jodi": "64",
+      "closePana": "680"
+    },
+    "tue": {
+      "openPana": "450",
+      "jodi": "93",
+      "closePana": "238"
+    },
+    "wed": {
+      "openPana": "125",
+      "jodi": "87",
+      "closePana": "458"
+    },
+    "thu": {
+      "openPana": "179",
+      "jodi": "71",
+      "closePana": "245"
+    },
+    "fri": {
+      "openPana": "270",
+      "jodi": "93",
+      "closePana": "256"
+    },
+    "sat": {
+      "openPana": "159",
+      "jodi": "59",
+      "closePana": "450"
+    }
+  },
+  {
+    "week": "09-09-24 to 15-09-24",
+    "mon": {
+      "openPana": "378",
+      "jodi": "85",
+      "closePana": "780"
+    },
+    "tue": {
+      "openPana": "457",
+      "jodi": "67",
+      "closePana": "124"
+    },
+    "wed": {
+      "openPana": "568",
+      "jodi": "91",
+      "closePana": "236"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "99",
+      "closePana": "360"
+    },
+    "fri": {
+      "openPana": "460",
+      "jodi": "09",
+      "closePana": "234"
+    },
+    "sat": {
+      "openPana": "459",
+      "jodi": "87",
+      "closePana": "890"
+    }
+  },
+  {
+    "week": "16-09-24 to 22-09-24",
+    "mon": {
+      "openPana": "230",
+      "jodi": "50",
+      "closePana": "145"
+    },
+    "tue": {
+      "openPana": "569",
+      "jodi": "07",
+      "closePana": "160"
+    },
+    "wed": {
+      "openPana": "168",
+      "jodi": "54",
+      "closePana": "257"
+    },
+    "thu": {
+      "openPana": "466",
+      "jodi": "68",
+      "closePana": "350"
+    },
+    "fri": {
+      "openPana": "578",
+      "jodi": "08",
+      "closePana": "468"
+    },
+    "sat": {
+      "openPana": "340",
+      "jodi": "73",
+      "closePana": "779"
+    }
+  },
+  {
+    "week": "23-09-24 to 29-09-24",
+    "mon": {
+      "openPana": "115",
+      "jodi": "70",
+      "closePana": "389"
+    },
+    "tue": {
+      "openPana": "248",
+      "jodi": "48",
+      "closePana": "800"
+    },
+    "wed": {
+      "openPana": "347",
+      "jodi": "45",
+      "closePana": "690"
+    },
+    "thu": {
+      "openPana": "660",
+      "jodi": "29",
+      "closePana": "289"
+    },
+    "fri": {
+      "openPana": "158",
+      "jodi": "46",
+      "closePana": "790"
+    },
+    "sat": {
+      "openPana": "125",
+      "jodi": "84",
+      "closePana": "699"
+    }
+  },
+  {
+    "week": "30-09-24 to 06-10-24",
+    "mon": {
+      "openPana": "678",
+      "jodi": "19",
+      "closePana": "568"
+    },
+    "tue": {
+      "openPana": "369",
+      "jodi": "89",
+      "closePana": "117"
+    },
+    "wed": {
+      "openPana": "356",
+      "jodi": "49",
+      "closePana": "360"
+    },
+    "thu": {
+      "openPana": "168",
+      "jodi": "50",
+      "closePana": "136"
+    },
+    "fri": {
+      "openPana": "348",
+      "jodi": "57",
+      "closePana": "124"
+    },
+    "sat": {
+      "openPana": "245",
+      "jodi": "15",
+      "closePana": "159"
+    }
+  },
+  {
+    "week": "07-10-24 to 13-10-24",
+    "mon": {
+      "openPana": "279",
+      "jodi": "88",
+      "closePana": "990"
+    },
+    "tue": {
+      "openPana": "470",
+      "jodi": "16",
+      "closePana": "367"
+    },
+    "wed": {
+      "openPana": "337",
+      "jodi": "33",
+      "closePana": "580"
+    },
+    "thu": {
+      "openPana": "140",
+      "jodi": "53",
+      "closePana": "238"
+    },
+    "fri": {
+      "openPana": "699",
+      "jodi": "47",
+      "closePana": "160"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "14-10-24 to 20-10-24",
+    "mon": {
+      "openPana": "468",
+      "jodi": "83",
+      "closePana": "346"
+    },
+    "tue": {
+      "openPana": "246",
+      "jodi": "26",
+      "closePana": "178"
+    },
+    "wed": {
+      "openPana": "589",
+      "jodi": "26",
+      "closePana": "240"
+    },
+    "thu": {
+      "openPana": "350",
+      "jodi": "88",
+      "closePana": "800"
+    },
+    "fri": {
+      "openPana": "111",
+      "jodi": "34",
+      "closePana": "356"
+    },
+    "sat": {
+      "openPana": "258",
+      "jodi": "57",
+      "closePana": "179"
+    }
+  },
+  {
+    "week": "21-10-24 to 27-10-24",
+    "mon": {
+      "openPana": "569",
+      "jodi": "04",
+      "closePana": "347"
+    },
+    "tue": {
+      "openPana": "440",
+      "jodi": "82",
+      "closePana": "129"
+    },
+    "wed": {
+      "openPana": "267",
+      "jodi": "57",
+      "closePana": "890"
+    },
+    "thu": {
+      "openPana": "445",
+      "jodi": "32",
+      "closePana": "589"
+    },
+    "fri": {
+      "openPana": "125",
+      "jodi": "86",
+      "closePana": "367"
+    },
+    "sat": {
+      "openPana": "679",
+      "jodi": "26",
+      "closePana": "240"
+    }
+  },
+  {
+    "week": "28-10-24 to 02-11-24",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "04-11-24 to 10-11-24",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "356",
+      "jodi": "46",
+      "closePana": "150"
+    },
+    "thu": {
+      "openPana": "120",
+      "jodi": "96",
+      "closePana": "790"
+    },
+    "fri": {
+      "openPana": "135",
+      "jodi": "98",
+      "closePana": "279"
+    },
+    "sat": {
+      "openPana": "580",
+      "jodi": "38",
+      "closePana": "990"
+    }
+  },
+  {
+    "week": "11-11-24 to 17-11-24",
+    "mon": {
+      "openPana": "227",
+      "jodi": "12",
+      "closePana": "345"
+    },
+    "tue": {
+      "openPana": "490",
+      "jodi": "33",
+      "closePana": "148"
+    },
+    "wed": {
+      "openPana": "799",
+      "jodi": "55",
+      "closePana": "230"
+    },
+    "thu": {
+      "openPana": "238",
+      "jodi": "36",
+      "closePana": "367"
+    },
+    "fri": {
+      "openPana": "256",
+      "jodi": "38",
+      "closePana": "459"
+    },
+    "sat": {
+      "openPana": "137",
+      "jodi": "13",
+      "closePana": "599"
+    }
+  },
+  {
+    "week": "18-11-24 to 24-11-24",
+    "mon": {
+      "openPana": "377",
+      "jodi": "79",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "569",
+      "jodi": "08",
+      "closePana": "224"
+    },
+    "wed": {
+      "openPana": "240",
+      "jodi": "69",
+      "closePana": "469"
+    },
+    "thu": {
+      "openPana": "134",
+      "jodi": "82",
+      "closePana": "480"
+    },
+    "fri": {
+      "openPana": "260",
+      "jodi": "80",
+      "closePana": "389"
+    },
+    "sat": {
+      "openPana": "345",
+      "jodi": "22",
+      "closePana": "688"
+    }
+  },
+  {
+    "week": "25-11-24 to 01-12-24",
+    "mon": {
+      "openPana": "369",
+      "jodi": "87",
+      "closePana": "124"
+    },
+    "tue": {
+      "openPana": "560",
+      "jodi": "11",
+      "closePana": "489"
+    },
+    "wed": {
+      "openPana": "115",
+      "jodi": "77",
+      "closePana": "278"
+    },
+    "thu": {
+      "openPana": "467",
+      "jodi": "73",
+      "closePana": "346"
+    },
+    "fri": {
+      "openPana": "289",
+      "jodi": "99",
+      "closePana": "577"
+    },
+    "sat": {
+      "openPana": "360",
+      "jodi": "96",
+      "closePana": "790"
+    }
+  },
+  {
+    "week": "02-12-24 to 08-12-24",
+    "mon": {
+      "openPana": "259",
+      "jodi": "69",
+      "closePana": "180"
+    },
+    "tue": {
+      "openPana": "667",
+      "jodi": "90",
+      "closePana": "569"
+    },
+    "wed": {
+      "openPana": "490",
+      "jodi": "39",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "236",
+      "jodi": "12",
+      "closePana": "480"
+    },
+    "fri": {
+      "openPana": "679",
+      "jodi": "21",
+      "closePana": "335"
+    },
+    "sat": {
+      "openPana": "129",
+      "jodi": "29",
+      "closePana": "225"
+    }
+  },
+  {
+    "week": "09-12-24 to 15-12-24",
+    "mon": {
+      "openPana": "235",
+      "jodi": "07",
+      "closePana": "890"
+    },
+    "tue": {
+      "openPana": "660",
+      "jodi": "22",
+      "closePana": "147"
+    },
+    "wed": {
+      "openPana": "290",
+      "jodi": "18",
+      "closePana": "134"
+    },
+    "thu": {
+      "openPana": "336",
+      "jodi": "22",
+      "closePana": "589"
+    },
+    "fri": {
+      "openPana": "160",
+      "jodi": "77",
+      "closePana": "278"
+    },
+    "sat": {
+      "openPana": "259",
+      "jodi": "60",
+      "closePana": "370"
+    }
+  },
+  {
+    "week": "16-12-24 to 22-12-24",
+    "mon": {
+      "openPana": "190",
+      "jodi": "02",
+      "closePana": "480"
+    },
+    "tue": {
+      "openPana": "128",
+      "jodi": "19",
+      "closePana": "568"
+    },
+    "wed": {
+      "openPana": "467",
+      "jodi": "73",
+      "closePana": "256"
+    },
+    "thu": {
+      "openPana": "249",
+      "jodi": "58",
+      "closePana": "567"
+    },
+    "fri": {
+      "openPana": "789",
+      "jodi": "42",
+      "closePana": "570"
+    },
+    "sat": {
+      "openPana": "677",
+      "jodi": "05",
+      "closePana": "168"
+    }
+  },
+  {
+    "week": "23-12-24 to 29-12-24",
+    "mon": {
+      "openPana": "230",
+      "jodi": "50",
+      "closePana": "668"
+    },
+    "tue": {
+      "openPana": "569",
+      "jodi": "02",
+      "closePana": "237"
+    },
+    "wed": {
+      "openPana": "167",
+      "jodi": "46",
+      "closePana": "457"
+    },
+    "thu": {
+      "openPana": "346",
+      "jodi": "38",
+      "closePana": "990"
+    },
+    "fri": {
+      "openPana": "450",
+      "jodi": "97",
+      "closePana": "160"
+    },
+    "sat": {
+      "openPana": "599",
+      "jodi": "34",
+      "closePana": "356"
+    }
+  },
+  {
+    "week": "30-12-24 to 05-01-25",
+    "mon": {
+      "openPana": "156",
+      "jodi": "28",
+      "closePana": "260"
+    },
+    "tue": {
+      "openPana": "568",
+      "jodi": "94",
+      "closePana": "699"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "458",
+      "jodi": "78",
+      "closePana": "125"
+    },
+    "fri": {
+      "openPana": "799",
+      "jodi": "51",
+      "closePana": "579"
+    },
+    "sat": {
+      "openPana": "389",
+      "jodi": "04",
+      "closePana": "356"
+    }
+  },
+  {
+    "week": "06-01-25 to 12-01-25",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "248",
+      "jodi": "47",
+      "closePana": "700"
+    },
+    "wed": {
+      "openPana": "690",
+      "jodi": "04",
+      "closePana": "158"
+    },
+    "thu": {
+      "openPana": "488",
+      "jodi": "01",
+      "closePana": "137"
+    },
+    "fri": {
+      "openPana": "340",
+      "jodi": "71",
+      "closePana": "560"
+    },
+    "sat": {
+      "openPana": "115",
+      "jodi": "72",
+      "closePana": "679"
+    }
+  },
+  {
+    "week": "13-01-25 to 19-01-25",
+    "mon": {
+      "openPana": "367",
+      "jodi": "68",
+      "closePana": "350"
+    },
+    "tue": {
+      "openPana": "578",
+      "jodi": "09",
+      "closePana": "135"
+    },
+    "wed": {
+      "openPana": "667",
+      "jodi": "95",
+      "closePana": "230"
+    },
+    "thu": {
+      "openPana": "269",
+      "jodi": "75",
+      "closePana": "177"
+    },
+    "fri": {
+      "openPana": "667",
+      "jodi": "67",
+      "closePana": "340"
+    },
+    "sat": {
+      "openPana": "168",
+      "jodi": "51",
+      "closePana": "489"
+    }
+  },
+  {
+    "week": "20-01-25 to 26-01-25",
+    "mon": {
+      "openPana": "990",
+      "jodi": "82",
+      "closePana": "480"
+    },
+    "tue": {
+      "openPana": "467",
+      "jodi": "70",
+      "closePana": "235"
+    },
+    "wed": {
+      "openPana": "889",
+      "jodi": "57",
+      "closePana": "458"
+    },
+    "thu": {
+      "openPana": "348",
+      "jodi": "53",
+      "closePana": "670"
+    },
+    "fri": {
+      "openPana": "290",
+      "jodi": "12",
+      "closePana": "688"
+    },
+    "sat": {
+      "openPana": "126",
+      "jodi": "98",
+      "closePana": "134"
+    }
+  },
+  {
+    "week": "27-01-25 to 02-02-25",
+    "mon": {
+      "openPana": "789",
+      "jodi": "42",
+      "closePana": "246"
+    },
+    "tue": {
+      "openPana": "560",
+      "jodi": "13",
+      "closePana": "355"
+    },
+    "wed": {
+      "openPana": "770",
+      "jodi": "48",
+      "closePana": "459"
+    },
+    "thu": {
+      "openPana": "145",
+      "jodi": "08",
+      "closePana": "468"
+    },
+    "fri": {
+      "openPana": "368",
+      "jodi": "78",
+      "closePana": "990"
+    },
+    "sat": {
+      "openPana": "237",
+      "jodi": "26",
+      "closePana": "358"
+    }
+  },
+  {
+    "week": "03-02-25 to 09-02-25",
+    "mon": {
+      "openPana": "269",
+      "jodi": "71",
+      "closePana": "155"
+    },
+    "tue": {
+      "openPana": "380",
+      "jodi": "18",
+      "closePana": "279"
+    },
+    "wed": {
+      "openPana": "799",
+      "jodi": "58",
+      "closePana": "378"
+    },
+    "thu": {
+      "openPana": "458",
+      "jodi": "71",
+      "closePana": "236"
+    },
+    "fri": {
+      "openPana": "120",
+      "jodi": "39",
+      "closePana": "469"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "46",
+      "closePana": "169"
+    }
+  },
+  {
+    "week": "10-02-25 to 16-02-25",
+    "mon": {
+      "openPana": "570",
+      "jodi": "24",
+      "closePana": "347"
+    },
+    "tue": {
+      "openPana": "258",
+      "jodi": "54",
+      "closePana": "112"
+    },
+    "wed": {
+      "openPana": "568",
+      "jodi": "90",
+      "closePana": "479"
+    },
+    "thu": {
+      "openPana": "127",
+      "jodi": "01",
+      "closePana": "399"
+    },
+    "fri": {
+      "openPana": "678",
+      "jodi": "14",
+      "closePana": "590"
+    },
+    "sat": {
+      "openPana": "289",
+      "jodi": "95",
+      "closePana": "780"
+    }
+  },
+  {
+    "week": "17-02-25 to 23-02-25",
+    "mon": {
+      "openPana": "580",
+      "jodi": "37",
+      "closePana": "160"
+    },
+    "tue": {
+      "openPana": "389",
+      "jodi": "04",
+      "closePana": "455"
+    },
+    "wed": {
+      "openPana": "146",
+      "jodi": "18",
+      "closePana": "260"
+    },
+    "thu": {
+      "openPana": "660",
+      "jodi": "28",
+      "closePana": "369"
+    },
+    "fri": {
+      "openPana": "148",
+      "jodi": "31",
+      "closePana": "137"
+    },
+    "sat": {
+      "openPana": "460",
+      "jodi": "03",
+      "closePana": "599"
+    }
+  },
+  {
+    "week": "24-02-25 to 02-03-25",
+    "mon": {
+      "openPana": "557",
+      "jodi": "73",
+      "closePana": "689"
+    },
+    "tue": {
+      "openPana": "245",
+      "jodi": "15",
+      "closePana": "159"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "670",
+      "jodi": "30",
+      "closePana": "280"
+    },
+    "fri": {
+      "openPana": "120",
+      "jodi": "32",
+      "closePana": "570"
+    },
+    "sat": {
+      "openPana": "789",
+      "jodi": "47",
+      "closePana": "458"
+    }
+  },
+  {
+    "week": "03-03-25 to 09-03-25",
+    "mon": {
+      "openPana": "344",
+      "jodi": "13",
+      "closePana": "490"
+    },
+    "tue": {
+      "openPana": "690",
+      "jodi": "58",
+      "closePana": "170"
+    },
+    "wed": {
+      "openPana": "259",
+      "jodi": "60",
+      "closePana": "578"
+    },
+    "thu": {
+      "openPana": "156",
+      "jodi": "29",
+      "closePana": "379"
+    },
+    "fri": {
+      "openPana": "499",
+      "jodi": "20",
+      "closePana": "389"
+    },
+    "sat": {
+      "openPana": "268",
+      "jodi": "67",
+      "closePana": "467"
+    }
+  },
+  {
+    "week": "10-03-25 to 16-03-25",
+    "mon": {
+      "openPana": "256",
+      "jodi": "36",
+      "closePana": "150"
+    },
+    "tue": {
+      "openPana": "458",
+      "jodi": "79",
+      "closePana": "135"
+    },
+    "wed": {
+      "openPana": "566",
+      "jodi": "74",
+      "closePana": "248"
+    },
+    "thu": {
+      "openPana": "347",
+      "jodi": "46",
+      "closePana": "899"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "117",
+      "jodi": "96",
+      "closePana": "790"
+    }
+  },
+  {
+    "week": "17-03-25 to 23-03-25",
+    "mon": {
+      "openPana": "679",
+      "jodi": "29",
+      "closePana": "379"
+    },
+    "tue": {
+      "openPana": "568",
+      "jodi": "94",
+      "closePana": "167"
+    },
+    "wed": {
+      "openPana": "138",
+      "jodi": "21",
+      "closePana": "560"
+    },
+    "thu": {
+      "openPana": "260",
+      "jodi": "89",
+      "closePana": "289"
+    },
+    "fri": {
+      "openPana": "247",
+      "jodi": "32",
+      "closePana": "156"
+    },
+    "sat": {
+      "openPana": "580",
+      "jodi": "34",
+      "closePana": "789"
+    }
+  },
+  {
+    "week": "24-03-25 to 30-03-25",
+    "mon": {
+      "openPana": "128",
+      "jodi": "18",
+      "closePana": "459"
+    },
+    "tue": {
+      "openPana": "478",
+      "jodi": "93",
+      "closePana": "779"
+    },
+    "wed": {
+      "openPana": "235",
+      "jodi": "06",
+      "closePana": "178"
+    },
+    "thu": {
+      "openPana": "560",
+      "jodi": "12",
+      "closePana": "688"
+    },
+    "fri": {
+      "openPana": "348",
+      "jodi": "51",
+      "closePana": "290"
+    },
+    "sat": {
+      "openPana": "669",
+      "jodi": "19",
+      "closePana": "568"
+    }
+  },
+  {
+    "week": "31-03-25 to 06-04-25",
+    "mon": {
+      "openPana": "359",
+      "jodi": "71",
+      "closePana": "245"
+    },
+    "tue": {
+      "openPana": "458",
+      "jodi": "79",
+      "closePana": "126"
+    },
+    "wed": {
+      "openPana": "678",
+      "jodi": "10",
+      "closePana": "370"
+    },
+    "thu": {
+      "openPana": "230",
+      "jodi": "54",
+      "closePana": "446"
+    },
+    "fri": {
+      "openPana": "125",
+      "jodi": "82",
+      "closePana": "246"
+    },
+    "sat": {
+      "openPana": "480",
+      "jodi": "20",
+      "closePana": "578"
+    }
+  },
+  {
+    "week": "07-04-25 to 13-04-25",
+    "mon": {
+      "openPana": "570",
+      "jodi": "23",
+      "closePana": "689"
+    },
+    "tue": {
+      "openPana": "280",
+      "jodi": "09",
+      "closePana": "478"
+    },
+    "wed": {
+      "openPana": "558",
+      "jodi": "89",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "489",
+      "jodi": "16",
+      "closePana": "358"
+    },
+    "fri": {
+      "openPana": "137",
+      "jodi": "19",
+      "closePana": "270"
+    },
+    "sat": {
+      "openPana": "378",
+      "jodi": "80",
+      "closePana": "677"
+    }
+  },
+  {
+    "week": "14-04-25 to 20-04-25",
+    "mon": {
+      "openPana": "890",
+      "jodi": "73",
+      "closePana": "256"
+    },
+    "tue": {
+      "openPana": "458",
+      "jodi": "76",
+      "closePana": "790"
+    },
+    "wed": {
+      "openPana": "589",
+      "jodi": "25",
+      "closePana": "230"
+    },
+    "thu": {
+      "openPana": "129",
+      "jodi": "28",
+      "closePana": "468"
+    },
+    "fri": {
+      "openPana": "470",
+      "jodi": "12",
+      "closePana": "345"
+    },
+    "sat": {
+      "openPana": "680",
+      "jodi": "46",
+      "closePana": "178"
+    }
+  },
+  {
+    "week": "21-04-25 to 27-04-25",
+    "mon": {
+      "openPana": "490",
+      "jodi": "37",
+      "closePana": "367"
+    },
+    "tue": {
+      "openPana": "239",
+      "jodi": "44",
+      "closePana": "590"
+    },
+    "wed": {
+      "openPana": "779",
+      "jodi": "36",
+      "closePana": "356"
+    },
+    "thu": {
+      "openPana": "668",
+      "jodi": "01",
+      "closePana": "245"
+    },
+    "fri": {
+      "openPana": "140",
+      "jodi": "55",
+      "closePana": "447"
+    },
+    "sat": {
+      "openPana": "347",
+      "jodi": "46",
+      "closePana": "169"
+    }
+  },
+  {
+    "week": "28-04-25 to 04-05-25",
+    "mon": {
+      "openPana": "146",
+      "jodi": "19",
+      "closePana": "360"
+    },
+    "tue": {
+      "openPana": "678",
+      "jodi": "15",
+      "closePana": "267"
+    },
+    "wed": {
+      "openPana": "250",
+      "jodi": "72",
+      "closePana": "589"
+    },
+    "thu": {
+      "openPana": "149",
+      "jodi": "45",
+      "closePana": "357"
+    },
+    "fri": {
+      "openPana": "770",
+      "jodi": "47",
+      "closePana": "890"
+    },
+    "sat": {
+      "openPana": "349",
+      "jodi": "66",
+      "closePana": "123"
+    }
+  },
+  {
+    "week": "05-05-25 to 11-05-25",
+    "mon": {
+      "openPana": "890",
+      "jodi": "77",
+      "closePana": "278"
+    },
+    "tue": {
+      "openPana": "158",
+      "jodi": "48",
+      "closePana": "990"
+    },
+    "wed": {
+      "openPana": "567",
+      "jodi": "82",
+      "closePana": "390"
+    },
+    "thu": {
+      "openPana": "235",
+      "jodi": "00",
+      "closePana": "569"
+    },
+    "fri": {
+      "openPana": "340",
+      "jodi": "78",
+      "closePana": "134"
+    },
+    "sat": {
+      "openPana": "118",
+      "jodi": "02",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "12-05-25 to 18-05-25",
+    "mon": {
+      "openPana": "468",
+      "jodi": "80",
+      "closePana": "334"
+    },
+    "tue": {
+      "openPana": "150",
+      "jodi": "63",
+      "closePana": "689"
+    },
+    "wed": {
+      "openPana": "226",
+      "jodi": "06",
+      "closePana": "457"
+    },
+    "thu": {
+      "openPana": "370",
+      "jodi": "09",
+      "closePana": "900"
+    },
+    "fri": {
+      "openPana": "145",
+      "jodi": "02",
+      "closePana": "499"
+    },
+    "sat": {
+      "openPana": "670",
+      "jodi": "37",
+      "closePana": "890"
+    }
+  },
+  {
+    "week": "19-05-25 to 25-05-25",
+    "mon": {
+      "openPana": "258",
+      "jodi": "54",
+      "closePana": "590"
+    },
+    "tue": {
+      "openPana": "339",
+      "jodi": "50",
+      "closePana": "389"
+    },
+    "wed": {
+      "openPana": "256",
+      "jodi": "36",
+      "closePana": "178"
+    },
+    "thu": {
+      "openPana": "567",
+      "jodi": "87",
+      "closePana": "449"
+    },
+    "fri": {
+      "openPana": "158",
+      "jodi": "43",
+      "closePana": "247"
+    },
+    "sat": {
+      "openPana": "699",
+      "jodi": "43",
+      "closePana": "580"
+    }
+  },
+  {
+    "week": "26-05-25 to 01-06-25",
+    "mon": {
+      "openPana": "460",
+      "jodi": "00",
+      "closePana": "389"
+    },
+    "tue": {
+      "openPana": "138",
+      "jodi": "29",
+      "closePana": "667"
+    },
+    "wed": {
+      "openPana": "369",
+      "jodi": "85",
+      "closePana": "690"
+    },
+    "thu": {
+      "openPana": "246",
+      "jodi": "22",
+      "closePana": "156"
+    },
+    "fri": {
+      "openPana": "579",
+      "jodi": "10",
+      "closePana": "488"
+    },
+    "sat": {
+      "openPana": "170",
+      "jodi": "81",
+      "closePana": "560"
+    }
+  },
+  {
+    "week": "02-06-25 to 08-06-25",
+    "mon": {
+      "openPana": "223",
+      "jodi": "77",
+      "closePana": "890"
+    },
+    "tue": {
+      "openPana": "457",
+      "jodi": "67",
+      "closePana": "368"
+    },
+    "wed": {
+      "openPana": "124",
+      "jodi": "73",
+      "closePana": "670"
+    },
+    "thu": {
+      "openPana": "580",
+      "jodi": "38",
+      "closePana": "459"
+    },
+    "fri": {
+      "openPana": "299",
+      "jodi": "04",
+      "closePana": "680"
+    },
+    "sat": {
+      "openPana": "568",
+      "jodi": "93",
+      "closePana": "788"
+    }
+  },
+  {
+    "week": "09-06-25 to 15-06-25",
+    "mon": {
+      "openPana": "189",
+      "jodi": "84",
+      "closePana": "239"
+    },
+    "tue": {
+      "openPana": "359",
+      "jodi": "74",
+      "closePana": "770"
+    },
+    "wed": {
+      "openPana": "259",
+      "jodi": "62",
+      "closePana": "480"
+    },
+    "thu": {
+      "openPana": "120",
+      "jodi": "31",
+      "closePana": "335"
+    },
+    "fri": {
+      "openPana": "479",
+      "jodi": "01",
+      "closePana": "146"
+    },
+    "sat": {
+      "openPana": "588",
+      "jodi": "15",
+      "closePana": "267"
+    }
+  },
+  {
+    "week": "16-06-25 to 22-06-25",
+    "mon": {
+      "openPana": "789",
+      "jodi": "40",
+      "closePana": "569"
+    },
+    "tue": {
+      "openPana": "124",
+      "jodi": "77",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "340",
+      "jodi": "71",
+      "closePana": "669"
+    },
+    "thu": {
+      "openPana": "257",
+      "jodi": "41",
+      "closePana": "380"
+    },
+    "fri": {
+      "openPana": "580",
+      "jodi": "34",
+      "closePana": "130"
+    },
+    "sat": {
+      "openPana": "369",
+      "jodi": "84",
+      "closePana": "699"
+    }
+  },
+  {
+    "week": "23-06-25 to 29-06-25",
+    "mon": {
+      "openPana": "279",
+      "jodi": "83",
+      "closePana": "490"
+    },
+    "tue": {
+      "openPana": "670",
+      "jodi": "31",
+      "closePana": "137"
+    },
+    "wed": {
+      "openPana": "239",
+      "jodi": "40",
+      "closePana": "460"
+    },
+    "thu": {
+      "openPana": "590",
+      "jodi": "43",
+      "closePana": "238"
+    },
+    "fri": {
+      "openPana": "125",
+      "jodi": "85",
+      "closePana": "357"
+    },
+    "sat": {
+      "openPana": "788",
+      "jodi": "39",
+      "closePana": "568"
+    }
+  },
+  {
+    "week": "30-06-25 to 06-07-25",
+    "mon": {
+      "openPana": "479",
+      "jodi": "06",
+      "closePana": "259"
+    },
+    "tue": {
+      "openPana": "480",
+      "jodi": "27",
+      "closePana": "188"
+    },
+    "wed": {
+      "openPana": "678",
+      "jodi": "19",
+      "closePana": "360"
+    },
+    "thu": {
+      "openPana": "167",
+      "jodi": "47",
+      "closePana": "458"
+    },
+    "fri": {
+      "openPana": "247",
+      "jodi": "38",
+      "closePana": "567"
+    },
+    "sat": {
+      "openPana": "667",
+      "jodi": "93",
+      "closePana": "120"
+    }
+  },
+  {
+    "week": "07-07-25 to 13-07-25",
+    "mon": {
+      "openPana": "579",
+      "jodi": "11",
+      "closePana": "290"
+    },
+    "tue": {
+      "openPana": "456",
+      "jodi": "53",
+      "closePana": "580"
+    },
+    "wed": {
+      "openPana": "179",
+      "jodi": "71",
+      "closePana": "236"
+    },
+    "thu": {
+      "openPana": "270",
+      "jodi": "94",
+      "closePana": "699"
+    },
+    "fri": {
+      "openPana": "356",
+      "jodi": "45",
+      "closePana": "447"
+    },
+    "sat": {
+      "openPana": "146",
+      "jodi": "16",
+      "closePana": "358"
+    }
+  },
+  {
+    "week": "14-07-25 to 20-07-25",
+    "mon": {
+      "openPana": "770",
+      "jodi": "46",
+      "closePana": "178"
+    },
+    "tue": {
+      "openPana": "347",
+      "jodi": "46",
+      "closePana": "240"
+    },
+    "wed": {
+      "openPana": "235",
+      "jodi": "08",
+      "closePana": "369"
+    },
+    "thu": {
+      "openPana": "599",
+      "jodi": "37",
+      "closePana": "890"
+    },
+    "fri": {
+      "openPana": "166",
+      "jodi": "32",
+      "closePana": "156"
+    },
+    "sat": {
+      "openPana": "990",
+      "jodi": "83",
+      "closePana": "670"
+    }
+  },
+  {
+    "week": "21-07-25 to 27-07-25",
+    "mon": {
+      "openPana": "580",
+      "jodi": "36",
+      "closePana": "178"
+    },
+    "tue": {
+      "openPana": "348",
+      "jodi": "54",
+      "closePana": "789"
+    },
+    "wed": {
+      "openPana": "168",
+      "jodi": "58",
+      "closePana": "288"
+    },
+    "thu": {
+      "openPana": "690",
+      "jodi": "53",
+      "closePana": "120"
+    },
+    "fri": {
+      "openPana": "259",
+      "jodi": "68",
+      "closePana": "567"
+    },
+    "sat": {
+      "openPana": "467",
+      "jodi": "79",
+      "closePana": "379"
+    }
+  },
+  {
+    "week": "28-07-25 to 03-08-25",
+    "mon": {
+      "openPana": "245",
+      "jodi": "10",
+      "closePana": "460"
+    },
+    "tue": {
+      "openPana": "238",
+      "jodi": "37",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "237",
+      "jodi": "29",
+      "closePana": "568"
+    },
+    "thu": {
+      "openPana": "458",
+      "jodi": "77",
+      "closePana": "179"
+    },
+    "fri": {
+      "openPana": "589",
+      "jodi": "25",
+      "closePana": "780"
+    },
+    "sat": {
+      "openPana": "160",
+      "jodi": "71",
+      "closePana": "335"
+    }
+  },
+  {
+    "week": "04-08-25 to 10-08-25",
+    "mon": {
+      "openPana": "358",
+      "jodi": "61",
+      "closePana": "290"
+    },
+    "tue": {
+      "openPana": "580",
+      "jodi": "30",
+      "closePana": "389"
+    },
+    "wed": {
+      "openPana": "469",
+      "jodi": "92",
+      "closePana": "778"
+    },
+    "thu": {
+      "openPana": "199",
+      "jodi": "95",
+      "closePana": "168"
+    },
+    "fri": {
+      "openPana": "345",
+      "jodi": "24",
+      "closePana": "149"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "11-08-25 to 17-08-25",
+    "mon": {
+      "openPana": "126",
+      "jodi": "94",
+      "closePana": "257"
+    },
+    "tue": {
+      "openPana": "577",
+      "jodi": "99",
+      "closePana": "568"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "63",
+      "closePana": "166"
+    },
+    "thu": {
+      "openPana": "459",
+      "jodi": "89",
+      "closePana": "478"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "899",
+      "jodi": "61",
+      "closePana": "380"
+    }
+  },
+  {
+    "week": "18-08-25 to 24-08-25",
+    "mon": {
+      "openPana": "235",
+      "jodi": "01",
+      "closePana": "146"
+    },
+    "tue": {
+      "openPana": "356",
+      "jodi": "46",
+      "closePana": "790"
+    },
+    "wed": {
+      "openPana": "160",
+      "jodi": "76",
+      "closePana": "349"
+    },
+    "thu": {
+      "openPana": "490",
+      "jodi": "39",
+      "closePana": "225"
+    },
+    "fri": {
+      "openPana": "148",
+      "jodi": "35",
+      "closePana": "780"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "25-08-25 to 31-08-25",
+    "mon": {
+      "openPana": "570",
+      "jodi": "21",
+      "closePana": "245"
+    },
+    "tue": {
+      "openPana": "334",
+      "jodi": "07",
+      "closePana": "890"
+    },
+    "wed": {
+      "openPana": "249",
+      "jodi": "55",
+      "closePana": "447"
+    },
+    "thu": {
+      "openPana": "168",
+      "jodi": "59",
+      "closePana": "568"
+    },
+    "fri": {
+      "openPana": "133",
+      "jodi": "77",
+      "closePana": "250"
+    },
+    "sat": {
+      "openPana": "679",
+      "jodi": "27",
+      "closePana": "467"
+    }
+  },
+  {
+    "week": "01-09-25 to 07-09-25",
+    "mon": {
+      "openPana": "460",
+      "jodi": "09",
+      "closePana": "180"
+    },
+    "tue": {
+      "openPana": "269",
+      "jodi": "73",
+      "closePana": "157"
+    },
+    "wed": {
+      "openPana": "690",
+      "jodi": "56",
+      "closePana": "448"
+    },
+    "thu": {
+      "openPana": "358",
+      "jodi": "60",
+      "closePana": "235"
+    },
+    "fri": {
+      "openPana": "180",
+      "jodi": "91",
+      "closePana": "245"
+    },
+    "sat": {
+      "openPana": "223",
+      "jodi": "75",
+      "closePana": "339"
+    }
+  },
+  {
+    "week": "08-09-25 to 14-09-25",
+    "mon": {
+      "openPana": "370",
+      "jodi": "08",
+      "closePana": "567"
+    },
+    "tue": {
+      "openPana": "457",
+      "jodi": "60",
+      "closePana": "136"
+    },
+    "wed": {
+      "openPana": "147",
+      "jodi": "25",
+      "closePana": "780"
+    },
+    "thu": {
+      "openPana": "589",
+      "jodi": "27",
+      "closePana": "250"
+    },
+    "fri": {
+      "openPana": "668",
+      "jodi": "03",
+      "closePana": "247"
+    },
+    "sat": {
+      "openPana": "246",
+      "jodi": "28",
+      "closePana": "134"
+    }
+  },
+  {
+    "week": "15-09-25 to 21-09-25",
+    "mon": {
+      "openPana": "137",
+      "jodi": "11",
+      "closePana": "335"
+    },
+    "tue": {
+      "openPana": "449",
+      "jodi": "76",
+      "closePana": "178"
+    },
+    "wed": {
+      "openPana": "237",
+      "jodi": "27",
+      "closePana": "566"
+    },
+    "thu": {
+      "openPana": "380",
+      "jodi": "15",
+      "closePana": "690"
+    },
+    "fri": {
+      "openPana": "489",
+      "jodi": "15",
+      "closePana": "267"
+    },
+    "sat": {
+      "openPana": "156",
+      "jodi": "25",
+      "closePana": "889"
+    }
+  },
+  {
+    "week": "22-09-25 to 28-09-25",
+    "mon": {
+      "openPana": "680",
+      "jodi": "41",
+      "closePana": "290"
+    },
+    "tue": {
+      "openPana": "678",
+      "jodi": "11",
+      "closePana": "470"
+    },
+    "wed": {
+      "openPana": "457",
+      "jodi": "69",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "780",
+      "jodi": "55",
+      "closePana": "348"
+    },
+    "fri": {
+      "openPana": "169",
+      "jodi": "63",
+      "closePana": "247"
+    },
+    "sat": {
+      "openPana": "368",
+      "jodi": "78",
+      "closePana": "116"
+    }
+  },
+  {
+    "week": "29-09-25 to 05-10-25",
+    "mon": {
+      "openPana": "780",
+      "jodi": "54",
+      "closePana": "789"
+    },
+    "tue": {
+      "openPana": "136",
+      "jodi": "07",
+      "closePana": "377"
+    },
+    "wed": {
+      "openPana": "679",
+      "jodi": "22",
+      "closePana": "237"
+    },
+    "thu": {
+      "openPana": "368",
+      "jodi": "7",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "568",
+      "jodi": "97",
+      "closePana": "160"
+    },
+    "sat": {
+      "openPana": "259",
+      "jodi": "68",
+      "closePana": "990"
+    }
+  },
+  {
+    "week": "06-10-25 to 12-10-25",
+    "mon": {
+      "openPana": "380",
+      "jodi": "19",
+      "closePana": "379"
+    },
+    "tue": {
+      "openPana": "349",
+      "jodi": "64",
+      "closePana": "130"
+    },
+    "wed": {
+      "openPana": "888",
+      "jodi": "40",
+      "closePana": "460"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "91",
+      "closePana": "227"
+    },
+    "fri": {
+      "openPana": "790",
+      "jodi": "62",
+      "closePana": "138"
+    },
+    "sat": {
+      "openPana": "667",
+      "jodi": "99",
+      "closePana": "180"
+    }
+  },
+  {
+    "week": "13-10-25 to 19-10-25",
+    "mon": {
+      "openPana": "690",
+      "jodi": "57",
+      "closePana": "359"
+    },
+    "tue": {
+      "openPana": "179",
+      "jodi": "79",
+      "closePana": "568"
+    },
+    "wed": {
+      "openPana": "233",
+      "jodi": "89",
+      "closePana": "180"
+    },
+    "thu": {
+      "openPana": "679",
+      "jodi": "22",
+      "closePana": "246"
+    },
+    "fri": {
+      "openPana": "247",
+      "jodi": "31",
+      "closePana": "489"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "20-10-25 to 26-10-25",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "27-10-25 to 02-11-25",
+    "mon": {
+      "openPana": "360",
+      "jodi": "96",
+      "closePana": "790"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "21",
+      "closePana": "236"
+    },
+    "wed": {
+      "openPana": "500",
+      "jodi": "58",
+      "closePana": "125"
+    },
+    "thu": {
+      "openPana": "689",
+      "jodi": "33",
+      "closePana": "346"
+    },
+    "fri": {
+      "openPana": "178",
+      "jodi": "66",
+      "closePana": "557"
+    },
+    "sat": {
+      "openPana": "235",
+      "jodi": "09",
+      "closePana": "270"
+    }
+  },
+  {
+    "week": "03-11-25 to 09-11-25",
+    "mon": {
+      "openPana": "334",
+      "jodi": "05",
+      "closePana": "690"
+    },
+    "tue": {
+      "openPana": "159",
+      "jodi": "58",
+      "closePana": "990"
+    },
+    "wed": {
+      "openPana": "590",
+      "jodi": "40",
+      "closePana": "578"
+    },
+    "thu": {
+      "openPana": "457",
+      "jodi": "69",
+      "closePana": "135"
+    },
+    "fri": {
+      "openPana": "488",
+      "jodi": "02",
+      "closePana": "246"
+    },
+    "sat": {
+      "openPana": "299",
+      "jodi": "09",
+      "closePana": "568"
+    }
+  },
+  {
+    "week": "10-11-25 to 16-11-25",
+    "mon": {
+      "openPana": "490",
+      "jodi": "31",
+      "closePana": "335"
+    },
+    "tue": {
+      "openPana": "368",
+      "jodi": "75",
+      "closePana": "780"
+    },
+    "wed": {
+      "openPana": "167",
+      "jodi": "43",
+      "closePana": "256"
+    },
+    "thu": {
+      "openPana": "580",
+      "jodi": "34",
+      "closePana": "158"
+    },
+    "fri": {
+      "openPana": "146",
+      "jodi": "13",
+      "closePana": "229"
+    },
+    "sat": {
+      "openPana": "556",
+      "jodi": "65",
+      "closePana": "348"
+    }
+  },
+  {
+    "week": "17-11-25 to 23-11-25",
+    "mon": {
+      "openPana": "270",
+      "jodi": "98",
+      "closePana": "459"
+    },
+    "tue": {
+      "openPana": "367",
+      "jodi": "60",
+      "closePana": "127"
+    },
+    "wed": {
+      "openPana": "369",
+      "jodi": "89",
+      "closePana": "568"
+    },
+    "thu": {
+      "openPana": "135",
+      "jodi": "97",
+      "closePana": "223"
+    },
+    "fri": {
+      "openPana": "400",
+      "jodi": "43",
+      "closePana": "779"
+    },
+    "sat": {
+      "openPana": "258",
+      "jodi": "51",
+      "closePana": "470"
+    }
+  },
+  {
+    "week": "24-11-25 to 30-11-25",
+    "mon": {
+      "openPana": "167",
+      "jodi": "47",
+      "closePana": "368"
+    },
+    "tue": {
+      "openPana": "770",
+      "jodi": "42",
+      "closePana": "679"
+    },
+    "wed": {
+      "openPana": "456",
+      "jodi": "52",
+      "closePana": "237"
+    },
+    "thu": {
+      "openPana": "138",
+      "jodi": "21",
+      "closePana": "489"
+    },
+    "fri": {
+      "openPana": "267",
+      "jodi": "55",
+      "closePana": "177"
+    },
+    "sat": {
+      "openPana": "670",
+      "jodi": "31",
+      "closePana": "588"
+    }
+  },
+  {
+    "week": "01-12-25 to 07-12-25",
+    "mon": {
+      "openPana": "289",
+      "jodi": "98",
+      "closePana": "459"
+    },
+    "tue": {
+      "openPana": "378",
+      "jodi": "84",
+      "closePana": "167"
+    },
+    "wed": {
+      "openPana": "480",
+      "jodi": "24",
+      "closePana": "789"
+    },
+    "thu": {
+      "openPana": "288",
+      "jodi": "84",
+      "closePana": "590"
+    },
+    "fri": {
+      "openPana": "340",
+      "jodi": "78",
+      "closePana": "134"
+    },
+    "sat": {
+      "openPana": "688",
+      "jodi": "27",
+      "closePana": "467"
+    }
+  },
+  {
+    "week": "08-12-25 to 14-12-25",
+    "mon": {
+      "openPana": "400",
+      "jodi": "45",
+      "closePana": "357"
+    },
+    "tue": {
+      "openPana": "779",
+      "jodi": "37",
+      "closePana": "250"
+    },
+    "wed": {
+      "openPana": "147",
+      "jodi": "22",
+      "closePana": "345"
+    },
+    "thu": {
+      "openPana": "280",
+      "jodi": "05",
+      "closePana": "690"
+    },
+    "fri": {
+      "openPana": "667",
+      "jodi": "99",
+      "closePana": "135"
+    },
+    "sat": {
+      "openPana": "356",
+      "jodi": "42",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "15-12-25 to 21-12-25",
+    "mon": {
+      "openPana": "178",
+      "jodi": "65",
+      "closePana": "500"
+    },
+    "tue": {
+      "openPana": "257",
+      "jodi": "41",
+      "closePana": "489"
+    },
+    "wed": {
+      "openPana": "558",
+      "jodi": "82",
+      "closePana": "110"
+    },
+    "thu": {
+      "openPana": "378",
+      "jodi": "85",
+      "closePana": "230"
+    },
+    "fri": {
+      "openPana": "889",
+      "jodi": "58",
+      "closePana": "459"
+    },
+    "sat": {
+      "openPana": "267",
+      "jodi": "56",
+      "closePana": "880"
+    }
+  },
+  {
+    "week": "22-12-25 to 28-12-25",
+    "mon": {
+      "openPana": "357",
+      "jodi": "53",
+      "closePana": "148"
+    },
+    "tue": {
+      "openPana": "120",
+      "jodi": "30",
+      "closePana": "136"
+    },
+    "wed": {
+      "openPana": "339",
+      "jodi": "53",
+      "closePana": "111"
+    },
+    "thu": {
+      "openPana": "567",
+      "jodi": "81",
+      "closePana": "470"
+    },
+    "fri": {
+      "openPana": "256",
+      "jodi": "34",
+      "closePana": "789"
+    },
+    "sat": {
+      "openPana": "670",
+      "jodi": "32",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "29-12-25 to 04-01-26",
+    "mon": {
+      "openPana": "168",
+      "jodi": "52",
+      "closePana": "246"
+    },
+    "tue": {
+      "openPana": "247",
+      "jodi": "31",
+      "closePana": "588"
+    },
+    "wed": {
+      "openPana": "568",
+      "jodi": "95",
+      "closePana": "159"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "257",
+      "jodi": "42",
+      "closePana": "336"
+    },
+    "sat": {
+      "openPana": "170",
+      "jodi": "82",
+      "closePana": "688"
+    }
+  },
+  {
+    "week": "05-01-26 to 11-01-26",
+    "mon": {
+      "openPana": "490",
+      "jodi": "39",
+      "closePana": "360"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "345",
+      "jodi": "21",
+      "closePana": "344"
+    },
+    "thu": {
+      "openPana": "267",
+      "jodi": "52",
+      "closePana": "679"
+    },
+    "fri": {
+      "openPana": "127",
+      "jodi": "09",
+      "closePana": "180"
+    },
+    "sat": {
+      "openPana": "568",
+      "jodi": "99",
+      "closePana": "234"
+    }
+  },
+  {
+    "week": "12-01-26 to 18-01-26",
+    "mon": {
+      "openPana": "578",
+      "jodi": "01",
+      "closePana": "470"
+    },
+    "tue": {
+      "openPana": "136",
+      "jodi": "02",
+      "closePana": "480"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "60",
+      "closePana": "226"
+    },
+    "thu": {
+      "openPana": "379",
+      "jodi": "95",
+      "closePana": "258"
+    },
+    "fri": {
+      "openPana": "890",
+      "jodi": "74",
+      "closePana": "167"
+    },
+    "sat": {
+      "openPana": "556",
+      "jodi": "64",
+      "closePana": "347"
+    }
+  },
+  {
+    "week": "19-01-26 to 25-01-26",
+    "mon": {
+      "openPana": "389",
+      "jodi": "07",
+      "closePana": "124"
+    },
+    "tue": {
+      "openPana": "247",
+      "jodi": "34",
+      "closePana": "590"
+    },
+    "wed": {
+      "openPana": "550",
+      "jodi": "01",
+      "closePana": "335"
+    },
+    "thu": {
+      "openPana": "479",
+      "jodi": "09",
+      "closePana": "270"
+    },
+    "fri": {
+      "openPana": "660",
+      "jodi": "22",
+      "closePana": "156"
+    },
+    "sat": {
+      "openPana": "233",
+      "jodi": "82",
+      "closePana": "679"
+    }
+  },
+  {
+    "week": "26-01-26 to 01-02-26",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "158",
+      "jodi": "43",
+      "closePana": "490"
+    },
+    "wed": {
+      "openPana": "146",
+      "jodi": "18",
+      "closePana": "369"
+    },
+    "thu": {
+      "openPana": "113",
+      "jodi": "56",
+      "closePana": "259"
+    },
+    "fri": {
+      "openPana": "900",
+      "jodi": "95",
+      "closePana": "140"
+    },
+    "sat": {
+      "openPana": "379",
+      "jodi": "97",
+      "closePana": "557"
+    }
+  },
+  {
+    "week": "02-02-26 to 08-02-26",
+    "mon": {
+      "openPana": "124",
+      "jodi": "78",
+      "closePana": "260"
+    },
+    "tue": {
+      "openPana": "115",
+      "jodi": "77",
+      "closePana": "449"
+    },
+    "wed": {
+      "openPana": "225",
+      "jodi": "94",
+      "closePana": "347"
+    },
+    "thu": {
+      "openPana": "680",
+      "jodi": "44",
+      "closePana": "789"
+    },
+    "fri": {
+      "openPana": "579",
+      "jodi": "11",
+      "closePana": "344"
+    },
+    "sat": {
+      "openPana": "400",
+      "jodi": "43",
+      "closePana": "148"
+    }
+  },
+  {
+    "week": "09-02-26 to 15-02-26",
+    "mon": {
+      "openPana": "389",
+      "jodi": "07",
+      "closePana": "890"
+    },
+    "tue": {
+      "openPana": "258",
+      "jodi": "57",
+      "closePana": "557"
+    },
+    "wed": {
+      "openPana": "550",
+      "jodi": "08",
+      "closePana": "278"
+    },
+    "thu": {
+      "openPana": "689",
+      "jodi": "33",
+      "closePana": "166"
+    },
+    "fri": {
+      "openPana": "180",
+      "jodi": "94",
+      "closePana": "356"
+    },
+    "sat": {
+      "openPana": "669",
+      "jodi": "13",
+      "closePana": "247"
+    }
+  },
+  {
+    "week": "16-02-26 to 22-02-26",
+    "mon": {
+      "openPana": "478",
+      "jodi": "94",
+      "closePana": "347"
+    },
+    "tue": {
+      "openPana": "469",
+      "jodi": "92",
+      "closePana": "570"
+    },
+    "wed": {
+      "openPana": "170",
+      "jodi": "87",
+      "closePana": "449"
+    },
+    "thu": {
+      "openPana": "780",
+      "jodi": "54",
+      "closePana": "266"
+    },
+    "fri": {
+      "openPana": "346",
+      "jodi": "38",
+      "closePana": "567"
+    },
+    "sat": {
+      "openPana": "259",
+      "jodi": "60",
+      "closePana": "136"
+    }
+  },
+  {
+    "week": "23-02-26 to 01-03-26",
+    "mon": {
+      "openPana": "160",
+      "jodi": "73",
+      "closePana": "445"
+    },
+    "tue": {
+      "openPana": "569",
+      "jodi": "09",
+      "closePana": "234"
+    },
+    "wed": {
+      "openPana": "370",
+      "jodi": "05",
+      "closePana": "168"
+    },
+    "thu": {
+      "openPana": "900",
+      "jodi": "92",
+      "closePana": "679"
+    },
+    "fri": {
+      "openPana": "349",
+      "jodi": "65",
+      "closePana": "258"
+    },
+    "sat": {
+      "openPana": "113",
+      "jodi": "52",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "02-03-26 to 08-03-26",
+    "mon": {
+      "openPana": "478",
+      "jodi": "98",
+      "closePana": "369"
+    },
+    "tue": {
+      "openPana": "280",
+      "jodi": "01",
+      "closePana": "560"
+    },
+    "wed": {
+      "openPana": "126",
+      "jodi": "99",
+      "closePana": "388"
+    },
+    "thu": {
+      "openPana": "470",
+      "jodi": "16",
+      "closePana": "899"
+    },
+    "fri": {
+      "openPana": "130",
+      "jodi": "41",
+      "closePana": "588"
+    },
+    "sat": {
+      "openPana": "130",
+      "jodi": "41",
+      "closePana": "588"
+    }
+  },
+  {
+    "week": "09-03-26 to 15-03-26",
+    "mon": {
+      "openPana": "247",
+      "jodi": "33",
+      "closePana": "490"
+    },
+    "tue": {
+      "openPana": "179",
+      "jodi": "77",
+      "closePana": "368"
+    },
+    "wed": {
+      "openPana": "457",
+      "jodi": "60",
+      "closePana": "235"
+    },
+    "thu": {
+      "openPana": "689",
+      "jodi": "30",
+      "closePana": "578"
+    },
+    "fri": {
+      "openPana": "358",
+      "jodi": "68",
+      "closePana": "990"
+    },
+    "sat": {
+      "openPana": "137",
+      "jodi": "12",
+      "closePana": "156"
+    }
+  },
+  {
+    "week": "16-03-26 to 22-03-26",
+    "mon": {
+      "openPana": "120",
+      "jodi": "31",
+      "closePana": "669"
+    },
+    "tue": {
+      "openPana": "377",
+      "jodi": "72",
+      "closePana": "147"
+    },
+    "wed": {
+      "openPana": "249",
+      "jodi": "58",
+      "closePana": "468"
+    },
+    "thu": {
+      "openPana": "160",
+      "jodi": "71",
+      "closePana": "470"
+    },
+    "fri": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "800"
+    },
+    "sat": {
+      "openPana": "789",
+      "jodi": "56",
+      "closePana": "457"
+    }
+  },
+  {
+    "week": "23-03-26 to 29-03-26",
+    "mon": {
+      "openPana": "230",
+      "jodi": "51",
+      "closePana": "146"
+    },
+    "tue": {
+      "openPana": "247",
+      "jodi": "34",
+      "closePana": "699"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "68",
+      "closePana": "567"
+    },
+    "thu": {
+      "openPana": "157",
+      "jodi": "34",
+      "closePana": "770"
+    },
+    "fri": {
+      "openPana": "590",
+      "jodi": "41",
+      "closePana": "579"
+    },
+    "sat": {
+      "openPana": "335",
+      "jodi": "18",
+      "closePana": "378"
+    }
+  },
+  {
+    "week": "30-03-26 to 05-04-26",
+    "mon": {
+      "openPana": "169",
+      "jodi": "66",
+      "closePana": "268"
+    },
+    "tue": {
+      "openPana": "550",
+      "jodi": "01",
+      "closePana": "489"
+    },
+    "wed": {
+      "openPana": "245",
+      "jodi": "15",
+      "closePana": "456"
+    },
+    "thu": {
+      "openPana": "390",
+      "jodi": "26",
+      "closePana": "178"
+    },
+    "fri": {
+      "openPana": "479",
+      "jodi": "05",
+      "closePana": "339"
+    },
+    "sat": {
+      "openPana": "578",
+      "jodi": "03",
+      "closePana": "247"
+    }
+  },
+  {
+    "week": "06-04-26 to 12-04-26",
+    "mon": {
+      "openPana": "369",
+      "jodi": "83",
+      "closePana": "788"
+    },
+    "tue": {
+      "openPana": "140",
+      "jodi": "55",
+      "closePana": "690"
+    },
+    "wed": {
+      "openPana": "446",
+      "jodi": "44",
+      "closePana": "248"
+    },
+    "thu": {
+      "openPana": "348",
+      "jodi": "51",
+      "closePana": "119"
+    },
+    "fri": {
+      "openPana": "278",
+      "jodi": "70",
+      "closePana": "569"
+    },
+    "sat": {
+      "openPana": "467",
+      "jodi": "76",
+      "closePana": "457"
+    }
+  },
+  {
+    "week": "13-04-26 to 19-04-26",
+    "mon": {
+      "openPana": "670",
+      "jodi": "38",
+      "closePana": "378"
+    },
+    "tue": {
+      "openPana": "124",
+      "jodi": "75",
+      "closePana": "780"
+    },
+    "wed": {
+      "openPana": "455",
+      "jodi": "47",
+      "closePana": "269"
+    },
+    "thu": {
+      "openPana": "370",
+      "jodi": "06",
+      "closePana": "178"
+    },
+    "fri": {
+      "openPana": "237",
+      "jodi": "24",
+      "closePana": "789"
+    },
+    "sat": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "477"
+    }
+  },
+  {
+    "week": "20-04-26 to 26-04-26",
+    "mon": {
+      "openPana": "357",
+      "jodi": "53",
+      "closePana": "788"
+    },
+    "tue": {
+      "openPana": "450",
+      "jodi": "99",
+      "closePana": "135"
+    },
+    "wed": {
+      "openPana": "689",
+      "jodi": "31",
+      "closePana": "380"
+    },
+    "thu": {
+      "openPana": "138",
+      "jodi": "22",
+      "closePana": "255"
+    },
+    "fri": {
+      "openPana": "346",
+      "jodi": "36",
+      "closePana": "169"
+    },
+    "sat": {
+      "openPana": "239",
+      "jodi": "44",
+      "closePana": "400"
+    }
+  },
+  {
+    "week": "27-04-26 to 03-05-26",
+    "mon": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "279"
+    },
+    "tue": {
+      "openPana": "140",
+      "jodi": "50",
+      "closePana": "460"
+    },
+    "wed": {
+      "openPana": "266",
+      "jodi": "49",
+      "closePana": "379"
+    },
+    "thu": {
+      "openPana": "469",
+      "jodi": "95",
+      "closePana": "113"
+    },
+    "fri": {
+      "openPana": "167",
+      "jodi": "43",
+      "closePana": "670"
+    },
+    "sat": {
+      "openPana": "788",
+      "jodi": "39",
+      "closePana": "289"
+    }
+  },
+  {
+    "week": "04-05-26 to 10-05-26",
+    "mon": {
+      "openPana": "679",
+      "jodi": "20",
+      "closePana": "578"
+    },
+    "tue": {
+      "openPana": "236",
+      "jodi": "14",
+      "closePana": "770"
+    },
+    "wed": {
+      "openPana": "348",
+      "jodi": "54",
+      "closePana": "149"
+    },
+    "thu": {
+      "openPana": "668",
+      "jodi": "08",
+      "closePana": "350"
+    },
+    "fri": {
+      "openPana": "180",
+      "jodi": "98",
+      "closePana": "459"
+    },
+    "sat": {
+      "openPana": "470",
+      "jodi": "15",
+      "closePana": "267"
+    }
+  },
+  {
+    "week": "11-05-26 to 17-05-26",
+    "mon": {
+      "openPana": "780",
+      "jodi": "51",
+      "closePana": "128"
+    },
+    "tue": {
+      "openPana": "689",
+      "jodi": "37",
+      "closePana": "340"
+    },
+    "wed": {
+      "openPana": "570",
+      "jodi": "22",
+      "closePana": "246"
+    },
+    "thu": {
+      "openPana": "467",
+      "jodi": "77",
+      "closePana": "566"
+    },
+    "fri": {
+      "openPana": "226",
+      "jodi": "08",
+      "closePana": "459"
+    },
+    "sat": {
+      "openPana": "120",
+      "jodi": "37",
+      "closePana": "223"
+    }
+  },
+  {
+    "week": "18-05-26 to 24-05-26",
+    "mon": {
+      "openPana": "458",
+      "jodi": "79",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "667",
+      "jodi": "92",
+      "closePana": "589"
+    },
+    "wed": {
+      "openPana": "348",
+      "jodi": "53",
+      "closePana": "490"
+    },
+    "thu": {
+      "openPana": "145",
+      "jodi": "06",
+      "closePana": "259"
+    },
+    "fri": {
+      "openPana": "336",
+      "jodi": "23",
+      "closePana": "689"
+    },
+    "sat": {
+      "openPana": "280",
+      "jodi": "01",
+      "closePana": "344"
+    }
+  },
+  {
+    "week": "25-05-26 to 31-05-26",
+    "mon": {
+      "openPana": "447",
+      "jodi": "56",
+      "closePana": "240"
+    },
+    "tue": {
+      "openPana": "560",
+      "jodi": "13",
+      "closePana": "788"
+    },
+    "wed": {
+      "openPana": "138",
+      "jodi": "27",
+      "closePana": "340"
+    },
+    "thu": {
+      "openPana": "188",
+      "jodi": "74",
+      "closePana": "239"
+    },
+    "fri": {
+      "openPana": "234",
+      "jodi": "98",
+      "closePana": "468"
+    },
+    "sat": {
+      "openPana": "369",
+      "jodi": "83",
+      "closePana": "166"
+    }
+  },
+  {
+    "week": "31-05-26 to 07-06-26",
+    "mon": {
+      "openPana": "270",
+      "jodi": "92",
+      "closePana": "156"
+    },
+    "tue": {
+      "openPana": "356",
+      "jodi": "42",
+      "closePana": "679"
+    },
+    "wed": {
+      "openPana": "770",
+      "jodi": "48",
+      "closePana": "567"
+    },
+    "thu": {
+      "openPana": "790",
+      "jodi": "67",
+      "closePana": "278"
+    },
+    "fri": {
+      "openPana": "167",
+      "jodi": "47",
+      "closePana": "890"
+    },
+    "sat": {
+      "openPana": "349",
+      "jodi": "65",
+      "closePana": "366"
+    }
+  },
+  {
+    "week": "08-06-26 to 14-06-26",
+    "mon": {
+      "openPana": "589",
+      "jodi": "29",
+      "closePana": "568"
+    },
+    "tue": {
+      "openPana": "235",
+      "jodi": "01",
+      "closePana": "669"
+    },
+    "wed": {
+      "openPana": "590",
+      "jodi": "43",
+      "closePana": "148"
+    },
+    "thu": {
+      "openPana": "126",
+      "jodi": "92",
+      "closePana": "345"
+    },
+    "fri": {
+      "openPana": "379",
+      "jodi": "90",
+      "closePana": "578"
+    },
+    "sat": {
+      "openPana": "112",
+      "jodi": "40",
+      "closePana": "677"
+    }
+  },
+  {
+    "week": "15-06-26 to 21-06-26",
+    "mon": {
+      "openPana": "245",
+      "jodi": "14",
+      "closePana": "130"
+    },
+    "tue": {
+      "openPana": "450",
+      "jodi": "94",
+      "closePana": "699"
+    },
+    "wed": {
+      "openPana": "146",
+      "jodi": "15",
+      "closePana": "357"
+    },
+    "thu": {
+      "openPana": "880",
+      "jodi": "69",
+      "closePana": "568"
+    },
+    "fri": {
+      "openPana": "356",
+      "jodi": "41",
+      "closePana": "678"
+    },
+    "sat": {
+      "openPana": "180",
+      "jodi": "91",
+      "closePana": "236"
+    }
+  },
+  {
+    "week": "21-06-26 to 28-06-26",
+    "mon": {
+      "openPana": "990",
+      "jodi": "84",
+      "closePana": "239"
+    },
+    "tue": {
+      "openPana": "169",
+      "jodi": "66",
+      "closePana": "356"
+    },
+    "wed": {
+      "openPana": "270",
+      "jodi": "92",
+      "closePana": "589"
+    },
+    "thu": {
+      "openPana": "478",
+      "jodi": "99",
+      "closePana": "117"
+    },
+    "fri": {
+      "openPana": "349",
+      "jodi": "61",
+      "closePana": "579"
+    },
+    "sat": {
+      "openPana": "150",
+      "jodi": "64",
+      "closePana": "248"
+    }
+  },
+  {
+    "week": "29-06-26 to 05-07-26",
+    "mon": {
+      "openPana": "588",
+      "jodi": "11",
+      "closePana": "470"
+    },
+    "tue": {
+      "openPana": "890",
+      "jodi": "73",
+      "closePana": "157"
+    },
+    "wed": {
+      "openPana": "679",
+      "jodi": "23",
+      "closePana": "355"
+    },
+    "thu": {
+      "openPana": "468",
+      "jodi": "89",
+      "closePana": "360"
+    },
+    "fri": {
+      "openPana": "158",
+      "jodi": "42",
+      "closePana": "237"
+    },
+    "sat": {
+      "openPana": "477",
+      "jodi": "89",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "06-07-26 to 12-07-26",
+    "mon": {
+      "openPana": "356",
+      "jodi": "40",
+      "closePana": "136"
+    },
+    "tue": {
+      "openPana": "269",
+      "jodi": "79",
+      "closePana": "577"
+    },
+    "wed": {
+      "openPana": "120",
+      "jodi": "32",
+      "closePana": "234"
+    },
+    "thu": {
+      "openPana": "458",
+      "jodi": "73",
+      "closePana": "670"
+    },
+    "fri": {
+      "openPana": "330",
+      "jodi": "69",
+      "closePana": "568"
+    },
+    "sat": {
+      "openPana": "167",
+      "jodi": "44",
+      "closePana": "338"
+    }
+  },
+  {
+    "week": "13-07-26 to 19-07-26",
+    "mon": {
+      "openPana": "569",
+      "jodi": "01",
+      "closePana": "236"
+    },
+    "tue": {
+      "openPana": "489",
+      "jodi": "17",
+      "closePana": "340"
+    },
+    "wed": {
+      "openPana": "240",
+      "jodi": "66",
+      "closePana": "466"
+    },
+    "thu": {
+      "openPana": "678",
+      "jodi": "13",
+      "closePana": "157"
+    },
+    "fri": {
+      "openPana": "470",
+      "jodi": "16",
+      "closePana": "259"
+    },
+    "sat": {
+      "openPana": "389",
+      "jodi": "02",
+      "closePana": "480"
+    }
+  },
+  {
+    "week": "20-07-26 to 26-07-26",
+    "mon": {
+      "openPana": "168",
+      "jodi": "59",
+      "closePana": "667"
+    },
+    "tue": {
+      "openPana": "560",
+      "jodi": "12",
+      "closePana": "390"
+    },
+    "wed": {
+      "openPana": "235",
+      "jodi": "04",
+      "closePana": "789"
+    },
+    "thu": {
+      "openPana": "334",
+      "jodi": "08",
+      "closePana": "468"
+    },
+    "fri": {
+      "openPana": "670",
+      "jodi": "32",
+      "closePana": "138"
+    },
+    "sat": {
+      "openPana": "112",
+      "jodi": "46",
+      "closePana": "600"
+    }
+  },
+  {
+    "week": "27-07-26 to 02-08-26",
+    "mon": {
+      "openPana": "457",
+      "jodi": "61",
+      "closePana": "245"
+    },
+    "tue": {
+      "openPana": "358",
+      "jodi": "68",
+      "closePana": "990"
+    },
+    "wed": {
+      "openPana": "278",
+      "jodi": "70",
+      "closePana": "136"
+    },
+    "thu": {
+      "openPana": "449",
+      "jodi": "70",
+      "closePana": "136"
+    },
+    "fri": {
+      "openPana": "356",
+      "jodi": "40",
+      "closePana": "389"
+    },
+    "sat": {
+      "openPana": "147",
+      "jodi": "23",
+      "closePana": "238"
+    }
+  },
+  {
+    "week": "03-08-26 to 09-08-26",
+    "mon": {
+      "openPana": "588",
+      "jodi": "12",
+      "closePana": "156"
+    },
+    "tue": {
+      "openPana": "349",
+      "jodi": "66",
+      "closePana": "600"
+    },
+    "wed": {
+      "openPana": "127",
+      "jodi": "06",
+      "closePana": "123"
+    },
+    "thu": {
+      "openPana": "468",
+      "jodi": "82",
+      "closePana": "589"
+    },
+    "fri": {
+      "openPana": "360",
+      "jodi": "99",
+      "closePana": "144"
+    },
+    "sat": {
+      "openPana": "660",
+      "jodi": "23",
+      "closePana": "300"
+    }
+  },
+  {
+    "week": "10-08-26 to 16-08-26",
+    "mon": {
+      "openPana": "257",
+      "jodi": "45",
+      "closePana": "168"
+    },
+    "tue": {
+      "openPana": "350",
+      "jodi": "83",
+      "closePana": "689"
+    },
+    "wed": {
+      "openPana": "459",
+      "jodi": "83",
+      "closePana": "247"
+    },
+    "thu": {
+      "openPana": "122",
+      "jodi": "55",
+      "closePana": "348"
+    },
+    "fri": {
+      "openPana": "260",
+      "jodi": "81",
+      "closePana": "146"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "17-08-26 to 23-08-26",
+    "mon": {
+      "openPana": "467",
+      "jodi": "77",
+      "closePana": "188"
+    },
+    "tue": {
+      "openPana": "123",
+      "jodi": "62",
+      "closePana": "570"
+    },
+    "wed": {
+      "openPana": "356",
+      "jodi": "46",
+      "closePana": "268"
+    },
+    "thu": {
+      "openPana": "680",
+      "jodi": "43",
+      "closePana": "157"
+    },
+    "fri": {
+      "openPana": "238",
+      "jodi": "33",
+      "closePana": "445"
+    },
+    "sat": {
+      "openPana": "489",
+      "jodi": "18",
+      "closePana": "567"
+    }
+  },
+  {
+    "week": "24-08-26 to 30-08-26",
+    "mon": {
+      "openPana": "380",
+      "jodi": "19",
+      "closePana": "126"
+    },
+    "tue": {
+      "openPana": "559",
+      "jodi": "92",
+      "closePana": "237"
+    },
+    "wed": {
+      "openPana": "167",
+      "jodi": "42",
+      "closePana": "660"
+    },
+    "thu": {
+      "openPana": "369",
+      "jodi": "81",
+      "closePana": "678"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "sat": {
+      "openPana": "230",
+      "jodi": "52",
+      "closePana": "345"
+    }
+  },
+  {
+    "week": "31-08-26 to 06-09-26",
+    "mon": {
+      "openPana": "158",
+      "jodi": "41",
+      "closePana": "560"
+    },
+    "tue": {
+      "openPana": "359",
+      "jodi": "70",
+      "closePana": "145"
+    },
+    "wed": {
+      "openPana": "490",
+      "jodi": "38",
+      "closePana": "224"
+    },
+    "thu": {
+      "openPana": "568",
+      "jodi": "98",
+      "closePana": "459"
+    },
+    "fri": {
+      "openPana": "169",
+      "jodi": "62",
+      "closePana": "778"
+    },
+    "sat": {
+      "openPana": "460",
+      "jodi": "08",
+      "closePana": "170"
+    }
+  },
+  {
+    "week": "07-09-26 to 13-09-26",
+    "mon": {
+      "openPana": "247",
+      "jodi": "31",
+      "closePana": "335"
+    },
+    "tue": {
+      "openPana": "489",
+      "jodi": "11",
+      "closePana": "290"
+    },
+    "wed": {
+      "openPana": "180",
+      "jodi": "96",
+      "closePana": "349"
+    },
+    "thu": {
+      "openPana": "679",
+      "jodi": "21",
+      "closePana": "588"
+    },
+    "fri": {
+      "openPana": "339",
+      "jodi": "55",
+      "closePana": "357"
+    },
+    "sat": {
+      "openPana": "135",
+      "jodi": "93",
+      "closePana": "346"
+    }
+  },
+  {
+    "week": "14-09-26 to 20-09-26",
+    "mon": {
+      "openPana": "669",
+      "jodi": "16",
+      "closePana": "268"
+    },
+    "tue": {
+      "openPana": "357",
+      "jodi": "56",
+      "closePana": "790"
+    },
+    "wed": {
+      "openPana": "124",
+      "jodi": "76",
+      "closePana": "349"
+    },
+    "thu": {
+      "openPana": "468",
+      "jodi": "85",
+      "closePana": "258"
+    },
+    "fri": {
+      "openPana": "899",
+      "jodi": "69",
+      "closePana": "126"
+    },
+    "sat": {
+      "openPana": "238",
+      "jodi": "36",
+      "closePana": "880"
+    }
+  },
+  {
+    "week": "21-09-26 to 27-09-26",
+    "mon": {
+      "openPana": "145",
+      "jodi": "00",
+      "closePana": "479"
+    },
+    "tue": {
+      "openPana": "570",
+      "jodi": "28",
+      "closePana": "378"
+    },
+    "wed": {
+      "openPana": "239",
+      "jodi": "48",
+      "closePana": "170"
+    },
+    "thu": {
+      "openPana": "346",
+      "jodi": "36",
+      "closePana": "556"
+    },
+    "fri": {
+      "openPana": "480",
+      "jodi": "28",
+      "closePana": "224"
+    },
+    "sat": {
+      "openPana": "669",
+      "jodi": "19",
+      "closePana": "135"
+    }
+  },
+  {
+    "week": "28-09-26 to 04-10-26",
+    "mon": {
+      "openPana": "268",
+      "jodi": "63",
+      "closePana": "157"
+    },
+    "tue": {
+      "openPana": "890",
+      "jodi": "75",
+      "closePana": "348"
+    },
+    "wed": {
+      "openPana": "349",
+      "jodi": "65",
+      "closePana": "690"
+    },
+    "thu": {
+      "openPana": "148",
+      "jodi": "31",
+      "closePana": "227"
+    },
+    "fri": {
+      "openPana": "335",
+      "jodi": "10",
+      "closePana": "389"
+    },
+    "sat": {
+      "openPana": "267",
+      "jodi": "53",
+      "closePana": "120"
+    }
+  },
+  {
+    "week": "05-10-26 to 11-10-26",
+    "mon": {
+      "openPana": "779",
+      "jodi": "36",
+      "closePana": "240"
+    },
+    "tue": {
+      "openPana": "169",
+      "jodi": "60",
+      "closePana": "479"
+    },
+    "wed": {
+      "openPana": "578",
+      "jodi": "07",
+      "closePana": "340"
+    },
+    "thu": {
+      "openPana": "260",
+      "jodi": "83",
+      "closePana": "166"
+    },
+    "fri": {
+      "openPana": "357",
+      "jodi": "56",
+      "closePana": "448"
+    },
+    "sat": {
+      "openPana": "125",
+      "jodi": "88",
+      "closePana": "189"
+    }
+  },
+  {
+    "week": "12-10-26 to 18-10-26",
+    "mon": {
+      "openPana": "177",
+      "jodi": "58",
+      "closePana": "567"
+    },
+    "tue": {
+      "openPana": "679",
+      "jodi": "22",
+      "closePana": "390"
+    },
+    "wed": {
+      "openPana": "237",
+      "jodi": "23",
+      "closePana": "166"
+    },
+    "thu": {
+      "openPana": "460",
+      "jodi": "04",
+      "closePana": "257"
+    },
+    "fri": {
+      "openPana": "168",
+      "jodi": "51",
+      "closePana": "344"
+    },
+    "sat": {
+      "openPana": "236",
+      "jodi": "14",
+      "closePana": "680"
+    }
+  },
+  {
+    "week": "19-10-26 to 25-10-26",
+    "mon": {
+      "openPana": "467",
+      "jodi": "75",
+      "closePana": "889"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "348",
+      "jodi": "59",
+      "closePana": "126"
+    },
+    "thu": {
+      "openPana": "225",
+      "jodi": "95",
+      "closePana": "555"
+    },
+    "fri": {
+      "openPana": "779",
+      "jodi": "31",
+      "closePana": "290"
+    },
+    "sat": {
+      "openPana": "134",
+      "jodi": "87",
+      "closePana": "458"
+    }
+  },
+  {
+    "week": "26-10-26 to 01-11-26",
+    "mon": {
+      "openPana": "237",
+      "jodi": "28",
+      "closePana": "369"
+    },
+    "tue": {
+      "openPana": "468",
+      "jodi": "89",
+      "closePana": "180"
+    },
+    "wed": {
+      "openPana": "389",
+      "jodi": "07",
+      "closePana": "566"
+    },
+    "thu": {
+      "openPana": "145",
+      "jodi": "07",
+      "closePana": "890"
+    },
+    "fri": {
+      "openPana": "467",
+      "jodi": "73",
+      "closePana": "238"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    }
+  }
+]

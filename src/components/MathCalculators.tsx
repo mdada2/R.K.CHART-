@@ -133,9 +133,7 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <ArrowRightLeft className="w-5 h-5 text-amber-400" />
               <span>
-                {isNight 
-                  ? (isMr ? 'राजधानी नाईट: कट अंक नियम व तक्ता' : 'Rajdhani Night: Cut Ank Rules & Table') 
-                  : (isMr ? 'कल्याण: कट अंक नियम व तक्ता' : 'Kalyan: Cut Ank Rules & Table')}
+                {marketInfo.name[language]}: {isMr ? 'कट अंक नियम व तक्ता' : 'Cut Ank Rules & Table'}
               </span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
@@ -220,9 +218,7 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Hash className="w-5 h-5 text-amber-400" />
               <span>
-                {isNight 
-                  ? (isMr ? 'राजधानी नाईट: फॅमिली जोडी जनरेटर' : 'Rajdhani Night: Family Jodi Generator') 
-                  : (isMr ? 'कल्याण: फॅमिली जोडी जनरेटर' : 'Kalyan: Family Jodi Generator')}
+                {marketInfo.name[language]}: {isMr ? 'फॅमिली जोडी जनरेटर' : 'Family Jodi Generator'}
               </span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
@@ -747,7 +743,7 @@ export const MathCalculators: React.FC<MathCalculatorsProps> = ({
                     {isMr ? '२ तास (सुमारे १२० मिनिटे)' : '2 Hours (approx. 120 mins)'}
                   </div>
                   <div className="text-[10px] text-slate-500">
-                    {isNight ? (isMr ? '०९:३५ PM ओपन ➔ ११:४५ PM क्लोज' : '09:35 PM Open ➔ 11:45 PM Close') : (isMr ? '०४:५० PM ओपन ➔ ०६:५० PM क्लोज' : '04:50 PM Open ➔ 06:50 PM Close')}
+                    {marketInfo.openTime} ओपन ➔ {marketInfo.closeTime} क्लोज
                   </div>
                 </div>
               </div>

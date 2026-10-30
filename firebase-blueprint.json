@@ -57,7 +57,7 @@
         },
         "preferredMarket": {
           "type": "string",
-          "enum": ["kalyan", "rajdhani_night"],
+          "enum": ["kalyan", "rajdhani_night", "manipur"],
           "maxLength": 20,
           "description": "Preferred default market"
         },
@@ -95,7 +95,7 @@
         },
         "market": {
           "type": "string",
-          "enum": ["kalyan", "rajdhani_night"],
+          "enum": ["kalyan", "rajdhani_night", "manipur"],
           "maxLength": 20,
           "description": "Target market identifier"
         },
@@ -148,7 +148,7 @@
       "properties": {
         "market": {
           "type": "string",
-          "enum": ["kalyan", "rajdhani_night"],
+          "enum": ["kalyan", "rajdhani_night", "manipur"],
           "maxLength": 20,
           "description": "Market identifier"
         },

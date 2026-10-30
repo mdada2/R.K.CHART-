@@ -151,7 +151,7 @@ export const PatternScannerView: React.FC<PatternScannerViewProps> = ({
   };
 
   const shareSangamOnWhatsApp = () => {
-    const marketName = isNight ? 'राजधानी नाईट' : 'कल्याण';
+    const marketName = marketInfo.name.mr;
     const halfText = sangamSets.halfSangamOpenPanaCloseAnk
       .slice(0, 8)
       .map((h) => h.label)

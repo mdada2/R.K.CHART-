@@ -50,15 +50,20 @@ export async function renderSharePhotoCard(payload: PhotoCardPayload): Promise<s
 
   const isMr = payload.language === 'mr';
   const isNight = payload.market === 'rajdhani_night';
+  const isManipur = payload.market === 'manipur';
 
-  const primaryAccent = isNight ? '#818cf8' : '#f59e0b';
-  const primaryAccentStrong = isNight ? '#6366f1' : '#d97706';
-  const secondaryAccent = isNight ? '#c084fc' : '#fbbf24';
+  const primaryAccent = isNight ? '#818cf8' : isManipur ? '#10b981' : '#f59e0b';
+  const primaryAccentStrong = isNight ? '#6366f1' : isManipur ? '#059669' : '#d97706';
+  const secondaryAccent = isNight ? '#c084fc' : isManipur ? '#14b8a6' : '#fbbf24';
   const dayLabel = DAY_NAMES[payload.day]?.[payload.language] || payload.day;
   const marketTitle = isNight
     ? isMr
       ? 'राजधानी नाईट अंक गणित चार्ट'
       : 'RAJDHANI NIGHT CHART STUDY'
+    : isManipur
+    ? isMr
+      ? 'मणीपुर अंक गणित चार्ट'
+      : 'MANIPUR CHART STUDY'
     : isMr
     ? 'कल्याण अंक गणित & जोडी चार्ट'
     : 'KALYAN ANK GANIT & JODI CHART';
@@ -66,7 +71,7 @@ export async function renderSharePhotoCard(payload: PhotoCardPayload): Promise<s
   // 1. Deep Studio Canvas Background
   const bgGrad = ctx.createLinearGradient(0, 0, width, height);
   bgGrad.addColorStop(0, '#060913');
-  bgGrad.addColorStop(0.55, isNight ? '#0f1029' : '#0f172a');
+  bgGrad.addColorStop(0.55, isNight ? '#0f1029' : isManipur ? '#061c16' : '#0f172a');
   bgGrad.addColorStop(1, '#050811');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
@@ -112,7 +117,7 @@ export async function renderSharePhotoCard(payload: PhotoCardPayload): Promise<s
   ctx.font = '800 56px "Noto Sans Devanagari", "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(isNight ? 'रा' : 'क', 153, 154);
+  ctx.fillText(isNight ? 'रा' : isManipur ? 'म' : 'क', 153, 154);
 
   // Title & Metadata
   ctx.textAlign = 'left';

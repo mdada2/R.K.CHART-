@@ -131,7 +131,14 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', isNight ? `rajdhani_night_historical_chart_2016_2026.csv` : `kalyan_historical_chart_2021_2026.csv`);
+    link.setAttribute(
+      'download',
+      market === 'rajdhani_night'
+        ? `rajdhani_night_historical_chart_2016_2026.csv`
+        : market === 'manipur'
+        ? `manipur_historical_chart_2022_2026.csv`
+        : `kalyan_historical_chart_2021_2026.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -146,8 +153,10 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
             <div className="flex items-center gap-2">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>
-                  {isNight 
+                  {market === 'rajdhani_night'
                     ? (isMr ? 'राजधानी नाईट जोडी व पॅनल चार्ट (२०१६ - २०२६)' : 'Rajdhani Night Jodi & Panel Chart Archive')
+                    : market === 'manipur'
+                    ? (isMr ? 'मणीपुर जोडी व पॅनल चार्ट (२०२२ - २०२६)' : 'Manipur Jodi & Panel Chart Archive')
                     : (isMr ? 'कल्याण जोडी व पॅनल चार्ट (२०२१ - २०२६)' : 'Kalyan Jodi & Panel Chart Archive')}
                 </span>
               </h2>

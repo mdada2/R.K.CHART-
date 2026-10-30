@@ -140,7 +140,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
     setTimeout(() => setCopiedJodi(null), 2000);
   };
 
-  const marketLabelMr = isNight ? 'राजधानी नाईट' : 'कल्याण';
+  const marketLabelMr = currentMarketInfo.name.mr;
 
   const handleWhatsAppShare = () => {
     const dayName = DAY_NAMES[selectedDay].mr;
@@ -667,7 +667,9 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                   {isMr ? `${DAY_NAMES[selectedDay].mr}चा निकाल प्रलंबित आहे` : `${DAY_NAMES[selectedDay].en} Result Pending`}
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  {isMr ? (isNight ? 'ओपन रात्री ०९:३५ वाजता आणि क्लोज रात्री ११:४५ वाजता जाहीर होतो.' : 'ओपन संध्याकाळी ०४:५० वाजता आणि क्लोज संध्याकाळी ०६:५० वाजता जाहीर होतो.') : (isNight ? 'Open at ~09:35 PM and Close at ~11:45 PM.' : 'Open at ~04:50 PM and Close at ~06:50 PM.')}
+                  {isMr
+                    ? `ओपन ${currentMarketInfo.openTime} वाजता आणि क्लोज ${currentMarketInfo.closeTime} वाजता जाहीर होतो.`
+                    : `Open at ~${currentMarketInfo.openTime} and Close at ~${currentMarketInfo.closeTime}.`}
                 </div>
               </div>
             </div>

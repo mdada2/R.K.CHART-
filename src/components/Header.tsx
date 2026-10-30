@@ -52,6 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const isMr = language === 'mr';
   const isNight = market === 'rajdhani_night';
+  const isManipur = market === 'manipur';
   const currentMarketInfo = MARKETS[market];
   const { user, isAdmin, isSigningIn, signInWithGoogle, signOutUser, cloudChartSyncStatus } =
     useFirebaseApp();
@@ -62,7 +63,17 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'passbook', label: isMr ? 'माझी नोंदवही' : 'My Passbook', icon: BookMarked },
     {
       id: 'chart',
-      label: isMr ? (isNight ? 'राजधानी चार्ट' : 'कल्याण चार्ट') : isNight ? 'Rajdhani Chart' : 'Kalyan Chart',
+      label: isMr
+        ? isNight
+          ? 'राजधानी चार्ट'
+          : isManipur
+          ? 'मणीपुर चार्ट'
+          : 'कल्याण चार्ट'
+        : isNight
+        ? 'Rajdhani Chart'
+        : isManipur
+        ? 'Manipur Chart'
+        : 'Kalyan Chart',
       icon: BarChart3,
     },
     { id: 'calculators', label: isMr ? 'अंक गणित टूल्स' : 'Math Calculators', icon: Calculator },
@@ -80,10 +91,12 @@ export const Header: React.FC<HeaderProps> = ({
             className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg font-bold text-xl transition-all shrink-0 ${
               isNight
                 ? 'bg-gradient-to-br from-indigo-500 via-purple-600 to-indigo-800 text-white shadow-indigo-500/20'
+                : isManipur
+                ? 'bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-800 text-white shadow-emerald-500/20'
                 : 'bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 shadow-amber-500/20'
             }`}
           >
-            {isNight ? 'रा' : 'क'}
+            {isNight ? 'रा' : isManipur ? 'म' : 'क'}
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -91,19 +104,31 @@ export const Header: React.FC<HeaderProps> = ({
                 {isMr
                   ? isNight
                     ? 'राजधानी नाईट अंक गणित & चार्ट'
+                    : isManipur
+                    ? 'मणीपुर अंक गणित & चार्ट'
                     : 'कल्याण अंक गणित & जोडी चार्ट'
                   : isNight
                   ? 'Rajdhani Night Ganit & Chart'
+                  : isManipur
+                  ? 'Manipur Ganit & Chart'
                   : 'Kalyan Ank Ganit & Jodi Chart'}
               </h1>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap">
-              <span className={isNight ? 'text-indigo-400 font-medium' : 'text-amber-400 font-medium'}>
+              <span
+                className={
+                  isNight
+                    ? 'text-indigo-400 font-medium'
+                    : isManipur
+                    ? 'text-emerald-400 font-medium'
+                    : 'text-amber-400 font-medium'
+                }
+              >
                 {currentMarketInfo.tagline[language]}
               </span>
               <span aria-hidden="true">·</span>
               <span className="font-mono tabular-nums">
-                {totalWeeks || (isNight ? 535 : 273)} {isMr ? 'आठवडे' : 'Weeks'}
+                {totalWeeks || (isNight ? 535 : isManipur ? 208 : 273)} {isMr ? 'आठवडे' : 'Weeks'}
               </span>
               <span aria-hidden="true">·</span>
               <span className="hidden sm:inline font-mono tabular-nums">
@@ -124,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center: Market Switcher (Kalyan Day vs Rajdhani Night) */}
+        {/* Center: Market Switcher (Kalyan vs Rajdhani Night vs Manipur) */}
         <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shadow-inner">
           <button
             type="button"
@@ -155,6 +180,23 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <span>{isMr ? 'राजधानी नाईट' : 'Rajdhani Night'}</span>
             <span className="text-[10px] opacity-75 font-normal hidden sm:inline">(Night)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onMarketChange('manipur')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              market === 'manipur'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
+            title={
+              isMr
+                ? 'मणीपुर (दुपारी ०३:२० - ०५:२०)'
+                : 'Manipur (Day Market: 03:20 PM - 05:20 PM)'
+            }
+          >
+            <span>{isMr ? 'मणीपुर' : 'Manipur'}</span>
+            <span className="text-[10px] opacity-75 font-normal hidden sm:inline">(Day)</span>
           </button>
         </div>
 

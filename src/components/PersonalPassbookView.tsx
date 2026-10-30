@@ -36,6 +36,7 @@ import { PhotoCardPayload } from '../utils/photoCardRenderer';
 interface PersonalPassbookViewProps {
   kalyanHistory: WeekRecord[];
   rajdhaniHistory: WeekRecord[];
+  manipurHistory?: WeekRecord[];
   language: Language;
   activeMarket: MarketType;
 }
@@ -43,9 +44,15 @@ interface PersonalPassbookViewProps {
 function evaluateEntry(
   entry: PassbookEntry,
   kalyanEffective: WeekRecord[],
-  rajdhaniEffective: WeekRecord[]
+  rajdhaniEffective: WeekRecord[],
+  manipurEffective: WeekRecord[]
 ): PassbookEvaluation {
-  const source = entry.market === 'rajdhani_night' ? rajdhaniEffective : kalyanEffective;
+  const source =
+    entry.market === 'rajdhani_night'
+      ? rajdhaniEffective
+      : entry.market === 'manipur'
+      ? manipurEffective
+      : kalyanEffective;
   const weekRec = source.find((w) => w.week === entry.week);
   const cell = weekRec ? weekRec[entry.day] : undefined;
 
@@ -175,6 +182,7 @@ function evaluateEntry(
 export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
   kalyanHistory,
   rajdhaniHistory,
+  manipurHistory = [],
   language,
   activeMarket,
 }) => {
@@ -196,9 +204,18 @@ export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
     () => getEffectiveHistory(rajdhaniHistory, 'rajdhani_night'),
     [rajdhaniHistory]
   );
+  const manipurEffective = useMemo(
+    () => getEffectiveHistory(manipurHistory, 'manipur'),
+    [manipurHistory]
+  );
 
   const [formMarket, setFormMarket] = useState<MarketType>(activeMarket);
-  const currentEffective = formMarket === 'rajdhani_night' ? rajdhaniEffective : kalyanEffective;
+  const currentEffective =
+    formMarket === 'rajdhani_night'
+      ? rajdhaniEffective
+      : formMarket === 'manipur'
+      ? manipurEffective
+      : kalyanEffective;
   const recentWeeks = useMemo(
     () => [...currentEffective].slice(-6).reverse(),
     [currentEffective]
@@ -301,9 +318,9 @@ export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
   const evaluatedList = useMemo(() => {
     return passbookEntries.map((entry) => ({
       entry,
-      evalResult: evaluateEntry(entry, kalyanEffective, rajdhaniEffective),
+      evalResult: evaluateEntry(entry, kalyanEffective, rajdhaniEffective, manipurEffective),
     }));
-  }, [passbookEntries, kalyanEffective, rajdhaniEffective]);
+  }, [passbookEntries, kalyanEffective, rajdhaniEffective, manipurEffective]);
 
   const stats = useMemo(() => {
     const completed = evaluatedList.filter((item) =>
@@ -476,11 +493,22 @@ export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
               </label>
               <select
                 value={formMarket}
-                onChange={(e) => setFormMarket(e.target.value as MarketType)}
+                onChange={(e) => {
+                  const nextMarket = e.target.value as MarketType;
+                  setFormMarket(nextMarket);
+                  const eff =
+                    nextMarket === 'rajdhani_night'
+                      ? rajdhaniEffective
+                      : nextMarket === 'manipur'
+                      ? manipurEffective
+                      : kalyanEffective;
+                  setFormWeek(eff[eff.length - 1]?.week || '');
+                }}
                 className="w-full min-h-[42px] px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white"
               >
                 <option value="kalyan">{MARKETS.kalyan.name[language]}</option>
                 <option value="rajdhani_night">{MARKETS.rajdhani_night.name[language]}</option>
+                <option value="manipur">{MARKETS.manipur.name[language]}</option>
               </select>
             </div>
 
@@ -626,6 +654,7 @@ export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
                   { id: 'all', label: isMr ? 'सर्व' : 'All' },
                   { id: 'kalyan', label: isMr ? 'कल्याण' : 'Kalyan' },
                   { id: 'rajdhani_night', label: isMr ? 'राजधानी' : 'Rajdhani' },
+                  { id: 'manipur', label: isMr ? 'मणीपुर' : 'Manipur' },
                 ].map((m) => (
                   <button
                     key={m.id}
@@ -687,6 +716,10 @@ export const PersonalPassbookView: React.FC<PersonalPassbookViewProps> = ({
                     ? isMr
                       ? 'राजधानी नाईट'
                       : 'Rajdhani Night'
+                    : entry.market === 'manipur'
+                    ? isMr
+                      ? 'मणीपुर'
+                      : 'Manipur'
                     : isMr
                     ? 'कल्याण'
                     : 'Kalyan';

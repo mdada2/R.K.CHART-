@@ -34,6 +34,7 @@ interface FirebaseContextValue {
   cloudChartSyncStatus: 'connecting' | 'synced' | 'offline';
   cloudKalyanWeeks: Record<string, WeekRecord>;
   cloudRajdhaniWeeks: Record<string, WeekRecord>;
+  cloudManipurWeeks: Record<string, WeekRecord>;
   passbookEntries: PassbookEntry[];
   signInWithGoogle: () => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -117,6 +118,9 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [cloudRajdhaniWeeks, setCloudRajdhaniWeeks] = useState<Record<string, WeekRecord>>(() =>
     loadCachedCloudWeeks('rajdhani_night')
   );
+  const [cloudManipurWeeks, setCloudManipurWeeks] = useState<Record<string, WeekRecord>>(() =>
+    loadCachedCloudWeeks('manipur')
+  );
 
   const [localEntries, setLocalEntries] = useState<PassbookEntry[]>(() => loadLocalPassbook());
   const [cloudEntries, setCloudEntries] = useState<PassbookEntry[]>([]);
@@ -156,7 +160,11 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           photoURL,
           preferredLanguage: existingData.preferredLanguage === 'en' ? 'en' : 'mr',
           preferredMarket:
-            existingData.preferredMarket === 'rajdhani_night' ? 'rajdhani_night' : 'kalyan',
+            existingData.preferredMarket === 'rajdhani_night'
+              ? 'rajdhani_night'
+              : existingData.preferredMarket === 'manipur'
+              ? 'manipur'
+              : 'kalyan',
           createdAt: existingData.createdAt || serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -266,9 +274,49 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     );
 
+    const manipurPath = 'charts/manipur/weeklyData';
+    const manipurQuery = query(
+      collection(db, 'charts', 'manipur', 'weeklyData'),
+      where('market', '==', 'manipur')
+    );
+
+    const unsubManipur = onSnapshot(
+      manipurQuery,
+      (snap) => {
+        const nextMap: Record<string, WeekRecord> = {};
+        const sortedDocs = [...snap.docs].sort(
+          (a, b) => (a.data().weekIndex ?? 0) - (b.data().weekIndex ?? 0)
+        );
+        for (const d of sortedDocs) {
+          const data = d.data();
+          if (data.week && data.mon && data.tue && data.wed && data.thu && data.fri && data.sat) {
+            nextMap[data.week] = {
+              week: data.week,
+              mon: data.mon,
+              tue: data.tue,
+              wed: data.wed,
+              thu: data.thu,
+              fri: data.fri,
+              sat: data.sat,
+            };
+          }
+        }
+        setCloudManipurWeeks(nextMap);
+        saveCachedCloudWeeks('manipur', nextMap);
+        setCloudChartSyncStatus('synced');
+      },
+      (err) => {
+        setCloudChartSyncStatus('offline');
+        try {
+          handleFirestoreError(err, OperationType.LIST, manipurPath);
+        } catch {}
+      }
+    );
+
     return () => {
       unsubKalyan();
       unsubRajdhani();
+      unsubManipur();
     };
   }, [authReady]);
 
@@ -552,6 +600,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       cloudChartSyncStatus,
       cloudKalyanWeeks,
       cloudRajdhaniWeeks,
+      cloudManipurWeeks,
       passbookEntries: combinedEntries,
       signInWithGoogle,
       signOutUser,
@@ -570,6 +619,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       cloudChartSyncStatus,
       cloudKalyanWeeks,
       cloudRajdhaniWeeks,
+      cloudManipurWeeks,
       combinedEntries,
       signInWithGoogle,
       signOutUser,

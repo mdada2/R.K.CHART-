@@ -82,16 +82,22 @@ export const BacktestingLab: React.FC<BacktestingLabProps> = ({
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>
-                {isNight 
+                {market === 'rajdhani_night' 
                   ? (isMr ? 'राजधानी नाईट: ऐतिहासिक निकाल पडताळणी लॅब' : 'Rajdhani Night: Historical Verification Lab')
+                  : market === 'manipur'
+                  ? (isMr ? 'मणीपुर: ऐतिहासिक निकाल पडताळणी लॅब' : 'Manipur: Historical Verification Lab')
                   : (isMr ? 'कल्याण: ऐतिहासिक निकाल पडताळणी लॅब' : 'Kalyan: Historical Verification Lab')}
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              {isNight
+              {market === 'rajdhani_night'
                 ? (isMr 
                     ? `राजधानी नाईटच्या २०१६ ते २०२६ मधील ५३०+ आठवड्यांच्या अधिकृत निकालांवर निवडलेल्या सूत्राची चाचणी केली जाते. यामध्ये शनिवार बंद (सुट्टी) असल्याने शुक्रवारनंतर थेट सोमवारची लाईन अचूक तपासली जाते.`
                     : `Tested against 530+ historical weeks of Rajdhani Night (2016-2026). Saturday is recognized as closed/holiday so Friday flows directly into Monday predictions.`)
+                : market === 'manipur'
+                ? (isMr
+                    ? `मणीपुरच्या २०२२ ते २०२६ मधील २०८ आठवड्यांच्या (सोमवार ते शनिवार) अधिकृत निकालांवर मागील सत्रांची थेट अचूकता तपासा.`
+                    : `Tested against 208 historical weeks of Manipur (Mon to Sat) to evaluate OTC and Jodi hit rates.`)
                 : (isMr
                     ? `कल्याणच्या २०२१ ते २०२६ मधील २७०+ आठवड्यांच्या (सोमवार ते शनिवार) अधिकृत निकालांवर मागील सत्रांची थेट अचूकता तपासा.`
                     : `Tested against 270+ historical weeks of Kalyan (Mon to Sat) to evaluate OTC and Jodi hit rates.`)}

@@ -97,7 +97,8 @@ export function getPreMarketForumGuesses(
   market: MarketType = 'kalyan'
 ): ExpertGuessItem[] {
   const isNight = market === 'rajdhani_night';
-  const lockTime = isNight ? '०८:४५ PM (रात्री)' : '०३:३० PM (दुपारी)';
+  const isManipur = market === 'manipur';
+  const lockTime = isNight ? '०८:४५ PM (रात्री)' : isManipur ? '०२:४५ PM (दुपारी)' : '०३:३० PM (दुपारी)';
 
   const prev = getPreviousPlayedData(history, targetDay);
   const masterPred = generateSolidPredictions(history, targetDay);
@@ -109,10 +110,10 @@ export function getPreMarketForumGuesses(
   const lineOTC = lineFam.otc;
   const diffOTC = diffPred.otc;
 
-  // Expert 1: DPBoss Top Community Forum Consensus (143 Guessing)
+  // Expert 1: Top Community Forum Consensus (143 Guessing)
   const item1: ExpertGuessItem = {
     id: 'dpboss-143',
-    sourceName: 'DPBoss फोरम १४३ (Community Consensus)',
+    sourceName: isManipur ? 'Satta1 फोरम १४३ (Community Consensus)' : 'DPBoss फोरम १४३ (Community Consensus)',
     author: 'टॉप १० गेसर्स सरासरी (Top 10 Forum Guessers)',
     lockTimestamp: `${lockTime} वाजता टाईम-लॉक केला गेला`,
     isTimeLocked: true,

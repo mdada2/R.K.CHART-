@@ -1,4 +1,4 @@
-import { DayKey, PredictionResult, WeekRecord, BacktestSummary, DigitFrequency, FormulaStep, JodiProbability, DigitConfluence, CalculationFormulaId } from '../types';
+import { DayKey, PredictionResult, WeekRecord, BacktestSummary, DigitFrequency, FormulaStep, JodiProbability, DigitConfluence, CalculationFormulaId, MarketType } from '../types';
 
 export const CUT_MAP: Record<number, number> = {
   0: 5,
@@ -130,7 +130,7 @@ function parseWeekEndDate(weekStr: string): Date | null {
  */
 export function getEffectiveHistory(
   history: WeekRecord[],
-  market: 'kalyan' | 'rajdhani_night' = 'kalyan'
+  market: MarketType = 'kalyan'
 ): WeekRecord[] {
   if (!history || history.length === 0) return [];
   const isNight = market === 'rajdhani_night';
