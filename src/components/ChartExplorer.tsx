@@ -10,6 +10,8 @@ import {
   getJodiTotal, 
   getJodiDifference, 
   getFamilyJodis,
+  getNearbyJodis,
+  isValidPlayedJodi,
   calculatePanaSum,
   ALL_PANAS
 } from '../utils/matkaMath';
@@ -659,6 +661,49 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
                 }
               }
 
+              // 3. Multi-Week Diagonal Progression & Nearby Numbers Check (तिरपी लाइन व जवळचे अंक)
+              let diagSourceStep: { week: string; day: DayKey; jodi: string } | null = null;
+              if (currentWeekIdx >= 1 && currentDayIdx - 1 >= 0) {
+                const dKey = DAY_KEYS[currentDayIdx - 1];
+                const c = history[currentWeekIdx - 1]?.[dKey];
+                if (c && isValidPlayedJodi(c.jodi)) {
+                  diagSourceStep = { week: history[currentWeekIdx - 1].week, day: dKey, jodi: c.jodi };
+                }
+              }
+              if (diagSourceStep) {
+                const sJodi = diagSourceStep.jodi;
+                const sRev = `${sJodi[1]}${sJodi[0]}`;
+                const sFamily = getFamilyJodis(sJodi);
+                const sNearby = getNearbyJodis(sJodi);
+                const curJodi = activeCellDetail.jodi;
+
+                if (curJodi === sJodi) {
+                  tricks.push(
+                    isMr
+                      ? `२+ आठवड्यांच्या तिरपी रेषेवरून (${DAY_NAMES[diagSourceStep.day].mr} ${sJodi}) थेट जोडी (${curJodi}) लागली.`
+                      : `Direct multi-week diagonal carry-over from ${DAY_NAMES[diagSourceStep.day].en} (${sJodi}).`
+                  );
+                } else if (curJodi === sRev) {
+                  tricks.push(
+                    isMr
+                      ? `२+ आठवड्यांच्या तिरपी रेषेवरून (${DAY_NAMES[diagSourceStep.day].mr} ${sJodi}) पलट जोडी (${curJodi}) लागली.`
+                      : `Palat reverse diagonal carry-over from ${DAY_NAMES[diagSourceStep.day].en} (${sJodi}).`
+                  );
+                } else if (sFamily.includes(curJodi)) {
+                  tricks.push(
+                    isMr
+                      ? `२+ आठवड्यांच्या तिरपी रेषेवरून (${DAY_NAMES[diagSourceStep.day].mr} ${sJodi}) फॅमिली जोडी (${curJodi}) लागली.`
+                      : `Family diagonal carry-over from ${DAY_NAMES[diagSourceStep.day].en} (${sJodi}).`
+                  );
+                } else if (sNearby.includes(curJodi)) {
+                  tricks.push(
+                    isMr
+                      ? `२+ आठवड्यांच्या तिरपी रेषेवरून जवळचा अंक (±१ दाणा / शेजारील घर: ${sJodi} ➔ ${curJodi}) आला.`
+                      : `Nearby ±1 Dana shift from diagonal source (${sJodi} ➔ ${curJodi}).`
+                  );
+                }
+              }
+
               return (
                 <div className="bg-amber-500/10 dark:bg-gradient-to-r dark:from-amber-500/10 dark:via-slate-950 dark:to-amber-500/5 border border-amber-500/30 p-3.5 rounded-xl text-xs space-y-2">
                   <div className="flex items-center gap-2">
@@ -679,6 +724,13 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
                     <div className="text-slate-300">
                       <span className="text-slate-400">{isMr ? '२. मागील आठवड्याचा समान वार:' : '2. Previous Week Same Day:'}</span>{' '}
                       <strong className="text-white font-mono">{prevWeekSameDayData.jodi}</strong>
+                    </div>
+                  )}
+
+                  {diagSourceStep && (
+                    <div className="text-slate-300">
+                      <span className="text-slate-400">{isMr ? '३. तिरपी लाईन स्त्रोत (१ आठवड्यापूर्वी):' : '3. Diagonal Source (1 Wk Prior):'}</span>{' '}
+                      <strong className="text-indigo-400 font-mono">{DAY_NAMES[diagSourceStep.day][language]} ({diagSourceStep.jodi})</strong>
                     </div>
                   )}
 

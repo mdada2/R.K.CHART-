@@ -273,12 +273,60 @@ export const EducationalGuide: React.FC<EducationalGuideProps> = ({
         </div>
       </div>
 
-      {/* Chapter 5: Mathematical Odds & Responsible Science */}
+      {/* Chapter 5: Multi-Week Diagonal Progression & Nearby Numbers (±1 Dana) */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4 transition-colors">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span className="w-6 h-6 rounded-md bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xs">
+            ५
+          </span>
+          <span>
+            {isMr
+              ? 'बहु-आठवडी तिरपी लाइन (↘ ↙) व जवळचे अंक (±१ दाणा व शेजारील घर नियम)'
+              : 'Multi-Week Diagonal Progression & Nearby Numbers (±1 Dana Shift)'}
+          </span>
+        </h3>
+
+        <div className="text-sm text-slate-700 dark:text-slate-300 space-y-3 leading-relaxed">
+          <p>
+            {isMr
+              ? 'अनुभवी चार्ट अभ्यासकांच्या मते, बाजारात बऱ्याच वेळा आठवड्यांच्या तिरप्या रेषेवरून (Staircase Progression) अंक खेळले जातात. यामध्ये २ प्रमुख नियम असतात:'
+              : 'Senior chart analysts emphasize diagonal progression staircases across historical weeks with two foundational rules:'}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl space-y-1.5">
+              <div className="font-bold text-indigo-600 dark:text-indigo-400 text-xs flex items-center gap-1.5">
+                <span>↘</span>
+                <span>{isMr ? 'सीधी तिरपी लाइन (Forward Diagonal Staircase)' : 'Forward Diagonal'}</span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                {isMr
+                  ? 'उदा. २ आठवड्यांपूर्वीचा मंगळवार ➔ मागील आठवड्याचा बुधवार ➔ चालू आठवड्याचा गुरुवार ही सीधी पायरी बनते. आदल्या दिवशी आलेली जोडी जर या पायरीवरून आली असेल, तर येणाऱ्या दिवसाचा निकाल त्याच तिरप्या रेषेच्या प्रोग्रेशनवर चालतो.'
+                  : 'Example: 2 weeks ago Tuesday ➔ Last week Wednesday ➔ Current week Thursday forms a forward staircase.'}
+              </p>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl space-y-1.5">
+              <div className="font-bold text-amber-600 dark:text-amber-400 text-xs flex items-center gap-1.5">
+                <span>⚡</span>
+                <span>{isMr ? 'जवळचे अंक (±१ दाणा व शेजारील घर नियम)' : 'Nearby Numbers (±1 Dana)'}</span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                {isMr
+                  ? 'जेव्हा थेट तिरपी जोडी १ अंकाने हुकते, तेव्हा जोडीच्या बेरजेत १ दाणा पुढे किंवा मागे (उदा. ४८ ची बेरीज २, म्हणून १ किंवा ३ बेरीज असणाऱ्या ४७, ४९, ३८, ५८ जोड्या) खेळल्या जातात.'
+                  : 'When a direct diagonal pair narrowly misses, the outcome frequently lands on a ±1 Dana shift (e.g. for 48, neighbor pairs are 47, 49, 38, 58).'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Chapter 6: Mathematical Odds & Responsible Science */}
       <div className="bg-white dark:bg-slate-900 border border-amber-500/30 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4 transition-colors">
         <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
           <ShieldAlert className="w-5 h-5" />
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-            {isMr ? 'गणितीय संभाव्यता व सावधगिरी (Probability & Responsible Education)' : 'Probability Theory & Responsible Caution'}
+            {isMr ? '६. गणितीय संभाव्यता व सावधगिरी (Probability & Responsible Education)' : '6. Probability Theory & Responsible Caution'}
           </h3>
         </div>
 

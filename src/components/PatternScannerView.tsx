@@ -25,6 +25,7 @@ import {
   getSuggestedPanasForDigits,
   PatternMatchMode,
   scanJodiPatterns,
+  scanCustomDiagonalPattern,
 } from '../utils/patternScanner';
 
 interface PatternScannerViewProps {
@@ -60,17 +61,29 @@ export const PatternScannerView: React.FC<PatternScannerViewProps> = ({
 
   const [queryInput, setQueryInput] = useState<string>(() => recentPlayedJodis[0]?.jodi || '91');
   const [matchMode, setMatchMode] = useState<PatternMatchMode>('exact');
-  const [activeSection, setActiveSection] = useState<'scanner' | 'sangam'>('scanner');
+  const [activeSection, setActiveSection] = useState<'scanner' | 'diagonal' | 'sangam'>('scanner');
+
+  // Custom Diagonal Scanner state (उदा. गुरुवार 48 ➔ शुक्रवार)
+  const [diagPrevDay, setDiagPrevDay] = useState<DayKey>('thu');
+  const [diagPrevJodi, setDiagPrevJodi] = useState<string>(() => recentPlayedJodis[0]?.jodi || '48');
+  const [diagTargetDay, setDiagTargetDay] = useState<DayKey>('fri');
 
   useEffect(() => {
     if (recentPlayedJodis[0]?.jodi) {
       setQueryInput(recentPlayedJodis[0].jodi);
+      setDiagPrevJodi(recentPlayedJodis[0].jodi);
+      setDiagPrevDay(recentPlayedJodis[0].day);
     }
   }, [market, recentPlayedJodis]);
 
   const scanResult = useMemo(
     () => scanJodiPatterns(history, queryInput || '91', matchMode),
     [history, queryInput, matchMode]
+  );
+
+  const customDiagResult = useMemo(
+    () => scanCustomDiagonalPattern(history, diagPrevDay, diagPrevJodi || '48', diagTargetDay),
+    [history, diagPrevDay, diagPrevJodi, diagTargetDay]
   );
 
   // Sangam state initialized from upcoming day's Solid OTC
@@ -198,13 +211,13 @@ export const PatternScannerView: React.FC<PatternScannerViewProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-xl self-start md:self-auto">
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-xl self-start md:self-auto">
             <button
               type="button"
               onClick={() => setActiveSection('scanner')}
               className={`min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                 activeSection === 'scanner'
-                  ? 'bg-amber-500 text-slate-950'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -213,15 +226,27 @@ export const PatternScannerView: React.FC<PatternScannerViewProps> = ({
             </button>
             <button
               type="button"
+              onClick={() => setActiveSection('diagonal')}
+              className={`min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                activeSection === 'diagonal'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <span className="font-black text-sm">↘</span>
+              <span>{isMr ? '२. तिरपी लाइन व जवळचे अंक' : '2. Diagonal & Nearby'}</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveSection('sangam')}
               className={`min-h-[40px] px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                 activeSection === 'sangam'
-                  ? 'bg-amber-500 text-slate-950'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>{isMr ? '२. हाफ व फुल संगम' : '2. Sangam Builder'}</span>
+              <span>{isMr ? '३. हाफ व फुल संगम' : '3. Sangam Studio'}</span>
             </button>
           </div>
         </div>
@@ -587,7 +612,332 @@ export const PatternScannerView: React.FC<PatternScannerViewProps> = ({
         </div>
       )}
 
-      {/* SECTION 2: HALF & FULL SANGAM CALCULATOR */}
+      {/* SECTION 2: CUSTOM DIAGONAL & NEARBY NUMBERS SCANNER (तिरपी लाइन व जवळचे अंक) */}
+      {activeSection === 'diagonal' && (
+        <div className="space-y-6">
+          {/* Controls Box */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <span className="text-indigo-400">↘</span>
+                <span>
+                  {isMr
+                    ? 'कस्टम तिरपी लाइन व जवळचे अंक स्कॅनर'
+                    : 'Custom Diagonal Progression & Nearby Numbers Scanner'}
+                </span>
+                <span className="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded-full border border-indigo-500/30">
+                  {isMr ? 'ऐतिहासिक पुरावा' : 'Historical Proof'}
+                </span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                {isMr
+                  ? 'आदल्या दिवशी खेळलेली कोणतीही जोडी (उदा. गुरुवार ४८) टाकून येणाऱ्या दिवसासाठी (शुक्रवार) थेट तिरपी अंक, जवळचे अंक (±1 दाणा) आणि संपूर्ण चार्टमधील पुरावा तपासा.'
+                  : 'Enter any preceding played Jodi (e.g. Thursday 48) to project upcoming target day OTC, nearby ±1 Dana pairs, and inspect full historical proof.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-2">
+              {/* Prev Day Selector */}
+              <div className="md:col-span-4 space-y-1">
+                <label className="block text-xs font-semibold text-slate-400">
+                  {isMr ? '१. आदला वार (खेळलेला दिवस):' : '1. Preceding Day Played:'}
+                </label>
+                <select
+                  value={diagPrevDay}
+                  onChange={(e) => setDiagPrevDay(e.target.value as DayKey)}
+                  className="w-full min-h-[44px] px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-indigo-500"
+                >
+                  {DAY_KEYS.map((d) => (
+                    <option key={d} value={d}>
+                      {DAY_NAMES[d][language]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Prev Jodi Input */}
+              <div className="md:col-span-4 space-y-1">
+                <label className="block text-xs font-semibold text-slate-400">
+                  {isMr ? '२. खेळलेली जोडी टाका:' : '2. Played Jodi:'}
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={2}
+                    value={diagPrevJodi}
+                    onChange={(e) => setDiagPrevJodi(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                    placeholder="48"
+                    className="w-full min-h-[44px] px-4 py-2 bg-slate-950 border border-slate-700 rounded-xl text-lg font-mono font-bold text-amber-400 tabular-nums focus:outline-none focus:border-indigo-500"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono font-semibold">
+                    जोडी
+                  </span>
+                </div>
+              </div>
+
+              {/* Target Day Selector */}
+              <div className="md:col-span-4 space-y-1">
+                <label className="block text-xs font-semibold text-slate-400">
+                  {isMr ? '३. येणारा लक्ष्य वार (पुढील दिवस):' : '3. Target Draw Day:'}
+                </label>
+                <select
+                  value={diagTargetDay}
+                  onChange={(e) => setDiagTargetDay(e.target.value as DayKey)}
+                  className="w-full min-h-[44px] px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-indigo-500"
+                >
+                  {DAY_KEYS.map((d) => (
+                    <option key={d} value={d}>
+                      {DAY_NAMES[d][language]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] text-slate-400 mr-1">
+                {isMr ? 'उदाहरणे / तत्काळ निवडा:' : 'Quick Examples:'}
+              </span>
+              {['48', '91', '55', '62', '38', '72', '24'].map((pj) => (
+                <button
+                  key={pj}
+                  type="button"
+                  onClick={() => setDiagPrevJodi(pj)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
+                    diagPrevJodi === pj
+                      ? 'bg-indigo-500/20 border-indigo-400 text-indigo-300'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {pj}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Historical Statistical Proof Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {/* Total occurrences */}
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center shadow-lg">
+              <div className="text-xs text-slate-400 font-semibold mb-1">
+                {isMr ? 'ऐतिहासिक घटना' : 'Total Occurrences'}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-white">
+                {customDiagResult.totalOccurrences}
+              </div>
+              <div className="text-[11px] text-slate-500 mt-0.5">
+                {isMr
+                  ? `${DAY_NAMES[diagPrevDay].mr} रोजी ${diagPrevJodi} आल्यानंतर`
+                  : `After ${DAY_NAMES[diagPrevDay].en} ${diagPrevJodi}`}
+              </div>
+            </div>
+
+            {/* Direct Diagonal Hits */}
+            <div className="bg-slate-900/90 border border-indigo-500/40 rounded-2xl p-4 text-center shadow-lg">
+              <div className="text-xs text-indigo-300 font-semibold mb-1">
+                {isMr ? 'थेट तिरपी पास दर' : 'Direct Diagonal Hit %'}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-indigo-400">
+                {customDiagResult.directHitRate}%
+              </div>
+              <div className="text-[11px] text-indigo-200/70 mt-0.5">
+                {customDiagResult.directHits} / {customDiagResult.totalOccurrences} {isMr ? 'सत्रे पास' : 'hits'}
+              </div>
+            </div>
+
+            {/* Nearby Hits */}
+            <div className="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-4 text-center shadow-lg">
+              <div className="text-xs text-amber-300 font-semibold mb-1">
+                {isMr ? 'जवळचा अंक (±1 दाणा) पास' : 'Nearby (±1 Dana) Hit %'}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-amber-400">
+                {customDiagResult.nearbyHitRate}%
+              </div>
+              <div className="text-[11px] text-amber-200/70 mt-0.5">
+                {customDiagResult.nearbyHits} / {customDiagResult.totalOccurrences} {isMr ? 'सत्रे पास' : 'hits'}
+              </div>
+            </div>
+
+            {/* Total Hit Rate */}
+            <div className="bg-slate-900/90 border-2 border-emerald-500/50 rounded-2xl p-4 text-center shadow-lg relative overflow-hidden">
+              <div className="text-xs text-emerald-300 font-semibold mb-1">
+                {isMr ? 'एकूण एकत्रित पास दर' : 'Total Combined Pass %'}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-400">
+                {customDiagResult.totalHitRate}%
+              </div>
+              <div className="text-[11px] text-emerald-300 font-bold mt-0.5">
+                {isMr ? 'थेट किंवा जवळचा अंक पास!' : 'Direct or Nearby Hit!'}
+              </div>
+            </div>
+          </div>
+
+          {/* Upcoming Projections Card */}
+          <div className="bg-gradient-to-r from-indigo-950/40 via-slate-900 to-amber-950/30 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="text-base sm:text-lg">🎯</span>
+                <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                  <span>
+                    {isMr
+                      ? `${DAY_NAMES[diagPrevDay].mr} (${diagPrevJodi}) वरून आगामी ${DAY_NAMES[diagTargetDay].mr}चे अंदाज`
+                      : `Upcoming Forecast for ${DAY_NAMES[diagTargetDay].en} from ${DAY_NAMES[diagPrevDay].en} (${diagPrevJodi})`}
+                  </span>
+                </h4>
+              </div>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                {isMr ? 'गणितावर आधारित' : 'Math-Engine'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Direct Diagonal pairs */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-indigo-300 flex items-center justify-between">
+                  <span>{isMr ? 'थेट तिरपी जोड्या (Direct / Palat / Family):' : 'Direct Diagonal Pairs:'}</span>
+                  <span className="text-[10px] text-slate-400">{isMr ? 'मुख्य संभाव्यता' : 'High Priority'}</span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {customDiagResult.projectedDirectJodis.map((j) => (
+                    <button
+                      key={j}
+                      onClick={() => copyText(j, j)}
+                      className="p-2 rounded-xl bg-slate-950 border border-indigo-500/40 hover:border-indigo-400 text-center cursor-pointer transition-all"
+                      title={isMr ? `${j} कॉपी करा` : `Copy ${j}`}
+                    >
+                      <span className="font-mono font-black text-lg text-indigo-300 block">{j}</span>
+                      <span className="text-[9px] text-slate-400">
+                        {copiedKey === j ? '✓' : isMr ? 'थेट' : 'Direct'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Nearby numbers pairs */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-amber-300 flex items-center justify-between">
+                  <span>{isMr ? 'तिरपीनुसार जवळचे अंक (±1 दाणा व शेजारी):' : 'Nearby Pairs (±1 Dana / Neighbors):'}</span>
+                  <span className="text-[10px] text-slate-400">{isMr ? 'हुकल्यास हमखास' : 'Safety Shift'}</span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {customDiagResult.projectedNearbyJodis.slice(0, 4).map((j) => (
+                    <button
+                      key={j}
+                      onClick={() => copyText(j, j)}
+                      className="p-2 rounded-xl bg-slate-950 border border-amber-500/40 hover:border-amber-400 text-center cursor-pointer transition-all"
+                      title={isMr ? `${j} कॉपी करा` : `Copy ${j}`}
+                    >
+                      <span className="font-mono font-black text-lg text-amber-400 block">{j}</span>
+                      <span className="text-[9px] text-slate-400">
+                        {copiedKey === j ? '✓' : isMr ? '±१ दाणा' : '±1 Dana'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Historical Evidence Breakdown Table */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>📊</span>
+                  <span>
+                    {isMr
+                      ? `संपूर्ण ऐतिहासिक पुरावा तक्ता (${customDiagResult.occurrences.length} सत्रांचे रेकॉर्ड)`
+                      : `Historical Evidence Breakdown (${customDiagResult.occurrences.length} Sessions)`}
+                  </span>
+                </h4>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {isMr
+                    ? `जेव्हा जेव्हा ${DAY_NAMES[diagPrevDay].mr} रोजी ${diagPrevJodi} (किंवा फॅमिली) आली, तेव्हा ${DAY_NAMES[diagTargetDay].mr} रोजी काय झाले त्याचा प्रत्यक्ष पुरावा.`
+                    : `Past outcomes recorded whenever ${DAY_NAMES[diagPrevDay].en} produced ${diagPrevJodi}.`}
+                </p>
+              </div>
+            </div>
+
+            {customDiagResult.occurrences.length === 0 ? (
+              <div className="p-8 text-center text-sm text-slate-400">
+                {isMr
+                  ? 'या जोडीसाठी ऐतिहासिक डेटा उपलब्ध नाही. इतर जोडी किंवा वार निवडून पहा.'
+                  : 'No historical occurrences found for this pair.'}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-xs text-slate-400 bg-slate-950/70">
+                      <th className="py-3 px-4 font-semibold">{isMr ? 'आठवडा' : 'Week'}</th>
+                      <th className="py-3 px-4 font-semibold">
+                        {isMr ? `${DAY_NAMES[diagPrevDay].mr} निकाल` : `${DAY_NAMES[diagPrevDay].en}`}
+                      </th>
+                      <th className="py-3 px-4 font-semibold">
+                        {isMr ? '१ आठवड्यापूर्वीची तिरपी जोडी' : 'Diagonal Source Step'}
+                      </th>
+                      <th className="py-3 px-4 font-semibold text-right">
+                        {isMr ? `${DAY_NAMES[diagTargetDay].mr} प्रत्यक्ष निकाल` : `${DAY_NAMES[diagTargetDay].en} Outcome`}
+                      </th>
+                      <th className="py-3 px-4 font-semibold text-center">{isMr ? 'स्थिती' : 'Status'}</th>
+                      <th className="py-3 px-4 font-semibold">{isMr ? 'तपशील' : 'Details'}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/70 text-xs sm:text-sm font-mono tabular-nums">
+                    {customDiagResult.occurrences.slice(0, 30).map((occ, idx) => (
+                      <tr key={`${occ.week}-${idx}`} className="hover:bg-slate-800/40">
+                        <td className="py-3 px-4 text-slate-300 whitespace-nowrap">{occ.week}</td>
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="font-bold text-amber-400">{occ.prevJodi}</span>
+                        </td>
+                        <td className="py-3 px-4 text-slate-300 whitespace-nowrap">
+                          {occ.diagonalSourceStep ? (
+                            <span className="text-indigo-300 font-sans">
+                              {occ.diagonalSourceStep.label} <span className="font-mono text-slate-400">({occ.diagonalSourceStep.week})</span>
+                            </span>
+                          ) : (
+                            <span className="text-slate-500 font-sans">{isMr ? 'थेट लाईन' : 'Direct'}</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right font-bold whitespace-nowrap">
+                          <span className="text-slate-300">{occ.targetOpenPana}-</span>
+                          <span className={occ.hitType === 'direct' ? 'text-emerald-400 text-base' : occ.hitType === 'nearby' ? 'text-amber-400 text-base' : 'text-slate-400'}>
+                            {occ.targetJodi}
+                          </span>
+                          <span className="text-slate-300">-{occ.targetClosePana}</span>
+                        </td>
+                        <td className="py-3 px-4 text-center whitespace-nowrap">
+                          {occ.hitType === 'direct' ? (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-sans font-bold">
+                              🎯 {isMr ? 'थेट तिरपी पास' : 'Direct Pass'}
+                            </span>
+                          ) : occ.hitType === 'nearby' ? (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-sans font-bold">
+                              ⚡ {isMr ? 'जवळचा अंक पास' : 'Nearby Pass'}
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-sans">
+                              ❌ {isMr ? 'इतर लाईन' : 'Miss'}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-slate-400 font-sans text-xs whitespace-nowrap">
+                          {occ.detailsMr}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 3: HALF & FULL SANGAM CALCULATOR */}
       {activeSection === 'sangam' && (
         <div className="space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 space-y-5">

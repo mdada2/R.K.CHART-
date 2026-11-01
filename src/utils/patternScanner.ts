@@ -3,7 +3,10 @@ import {
   ALL_PANAS,
   calculatePanaSum,
   DAY_KEYS,
+  DAY_NAMES,
+  getCutAnk,
   getFamilyJodis,
+  getNearbyJodis,
   isMarketClosed,
   isRedJodi,
   isValidPlayedJodi,
@@ -313,4 +316,211 @@ export function getSuggestedPanasForDigits(digits: number[]): string[] {
     if (sp && !result.includes(sp)) result.push(sp);
   }
   return result.slice(0, 4);
+}
+
+export interface CustomDiagonalOccurrence {
+  week: string;
+  prevDay: DayKey;
+  prevJodi: string;
+  targetDay: DayKey;
+  targetJodi: string;
+  targetOpenPana: string;
+  targetClosePana: string;
+  diagonalSourceStep?: {
+    week: string;
+    day: DayKey;
+    jodi: string;
+    label: string;
+  };
+  hitType: 'direct' | 'nearby' | 'miss';
+  detailsMr: string;
+}
+
+export interface CustomDiagonalScanResult {
+  prevDay: DayKey;
+  prevJodi: string;
+  targetDay: DayKey;
+  totalOccurrences: number;
+  directHits: number;
+  directHitRate: number;
+  nearbyHits: number;
+  nearbyHitRate: number;
+  missCount: number;
+  missRate: number;
+  totalHitRate: number;
+  occurrences: CustomDiagonalOccurrence[];
+  projectedDirectJodis: string[];
+  projectedNearbyJodis: string[];
+}
+
+export function scanCustomDiagonalPattern(
+  history: WeekRecord[],
+  prevDay: DayKey,
+  rawPrevJodi: string,
+  targetDay: DayKey
+): CustomDiagonalScanResult {
+  const cleanPrevJodi = rawPrevJodi.replace(/\D/g, '').slice(0, 2).padStart(2, '0');
+  const pIdx = DAY_KEYS.indexOf(prevDay);
+  const tIdx = DAY_KEYS.indexOf(targetDay);
+
+  // Collect occurrences: check exact first, if few occurrences expand to family
+  let exactMatchCount = 0;
+  for (let w = 1; w < history.length; w++) {
+    const c = history[w]?.[prevDay];
+    if (c && isValidPlayedJodi(c.jodi) && c.jodi === cleanPrevJodi) {
+      exactMatchCount++;
+    }
+  }
+
+  const allowedJodis = new Set<string>();
+  if (exactMatchCount >= 3) {
+    allowedJodis.add(cleanPrevJodi);
+  } else {
+    getFamilyJodis(cleanPrevJodi).forEach((j) => allowedJodis.add(j));
+  }
+
+  const occurrences: CustomDiagonalOccurrence[] = [];
+  let directHits = 0;
+  let nearbyHits = 0;
+  let missCount = 0;
+
+  for (let w = 1; w < history.length; w++) {
+    const prevCell = history[w]?.[prevDay];
+    if (!prevCell || !isValidPlayedJodi(prevCell.jodi) || !allowedJodis.has(prevCell.jodi)) {
+      continue;
+    }
+
+    // Determine when targetDay occurred
+    const targetWeekIdx = pIdx < tIdx ? w : w + 1;
+    if (targetWeekIdx >= history.length) continue;
+
+    const targetCell = history[targetWeekIdx]?.[targetDay];
+    if (!targetCell || !isValidPlayedJodi(targetCell.jodi) || isMarketClosed(targetCell.jodi)) {
+      continue;
+    }
+
+    // Identify diagonal source 1 week earlier: (targetWeekIdx - 1, targetDay - 1)
+    let diagSource: CustomDiagonalOccurrence['diagonalSourceStep'] | undefined;
+    const diagCol = tIdx - 1;
+    if (targetWeekIdx >= 1) {
+      let srcDayKey: DayKey | null = null;
+      let srcWeekIdx = targetWeekIdx - 1;
+      if (diagCol >= 0) {
+        srcDayKey = DAY_KEYS[diagCol];
+      } else {
+        srcDayKey = DAY_KEYS[DAY_KEYS.length - 1];
+        srcWeekIdx = targetWeekIdx - 1;
+      }
+
+      if (srcDayKey) {
+        const srcCell = history[srcWeekIdx]?.[srcDayKey];
+        if (srcCell && isValidPlayedJodi(srcCell.jodi)) {
+          diagSource = {
+            week: history[srcWeekIdx].week,
+            day: srcDayKey,
+            jodi: srcCell.jodi,
+            label: `${DAY_NAMES[srcDayKey].mr} (${srcCell.jodi})`,
+          };
+        }
+      }
+    }
+
+    const tJodi = targetCell.jodi;
+    let hitType: 'direct' | 'nearby' | 'miss' = 'miss';
+    let detailsMr = '';
+
+    if (diagSource) {
+      const sJodi = diagSource.jodi;
+      const sRev = `${sJodi[1]}${sJodi[0]}`;
+      const sFamily = getFamilyJodis(sJodi);
+      const sNearby = getNearbyJodis(sJodi);
+
+      if (tJodi === sJodi) {
+        hitType = 'direct';
+        detailsMr = `थेट तिरपी जोडी पास (${sJodi} ➔ ${tJodi})`;
+      } else if (tJodi === sRev) {
+        hitType = 'direct';
+        detailsMr = `तिरपी पलट जोडी पास (${sJodi} ➔ ${tJodi})`;
+      } else if (sFamily.includes(tJodi)) {
+        hitType = 'direct';
+        detailsMr = `तिरपी फॅमिली जोडी पास (${sJodi} ➔ ${tJodi})`;
+      } else if (sNearby.includes(tJodi)) {
+        hitType = 'nearby';
+        detailsMr = `तिरपी रेषेवरून जवळचा अंक (±१ दाणा) पास (${tJodi})`;
+      }
+    }
+
+    // If still miss, check relationship to prevCell
+    if (hitType === 'miss') {
+      const pJodi = prevCell.jodi;
+      const pRev = `${pJodi[1]}${pJodi[0]}`;
+      const pFamily = getFamilyJodis(pJodi);
+      const pNearby = getNearbyJodis(pJodi);
+
+      if (tJodi === pJodi || tJodi === pRev || pFamily.includes(tJodi)) {
+        hitType = 'direct';
+        detailsMr = `आदल्या जोडीवरून थेट रिपिट/फॅमिली पास (${pJodi} ➔ ${tJodi})`;
+      } else if (pNearby.includes(tJodi)) {
+        hitType = 'nearby';
+        detailsMr = `आदल्या जोडीवरून जवळचा अंक (±१ दाणा) पास (${tJodi})`;
+      } else {
+        hitType = 'miss';
+        detailsMr = `इतर लाईनवरून लागली (${tJodi})`;
+      }
+    }
+
+    if (hitType === 'direct') directHits++;
+    else if (hitType === 'nearby') nearbyHits++;
+    else missCount++;
+
+    occurrences.push({
+      week: history[targetWeekIdx].week,
+      prevDay,
+      prevJodi: prevCell.jodi,
+      targetDay,
+      targetJodi: tJodi,
+      targetOpenPana: targetCell.openPana,
+      targetClosePana: targetCell.closePana,
+      diagonalSourceStep: diagSource,
+      hitType,
+      detailsMr,
+    });
+  }
+
+  const total = occurrences.length;
+  const directHitRate = total > 0 ? Math.round((directHits / total) * 100) : 0;
+  const nearbyHitRate = total > 0 ? Math.round((nearbyHits / total) * 100) : 0;
+  const missRate = total > 0 ? Math.round((missCount / total) * 100) : 0;
+  const totalHitRate = directHitRate + nearbyHitRate;
+
+  // Projections for this pattern
+  const o = parseInt(cleanPrevJodi[0], 10);
+  const c = parseInt(cleanPrevJodi[1], 10);
+  const projectedDirect = Array.from(
+    new Set([
+      cleanPrevJodi,
+      `${c}${o}`,
+      `${getCutAnk(o)}${getCutAnk(c)}`,
+      ...getFamilyJodis(cleanPrevJodi).slice(0, 3),
+    ])
+  ).slice(0, 4);
+
+  const projectedNearby = getNearbyJodis(cleanPrevJodi).slice(0, 8);
+
+  return {
+    prevDay,
+    prevJodi: cleanPrevJodi,
+    targetDay,
+    totalOccurrences: total,
+    directHits,
+    directHitRate,
+    nearbyHits,
+    nearbyHitRate,
+    missCount,
+    missRate,
+    totalHitRate,
+    occurrences: occurrences.reverse(),
+    projectedDirectJodis: projectedDirect,
+    projectedNearbyJodis: projectedNearby,
+  };
 }

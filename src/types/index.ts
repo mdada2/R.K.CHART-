@@ -82,7 +82,38 @@ export interface DigitConfluence {
   formulaNames: string[];
 }
 
-export type CalculationFormulaId = 'master' | 'lineFamily' | 'totalDiff' | 'weeklyLine' | 'frequency';
+export type CalculationFormulaId = 'master' | 'diagonalNearby' | 'lineFamily' | 'totalDiff' | 'weeklyLine' | 'frequency';
+
+export interface DiagonalChainStep {
+  week: string;
+  day: DayKey;
+  jodi: string;
+  openPana: string;
+  closePana: string;
+  label: string;
+}
+
+export interface DiagonalChainAnalysis {
+  direction: 'forward' | 'reverse'; // forward = ↘, reverse = ↙
+  name: string;
+  steps: DiagonalChainStep[];
+  directOTC: number[];
+  directJodis: string[];
+  nearbyJodis: string[];
+  shiftDelta: number;
+  summaryMr: string;
+}
+
+export interface DiagonalPrecedingVerification {
+  isChainActive: boolean;
+  precedingJodi: string;
+  precedingDay: DayKey;
+  precedingWeek: string;
+  matchedSource?: DiagonalChainStep;
+  matchType: 'exact' | 'cut' | 'palat' | 'family' | 'nearby' | 'none';
+  alertTextMr: string;
+  alertTextEn: string;
+}
 
 export interface PredictionResult {
   targetDay: DayKey;
@@ -100,6 +131,13 @@ export interface PredictionResult {
   historicalHitRate?: number;
   jodiProbabilities?: Record<string, JodiProbability>;
   digitConfluences?: DigitConfluence[];
+  diagonalAnalysis?: {
+    verification: DiagonalPrecedingVerification;
+    forwardChain: DiagonalChainAnalysis | null;
+    reverseChain: DiagonalChainAnalysis | null;
+    combinedDirectJodis: string[];
+    combinedNearbyJodis: string[];
+  };
 }
 
 export interface BacktestSummary {

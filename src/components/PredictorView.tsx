@@ -468,9 +468,10 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
           <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
             {isMr ? '२. अंदाज पद्धत / सूत्र निवडा (Calculation Formula):' : '2. Calculation Formula:'}
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             {[
-              { id: 'master', label: isMr ? 'मास्टर संगम हायब्रीड' : 'Master Consensus', desc: isMr ? 'सर्व सूत्रांचे एकत्रित वेटेज' : 'Weighted ensemble' },
+              { id: 'master', label: isMr ? 'मास्टर संगम हायब्रीड' : 'Master Consensus', desc: isMr ? '५ सूत्रांचे एकत्रित एकमत' : '5-formula weighted ensemble' },
+              { id: 'diagonalNearby', label: isMr ? 'तिरपी लाइन व जवळचे अंक' : 'Diagonal & Nearby Line', desc: isMr ? '२+ आठवड्यांची तिरपी व ±१ दाणा' : 'Multi-week diagonal & ±1 Dana' },
               { id: 'lineFamily', label: isMr ? 'खेळ लाईन व फॅमिली' : 'Line & Family Trick', desc: isMr ? 'आदला क्लोज/कट व समान वार फॅमिली' : 'Preceding close & same-day family' },
               { id: 'totalDiff', label: isMr ? 'चालू बेरीज-फरक' : 'Total & Difference Trick', desc: isMr ? 'मागील दिवसाची बेरीज व फरक' : 'Previous day carry-over' },
               { id: 'weeklyLine', label: isMr ? 'आठवडी लाईन त्रिक' : 'Weekly Line Progression', desc: isMr ? 'समान वाराचा साप्ताहिक पॅटर्न' : 'Same-day step shift' },
@@ -885,6 +886,284 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
         </div>
       </div>
 
+      {/* DEDICATED CARD: MULTI-WEEK DIAGONAL & NEARBY NUMBERS (बहु-आठवडी तिरपी लाइन व जवळचे अंक) */}
+      {prediction.diagonalAnalysis && (
+        <div className="bg-white dark:bg-slate-900 border-2 border-indigo-500/40 dark:border-indigo-500/30 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 relative overflow-hidden">
+          <div className="hidden dark:block absolute -top-12 -right-12 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Card Title & Header */}
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg">
+                ↘
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>
+                    {isMr
+                      ? 'बहु-आठवडी तिरपी लाइन (↘ सीधी व ↙ उलटी) व जवळचे अंक'
+                      : 'Multi-Week Diagonal & Nearby Numbers Analysis'}
+                  </span>
+                  <span className="text-[10px] bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 font-bold px-2 py-0.5 rounded-full border border-indigo-500/30">
+                    {isMr ? '२+ आठवड्यांची साखळी' : '2+ Weeks Chain'}
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isMr
+                    ? 'आदल्या दिवसाची तिरपी साखळी पडताळणी, थेट तिरपी जोड्या आणि हुकल्यास ±1 दाणा व शेजारील घर बॅकअप'
+                    : 'Preceding draw diagonal verification, direct diagonal pairs, and ±1 Dana nearby shifts.'}
+                </p>
+              </div>
+            </div>
+
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+              {DAY_NAMES[selectedDay][language]} {isMr ? 'लक्ष्य' : 'Target'}
+            </span>
+          </div>
+
+          {/* 1. Preceding Day Verification Banner */}
+          {prediction.diagonalAnalysis.verification && (
+            <div
+              className={`p-3.5 sm:p-4 rounded-xl border flex items-start gap-3 transition-all ${
+                prediction.diagonalAnalysis.verification.isChainActive
+                  ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-500/50 text-emerald-900 dark:text-emerald-200 shadow-sm'
+                  : 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-500/30 text-amber-900 dark:text-amber-200'
+              }`}
+            >
+              <div
+                className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center font-bold text-base ${
+                  prediction.diagonalAnalysis.verification.isChainActive
+                    ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+                    : 'bg-amber-500/20 text-amber-700 dark:text-amber-400'
+                }`}
+              >
+                {prediction.diagonalAnalysis.verification.isChainActive ? '✓' : 'ℹ'}
+              </div>
+              <div className="space-y-1 text-xs">
+                <div className="font-bold flex items-center gap-2">
+                  <span>
+                    {prediction.diagonalAnalysis.verification.isChainActive
+                      ? isMr
+                        ? 'आदल्या दिवसाची साखळी सिद्ध झाली (Active Diagonal Chain)'
+                        : 'Preceding Draw Confirms Active Diagonal Chain'
+                      : isMr
+                        ? 'आदला दिवस व स्वतंत्र तिरपी प्रक्षेपण'
+                        : 'Target Day Standalone Diagonal Projection'}
+                  </span>
+                  {prediction.diagonalAnalysis.verification.isChainActive && (
+                    <span className="text-[10px] px-1.5 py-0.2 bg-emerald-500 text-slate-950 rounded font-black uppercase">
+                      Pass
+                    </span>
+                  )}
+                </div>
+                <p className="leading-relaxed">
+                  {isMr
+                    ? prediction.diagonalAnalysis.verification.alertTextMr
+                    : prediction.diagonalAnalysis.verification.alertTextEn}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Staircase Progression Steps (Forward ↘ and Reverse ↙) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            {/* Forward Diagonal Box */}
+            <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-xl p-3.5 sm:p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
+                  <span>↘</span>
+                  <span>{isMr ? 'सीधी तिरपी लाइन (Forward Staircase)' : 'Forward Diagonal Staircase'}</span>
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  शिफ्ट: +{prediction.diagonalAnalysis.forwardChain?.shiftDelta ?? 0}
+                </span>
+              </div>
+
+              {/* Steps progression */}
+              <div className="space-y-2">
+                {prediction.diagonalAnalysis.forwardChain?.steps &&
+                prediction.diagonalAnalysis.forwardChain.steps.length > 0 ? (
+                  <div className="flex flex-col gap-1.5 text-xs">
+                    {prediction.diagonalAnalysis.forwardChain.steps.map((st, sIdx) => (
+                      <div
+                        key={st.week + st.day}
+                        className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px]">
+                            {sIdx + 1}
+                          </span>
+                          <span className="font-medium text-slate-700 dark:text-slate-300">{st.label}</span>
+                          <span className="text-[10px] text-slate-400">({st.week})</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-slate-400">
+                            {st.openPana}-{st.closePana}
+                          </span>
+                          <span className="font-mono font-bold text-sm text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800">
+                            {st.jodi}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-center py-1 text-slate-400">
+                      <span className="text-xs font-bold flex items-center gap-1">
+                        <span>⬇</span>
+                        <span>{isMr ? `प्रोग्रेशन शिफ्टनुसार आज ${DAY_NAMES[selectedDay].mr} रोजी थेट:` : `Today's target:`}</span>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-400 italic">
+                    {isMr ? 'मागील आठवड्यांचा डेटा उपलब्ध नाही' : 'Insufficient historical steps'}
+                  </div>
+                )}
+              </div>
+
+              {/* Direct Forward Jodis */}
+              <div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mb-1.5 font-medium">
+                  {isMr ? 'थेट तिरपी जोड्या (Direct & Palat):' : 'Direct Diagonal Pairs:'}
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {(prediction.diagonalAnalysis.forwardChain?.directJodis || []).slice(0, 4).map((j) => (
+                    <button
+                      key={j}
+                      onClick={() => handleCopy(j)}
+                      className="p-1.5 rounded-lg bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800/80 hover:border-indigo-400 text-center cursor-pointer transition-all"
+                      title={isMr ? `${j} कॉपी करा` : `Copy ${j}`}
+                    >
+                      <span className="font-mono font-bold text-sm text-indigo-700 dark:text-indigo-300">{j}</span>
+                      <span className="block text-[9px] text-slate-400">{isMr ? 'थेट' : 'Direct'}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Reverse Diagonal Box */}
+            <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-xl p-3.5 sm:p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
+                  <span>↙</span>
+                  <span>{isMr ? 'उलटी तिरपी लाइन (Reverse Staircase)' : 'Reverse Diagonal Staircase'}</span>
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  {isMr ? 'उलटा क्रॉस' : 'Reverse Cross'}
+                </span>
+              </div>
+
+              {/* Reverse Steps */}
+              <div className="space-y-2">
+                {prediction.diagonalAnalysis.reverseChain?.steps &&
+                prediction.diagonalAnalysis.reverseChain.steps.length > 0 ? (
+                  <div className="flex flex-col gap-1.5 text-xs">
+                    {prediction.diagonalAnalysis.reverseChain.steps.map((st, sIdx) => (
+                      <div
+                        key={st.week + st.day}
+                        className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-[10px]">
+                            {sIdx + 1}
+                          </span>
+                          <span className="font-medium text-slate-700 dark:text-slate-300">{st.label}</span>
+                          <span className="text-[10px] text-slate-400">({st.week})</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-slate-400">
+                            {st.openPana}-{st.closePana}
+                          </span>
+                          <span className="font-mono font-bold text-sm text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800">
+                            {st.jodi}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-center py-1 text-slate-400">
+                      <span className="text-xs font-bold flex items-center gap-1">
+                        <span>⬇</span>
+                        <span>{isMr ? `उलटी रेषेवरून आज ${DAY_NAMES[selectedDay].mr} अपेक्षित:` : `Reverse Target:`}</span>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-400 italic p-3 text-center">
+                    {isMr
+                      ? `${DAY_NAMES[selectedDay].mr}साठी उलटी रेषेचा डेटा वीकेंड सीमेमुळे मर्यादित`
+                      : 'Reverse diagonal boundary limited for this day'}
+                  </div>
+                )}
+              </div>
+
+              {/* Direct Reverse Jodis */}
+              <div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mb-1.5 font-medium">
+                  {isMr ? 'उलटी रेषेवरील जोड्या (Reverse Pairs):' : 'Reverse Diagonal Pairs:'}
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {(prediction.diagonalAnalysis.reverseChain?.directJodis || []).slice(0, 4).map((j) => (
+                    <button
+                      key={j}
+                      onClick={() => handleCopy(j)}
+                      className="p-1.5 rounded-lg bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-800/80 hover:border-purple-400 text-center cursor-pointer transition-all"
+                      title={isMr ? `${j} कॉपी करा` : `Copy ${j}`}
+                    >
+                      <span className="font-mono font-bold text-sm text-purple-700 dark:text-purple-300">{j}</span>
+                      <span className="block text-[9px] text-slate-400">{isMr ? 'उलटी' : 'Rev'}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Nearby Numbers Section (जवळचे अंक / ±1 दाणा व शेजारील घर नियम) */}
+          <div className="bg-gradient-to-r from-amber-500/10 via-slate-100 to-amber-500/10 dark:from-amber-500/15 dark:via-slate-950 dark:to-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 sm:p-4 space-y-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-base">⚡</span>
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                  {isMr
+                    ? 'तिरपी लाइननुसार जवळचे अंक (±1 दाणा व शेजारील घर नियम)'
+                    : 'Nearby Numbers (±1 Dana & Adjacent House Shift)'}
+                </h4>
+              </div>
+              <span className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold">
+                {isMr ? 'थेट जोडी हुकल्यास हमखास बॅकअप' : 'Primary Safety Backup'}
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              {isMr
+                ? 'अनुभवी तज्ज्ञांनुसार, जेव्हा थेट तिरपी जोडी हुकते तेव्हा १ दाणा पुढे-मागे (उदा. ४८ ऐवजी ४७, ४९, ३८, ५८) किंवा शेजारील घराशी क्रॉस होऊन निकाल लागतो. खालील जोड्या या नियमाने तयार केल्या आहेत:'
+                : 'Empirical analysis shows that when a direct diagonal misses, the outcome frequently lands on a ±1 Dana shift or adjacent digit cross.'}
+            </p>
+
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 pt-1">
+              {prediction.diagonalAnalysis.combinedNearbyJodis.slice(0, 8).map((nj) => {
+                const isCopied = copiedJodi === nj;
+                return (
+                  <button
+                    key={nj}
+                    onClick={() => handleCopy(nj)}
+                    className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-500/30 hover:border-amber-500 text-center cursor-pointer transition-all shadow-sm group"
+                    title={isMr ? `${nj}: जवळचा अंक - कॉपी करा` : `Copy ${nj}`}
+                  >
+                    <span className="font-mono font-black text-base text-amber-600 dark:text-amber-400 group-hover:scale-105 inline-block transition-transform">
+                      {nj}
+                    </span>
+                    <span className="block text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      {isCopied ? '✓' : isMr ? '±१ दाणा' : '±1 Dana'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MULTI-FORMULA CONFLUENCE & JODI PROBABILITY METER */}
       {prediction.digitConfluences && prediction.digitConfluences.length > 0 && (
         <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-amber-500/30 rounded-2xl space-y-3 shadow-md">
@@ -892,7 +1171,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
             <div className="flex items-center gap-2">
               <span className="text-base sm:text-lg">🎯</span>
               <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                <span>{isMr ? 'चारही सूत्रांमधील अंकांचे एकमत (Multi-Formula Consensus)' : 'Multi-Formula Consensus Analysis'}</span>
+                <span>{isMr ? '५ सूत्रांमधील अंकांचे एकमत (Multi-Formula Consensus)' : 'Multi-Formula Consensus Analysis'}</span>
                 <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-mono font-bold">
                   {isMr ? 'सूत्र संगम' : 'Confluence'}
                 </span>
