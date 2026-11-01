@@ -17657,9 +17657,9 @@
   {
     "week": "26-10-26 to 30-10-26",
     "mon": {
-      "openPana": "***",
+      "openPana": "458",
       "jodi": "78",
-      "closePana": "***"
+      "closePana": "378"
     },
     "tue": {
       "openPana": "179",
@@ -17672,13 +17672,46 @@
       "closePana": "268"
     },
     "thu": {
-      "openPana": "***",
+      "openPana": "570",
       "jodi": "21",
-      "closePana": "***"
+      "closePana": "236"
     },
     "fri": {
       "openPana": "347",
-      "jodi": "4*",
+      "jodi": "40",
+      "closePana": "668"
+    },
+    "sat": {
+      "openPana": "***",
+      "jodi": "XX",
+      "closePana": "***"
+    }
+  },
+  {
+    "week": "02-11-26 to 06-11-26",
+    "mon": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "tue": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "wed": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "thu": {
+      "openPana": "***",
+      "jodi": "**",
+      "closePana": "***"
+    },
+    "fri": {
+      "openPana": "***",
+      "jodi": "**",
       "closePana": "***"
     },
     "sat": {
