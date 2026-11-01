@@ -52,7 +52,7 @@ app.post('/api/ai-analyze', async (req, res) => {
 
   try {
     const generatePromise = ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: 'gemini-2.5-flash',
       contents: `
 You are a mathematical pattern recognition and combinatorics tutor specializing in Indian numeral charts (Kalyan Jodi & Panel Chart study for education).
 Target Day: ${targetDay} (${targetDate})
