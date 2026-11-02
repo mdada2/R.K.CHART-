@@ -3,7 +3,11 @@ import { Download, Smartphone, Share, PlusSquare, X } from 'lucide-react';
 import { usePWAInstall, useOnlineStatus } from '../hooks/usePWAInstall';
 import { Language } from '../types';
 
-export const PWAInstallButton: React.FC<{ language: Language }> = ({ language }) => {
+export const PWAInstallButton: React.FC<{
+  language: Language;
+  fullWidth?: boolean;
+  className?: string;
+}> = ({ language, fullWidth, className }) => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showGuide, setShowGuide] = useState(false);
   const isMr = language === 'mr';
@@ -17,7 +21,12 @@ export const PWAInstallButton: React.FC<{ language: Language }> = ({ language })
       <button
         type="button"
         onClick={install}
-        className="flex items-center gap-1.5 min-h-[38px] px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+        className={
+          className ||
+          `flex items-center gap-1.5 min-h-[38px] px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+            fullWidth ? 'w-full justify-center text-sm py-2.5 rounded-xl' : ''
+          }`
+        }
         title={isMr ? 'मोबाईल होम-स्क्रीनवर ॲप इन्स्टॉल करा' : 'Install App to Home Screen'}
       >
         <Download className="w-3.5 h-3.5 shrink-0" />
@@ -32,11 +41,18 @@ export const PWAInstallButton: React.FC<{ language: Language }> = ({ language })
       <button
         type="button"
         onClick={() => setShowGuide(true)}
-        className="flex items-center gap-1.5 min-h-[38px] px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 text-emerald-300 hover:text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+        className={
+          className ||
+          (fullWidth
+            ? 'w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 text-sm font-semibold transition-all shrink-0 cursor-pointer shadow-xs'
+            : 'flex items-center gap-1.5 min-h-[38px] px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 text-emerald-300 hover:text-white text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer')
+        }
         title={isMr ? 'मोबाईल होम-स्क्रीनवर इन्स्टॉल मार्गदर्शक' : 'Home Screen App Install Guide'}
       >
-        <Smartphone className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
-        <span className="hidden sm:inline">{isMr ? 'होम-स्क्रीन ॲप' : 'Install App'}</span>
+        <Smartphone className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+        <span className={fullWidth ? 'inline' : 'hidden sm:inline'}>
+          {isMr ? 'होम-स्क्रीन ॲप' : 'Install App'}
+        </span>
       </button>
 
       {showGuide && (
