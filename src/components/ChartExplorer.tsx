@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, Calendar, X, Eye, Info, Sparkles, Layers, Download, Grid, LayoutList } from 'lucide-react';
+import React, { useState, useMemo, useRef } from 'react';
+import { Search, Filter, Calendar, X, Eye, Info, Sparkles, Layers, Download, Grid, LayoutList, Table } from 'lucide-react';
 import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { 
   DAY_NAMES, 
@@ -35,9 +35,13 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
   const [selectedYear, setSelectedYear] = useState<string>('2026');
   const [onlyRed, setOnlyRed] = useState(false);
   const [selectedDayFilter, setSelectedDayFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'compact' | 'panel'>('compact');
+  const [viewMode, setViewMode] = useState<'compact' | 'panel' | 'classic'>('classic');
   const [page, setPage] = useState(1);
   const pageSize = 12;
+
+  // Classic view row navigation
+  const classicTableRef = useRef<HTMLDivElement>(null);
+  const [classicScrollIdx, setClassicScrollIdx] = useState(0);
 
   // Selected cell for detailed modal
   const [activeCellDetail, setActiveCellDetail] = useState<{
@@ -146,6 +150,48 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     document.body.removeChild(link);
   };
 
+  // Classic view: scroll by ~3 row heights
+  const classicScrollUp = () => {
+    const container = classicTableRef.current;
+    if (!container) return;
+    const newIdx = Math.max(0, classicScrollIdx - 3);
+    setClassicScrollIdx(newIdx);
+    // find the nth tr in tbody and scroll to it
+    const rows = container.querySelectorAll('tbody tr');
+    if (rows[newIdx]) {
+      (rows[newIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const classicScrollDown = () => {
+    const container = classicTableRef.current;
+    if (!container) return;
+    const newIdx = Math.min(Math.max(0, filteredRows.length - 1), classicScrollIdx + 3);
+    setClassicScrollIdx(newIdx);
+    const rows = container.querySelectorAll('tbody tr');
+    if (rows[newIdx]) {
+      (rows[newIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Classic view column header labels
+  const classicDayLabels: Record<DayKey, { en: string; mr: string }> = {
+    mon: { en: 'Mon', mr: 'सोम' },
+    tue: { en: 'Tue', mr: 'मंगळ' },
+    wed: { en: 'Wed', mr: 'बुध' },
+    thu: { en: 'Thu', mr: 'गुरु' },
+    fri: { en: 'Fri', mr: 'शुक्र' },
+    sat: { en: 'Sat', mr: 'शनि' },
+  };
+
+  // Format pana with spaces: "159" -> "1 5 9"
+  const formatPana = (pana: string) => {
+    if (!pana || pana === '***' || pana === '**' || pana === '*') return pana;
+    return pana.split('').join(' ');
+  };
+
   return (
     <div className="space-y-5 max-w-6xl mx-auto pb-12">
       {/* Search and Filters Bar */}
@@ -174,7 +220,7 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* View Mode Toggle (Jodi vs Panel) */}
+            {/* View Mode Toggle (Jodi / Panel / Classic) */}
             <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-0.5">
               <button
                 onClick={() => setViewMode('compact')}
@@ -199,6 +245,18 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
               >
                 <Grid className="w-3.5 h-3.5" />
                 <span>{isMr ? 'पॅनल व्ह्यू' : 'Panel'}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('classic')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                  viewMode === 'classic'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title={isMr ? 'क्लासिक सत्ता मटका पॅनल चार्ट' : 'Classic Satta Panel Chart'}
+              >
+                <Table className="w-3.5 h-3.5" />
+                <span>{isMr ? 'क्लासिक' : 'Classic'}</span>
               </button>
             </div>
 
@@ -270,201 +328,415 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
       </div>
 
       {/* Chart Table */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-center border-collapse">
-            <thead>
-              <tr className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
-                <th className="py-3 px-3 font-semibold tracking-wider text-left min-w-[120px]">
-                  {isMr ? 'तारीख (Week)' : 'Week Dates'}
-                </th>
-                {DAY_KEYS.map((day) => (
-                  <th key={day} className="py-3 px-2 font-bold tracking-wider text-amber-600 dark:text-amber-400 min-w-[130px]">
-                    <div>{DAY_NAMES[day][language]}</div>
-                    {isNight && day === 'sat' && (
-                      <span className="inline-block text-[10px] font-normal text-slate-500 dark:text-slate-400">
-                        ({isMr ? 'सुट्टी / Off' : 'Closed'})
-                      </span>
-                    )}
+      {viewMode === 'classic' ? (
+        /* ── CLASSIC PANEL VIEW ── */
+        <div className="relative">
+          {/* Scrollable table container */}
+          <div
+            ref={classicTableRef}
+            className="overflow-x-auto overflow-y-auto max-h-[70vh] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            <table className="border-collapse text-center" style={{ minWidth: '520px' }}>
+              {/* Dark navy header */}
+              <thead className="sticky top-0 z-20">
+                <tr style={{ backgroundColor: '#1a237e' }}>
+                  <th
+                    className="sticky left-0 z-30 py-3 px-2 text-white font-bold text-xs border border-blue-900 whitespace-nowrap"
+                    style={{ backgroundColor: '#1a237e', minWidth: '90px' }}
+                  >
+                    {isMr ? 'तारीख' : 'Date'}
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs sm:text-sm font-mono">
-              {paginatedRows.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400 text-sm">
-                    {isMr ? 'कोणतेही निकाल आढळले नाहीत.' : 'No records found matching filters.'}
-                  </td>
+                  {DAY_KEYS.map((day) => (
+                    <th
+                      key={day}
+                      className="py-3 px-2 text-white font-bold text-xs border border-blue-900 whitespace-nowrap"
+                      style={{ minWidth: '70px' }}
+                    >
+                      {classicDayLabels[day][language]}
+                    </th>
+                  ))}
                 </tr>
-              ) : (
-                paginatedRows.map((row) => (
-                  <tr key={row.week} className="hover:bg-slate-800/40 transition-colors">
-                    {/* Week Date Column */}
-                    <td className="py-3 px-3 text-left font-sans text-xs text-slate-400 font-medium whitespace-nowrap">
-                      {row.week}
+              </thead>
+
+              <tbody>
+                {filteredRows.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="py-10 text-center text-slate-400 text-sm bg-white dark:bg-slate-900"
+                    >
+                      {isMr ? 'कोणतेही निकाल आढळले नाहीत.' : 'No records found matching filters.'}
                     </td>
+                  </tr>
+                ) : (
+                  filteredRows.map((row, rowIdx) => {
+                    const isEven = rowIdx % 2 === 0;
+                    // Split week range into two lines: "07-11-22" and "to 12-11-22"
+                    const weekParts = row.week.split(' to ');
+                    const weekLine1 = weekParts[0] || row.week;
+                    const weekLine2 = weekParts[1] ? `to ${weekParts[1]}` : '';
 
-                    {/* Day Cells */}
-                    {DAY_KEYS.map((day) => {
-                      const cell = row[day];
-                      if (!cell) return <td key={day} className="py-2 px-1 text-slate-600">-</td>;
-
-                      const isRed = isRedJodi(cell.jodi);
-                      const isClosed = isMarketClosed(cell.jodi);
-                      const isOpenOnly = !isClosed && cell.openPana !== '***' && cell.closePana === '***';
-                      const isPending = !isOpenOnly && !isClosed && cell.jodi.includes('*');
-
-                      return (
+                    return (
+                      <tr
+                        key={row.week}
+                        className={isEven ? 'bg-white dark:bg-slate-900' : 'bg-blue-50 dark:bg-slate-800/60'}
+                      >
+                        {/* Sticky Date Column */}
                         <td
-                          key={day}
-                          onClick={() => !isClosed && handleCellClick(row.week, day, cell)}
-                          className={`py-2 px-2 transition-all ${
-                            isClosed
-                              ? 'bg-slate-900/40 text-amber-500/80 cursor-default'
-                              : isPending
-                              ? 'bg-slate-950/20 text-slate-600 cursor-default'
-                              : isOpenOnly
-                              ? 'bg-amber-500/10 border-amber-500/30 cursor-pointer'
-                              : isRed
-                              ? 'bg-red-950/20 hover:bg-red-950/40 cursor-pointer'
-                              : 'hover:bg-amber-500/10 cursor-pointer'
+                          className={`sticky left-0 z-10 py-1.5 px-2 text-left text-[10px] font-medium font-sans border border-slate-200 dark:border-slate-700 ${
+                            isEven
+                              ? 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
+                              : 'bg-blue-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400'
                           }`}
-                          title={
-                            isClosed
-                              ? (isMr ? 'मार्केट सुट्टी / बंद' : 'Market Closed')
-                              : isPending 
-                              ? undefined 
-                              : isOpenOnly 
-                              ? (isMr ? 'दुपारचा ओपन निकाल जाहीर (क्लोज संध्याकाळी ६:०० पर्यंत येईल)' : 'Open declared, Close pending until ~6:00 PM')
-                              : (isMr ? 'सविस्तर गणित पाहण्यासाठी क्लिक करा' : 'Click to inspect')
-                          }
+                          style={{ minWidth: '90px' }}
                         >
-                          {isClosed ? (
-                            <div className="flex flex-col items-center justify-center py-1">
-                              <span className="text-[10px] text-amber-400 font-bold bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.2 rounded font-sans">
-                                {isMr ? 'मार्केट बंद' : 'CLOSED'}
-                              </span>
-                              <span className="text-xs font-mono text-slate-500 mt-0.5">XX</span>
+                          <div className="leading-tight whitespace-nowrap">{weekLine1}</div>
+                          {weekLine2 && (
+                            <div className="leading-tight whitespace-nowrap text-slate-400 dark:text-slate-500">
+                              {weekLine2}
                             </div>
-                          ) : isPending ? (
-                            viewMode === 'panel' ? (
-                              <div className="flex flex-col items-center justify-center py-1 text-slate-600 text-xs font-mono">
-                                <span className="text-[10px]">***</span>
-                                <span className="font-bold my-0.5">**</span>
-                                <span className="text-[10px]">***</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center gap-1.5 text-slate-600 text-xs">
-                                <span>***</span>
-                                <span className="font-bold">**</span>
-                                <span>***</span>
-                              </div>
-                            )
-                          ) : isOpenOnly ? (
-                            viewMode === 'panel' ? (
-                              <div className="flex flex-col items-center justify-center py-1 font-mono">
-                                <span className="text-[11px] text-amber-300 font-semibold tracking-tight">
-                                  {cell.openPana}
-                                </span>
-                                <span className="text-base sm:text-xl font-black tracking-tight my-0.5 px-2 py-0.5 rounded text-amber-400 bg-amber-500/20 border border-amber-500/50 shadow-sm shadow-amber-500/20">
-                                  {cell.jodi.replace('*', '')}*
-                                </span>
-                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">
-                                  ***
-                                </span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center gap-2">
-                                <span className="text-[11px] text-amber-300 font-semibold tracking-tight">
-                                  {cell.openPana}
-                                </span>
-                                <span className="text-base sm:text-lg font-black tracking-tight px-2 py-0.5 rounded text-amber-400 bg-amber-500/20 border border-amber-500/50 shadow-sm shadow-amber-500/20">
-                                  {cell.jodi.replace('*', '')}
-                                </span>
-                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">
-                                  ***
-                                </span>
-                              </div>
-                            )
-                          ) : (
-                            viewMode === 'panel' ? (
-                              <div className="flex flex-col items-center justify-center py-1 font-mono">
-                                <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                                  {cell.openPana}
-                                </span>
-                                <span
-                                  className={`text-base sm:text-xl font-black tracking-tight my-0.5 px-2 py-0.5 rounded ${
-                                    isRed
-                                      ? 'text-red-400 bg-red-950/60 font-black'
-                                      : 'text-amber-300 font-black'
-                                  }`}
-                                >
-                                  {cell.jodi}
-                                </span>
-                                <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                                  {cell.closePana}
-                                </span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center gap-2">
-                                <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                                  {cell.openPana}
-                                </span>
-                                <span
-                                  className={`text-base sm:text-lg font-black tracking-tight px-1.5 py-0.5 rounded ${
-                                    isRed
-                                      ? 'text-red-400 bg-red-950/60 font-black'
-                                      : 'text-amber-300 font-black'
-                                  }`}
-                                >
-                                  {cell.jodi}
-                                </span>
-                                <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                                  {cell.closePana}
-                                </span>
-                              </div>
-                            )
                           )}
                         </td>
-                      );
-                    })}
+
+                        {/* Day cells */}
+                        {DAY_KEYS.map((day) => {
+                          const cell = row[day];
+
+                          if (!cell) {
+                            return (
+                              <td
+                                key={day}
+                                className="py-1.5 px-1 border border-slate-200 dark:border-slate-700 text-slate-400 text-xs"
+                              >
+                                —
+                              </td>
+                            );
+                          }
+
+                          const isRed = isRedJodi(cell.jodi);
+                          const isClosed = isMarketClosed(cell.jodi);
+                          const isOpenOnly = !isClosed && cell.openPana !== '***' && cell.closePana === '***';
+                          const isPending = !isOpenOnly && !isClosed && cell.jodi.includes('*');
+
+                          return (
+                            <td
+                              key={day}
+                              onClick={() => !isClosed && handleCellClick(row.week, day, cell)}
+                              className={`py-1 px-1 border border-slate-200 dark:border-slate-700 transition-colors ${
+                                isClosed
+                                  ? 'bg-slate-100 dark:bg-slate-900/40 cursor-default'
+                                  : isPending
+                                  ? 'cursor-default'
+                                  : isOpenOnly
+                                  ? 'cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-500/10'
+                                  : 'cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/20'
+                              }`}
+                              title={
+                                isClosed
+                                  ? (isMr ? 'मार्केट सुट्टी / बंद' : 'Market Closed')
+                                  : isPending
+                                  ? undefined
+                                  : isOpenOnly
+                                  ? (isMr ? 'दुपारचा ओपन निकाल जाहीर (क्लोज संध्याकाळी ६:०० पर्यंत येईल)' : 'Open declared, Close pending until ~6:00 PM')
+                                  : (isMr ? 'सविस्तर गणित पाहण्यासाठी क्लिक करा' : 'Click to inspect')
+                              }
+                            >
+                              {isClosed ? (
+                                <div className="flex flex-col items-center justify-center py-0.5">
+                                  <span className="text-[9px] text-amber-500 font-bold font-sans">
+                                    {isMr ? 'बंद' : 'OFF'}
+                                  </span>
+                                  <span className="text-[11px] font-mono text-slate-400">XX</span>
+                                </div>
+                              ) : isPending ? (
+                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
+                                  <span className="text-[9px] text-slate-400">* * *</span>
+                                  <span className="text-sm font-black text-slate-500 leading-tight">**</span>
+                                  <span className="text-[9px] text-slate-400">* * *</span>
+                                </div>
+                              ) : isOpenOnly ? (
+                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
+                                  <span className="text-[9px] text-amber-400 tracking-wider">
+                                    {formatPana(cell.openPana)}
+                                  </span>
+                                  <span className="text-lg font-black leading-tight text-amber-500">
+                                    {cell.jodi.replace('*', '')}*
+                                  </span>
+                                  <span className="text-[9px] text-slate-400 tracking-wider">* * *</span>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
+                                  {/* Open Pana - small */}
+                                  <span className="text-[9px] text-slate-500 dark:text-slate-400 tracking-wider leading-tight">
+                                    {formatPana(cell.openPana)}
+                                  </span>
+                                  {/* Jodi - large and bold */}
+                                  <span
+                                    className={`text-xl font-black leading-tight ${
+                                      isRed
+                                        ? 'text-red-600 dark:text-red-500'
+                                        : 'text-[#1a237e] dark:text-blue-300'
+                                    }`}
+                                  >
+                                    {cell.jodi}
+                                  </span>
+                                  {/* Close Pana - small */}
+                                  <span className="text-[9px] text-slate-500 dark:text-slate-400 tracking-wider leading-tight">
+                                    {formatPana(cell.closePana)}
+                                  </span>
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Floating ↑ ↓ navigation — bottom-left */}
+          <div className="fixed bottom-6 left-4 z-40 flex flex-col gap-2">
+            <button
+              onClick={classicScrollUp}
+              className="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-white shadow-lg flex items-center justify-center text-xl font-bold transition-colors"
+              title={isMr ? 'वर स्क्रोल करा' : 'Scroll Up'}
+              aria-label="Scroll up"
+            >
+              ↑
+            </button>
+            <button
+              onClick={classicScrollDown}
+              className="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-white shadow-lg flex items-center justify-center text-xl font-bold transition-colors"
+              title={isMr ? 'खाली स्क्रोल करा' : 'Scroll Down'}
+              aria-label="Scroll down"
+            >
+              ↓
+            </button>
+          </div>
+
+          {/* Floating Refresh button — bottom-right */}
+          <button
+            onClick={() => {
+              setClassicScrollIdx(0);
+              const container = classicTableRef.current;
+              if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="fixed bottom-6 right-4 z-40 px-4 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transition-colors"
+            title={isMr ? 'वरती जा' : 'Back to top'}
+          >
+            <span>⟳</span>
+            <span className="hidden sm:inline">{isMr ? 'रिफ्रेश' : 'Refresh'}</span>
+          </button>
+
+          {/* Row count info */}
+          <div className="mt-2 px-1 text-xs text-slate-500 dark:text-slate-400 text-right">
+            {isMr
+              ? `एकूण ${filteredRows.length} आठवडे`
+              : `${filteredRows.length} weeks shown`}
+          </div>
+        </div>
+      ) : (
+        /* ── EXISTING COMPACT / PANEL VIEW ── */
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-center border-collapse">
+              <thead>
+                <tr className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 text-xs sm:text-sm">
+                  <th className="py-3 px-3 font-semibold tracking-wider text-left min-w-[120px]">
+                    {isMr ? 'तारीख (Week)' : 'Week Dates'}
+                  </th>
+                  {DAY_KEYS.map((day) => (
+                    <th key={day} className="py-3 px-2 font-bold tracking-wider text-amber-600 dark:text-amber-400 min-w-[130px]">
+                      <div>{DAY_NAMES[day][language]}</div>
+                      {isNight && day === 'sat' && (
+                        <span className="inline-block text-[10px] font-normal text-slate-500 dark:text-slate-400">
+                          ({isMr ? 'सुट्टी / Off' : 'Closed'})
+                        </span>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80 text-xs sm:text-sm font-mono">
+                {paginatedRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-slate-400 text-sm">
+                      {isMr ? 'कोणतेही निकाल आढळले नाहीत.' : 'No records found matching filters.'}
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  paginatedRows.map((row) => (
+                    <tr key={row.week} className="hover:bg-slate-800/40 transition-colors">
+                      {/* Week Date Column */}
+                      <td className="py-3 px-3 text-left font-sans text-xs text-slate-400 font-medium whitespace-nowrap">
+                        {row.week}
+                      </td>
 
-        {/* Pagination Bar */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
-          <div>
-            <span>
-              {isMr
-                ? `एकूण ${filteredRows.length} आठवडे (पृष्ठ ${page} पैकी ${totalPages})`
-                : `Showing page ${page} of ${totalPages} (${filteredRows.length} weeks)`}
-            </span>
+                      {/* Day Cells */}
+                      {DAY_KEYS.map((day) => {
+                        const cell = row[day];
+                        if (!cell) return <td key={day} className="py-2 px-1 text-slate-600">-</td>;
+
+                        const isRed = isRedJodi(cell.jodi);
+                        const isClosed = isMarketClosed(cell.jodi);
+                        const isOpenOnly = !isClosed && cell.openPana !== '***' && cell.closePana === '***';
+                        const isPending = !isOpenOnly && !isClosed && cell.jodi.includes('*');
+
+                        return (
+                          <td
+                            key={day}
+                            onClick={() => !isClosed && handleCellClick(row.week, day, cell)}
+                            className={`py-2 px-2 transition-all ${
+                              isClosed
+                                ? 'bg-slate-900/40 text-amber-500/80 cursor-default'
+                                : isPending
+                                ? 'bg-slate-950/20 text-slate-600 cursor-default'
+                                : isOpenOnly
+                                ? 'bg-amber-500/10 border-amber-500/30 cursor-pointer'
+                                : isRed
+                                ? 'bg-red-950/20 hover:bg-red-950/40 cursor-pointer'
+                                : 'hover:bg-amber-500/10 cursor-pointer'
+                            }`}
+                            title={
+                              isClosed
+                                ? (isMr ? 'मार्केट सुट्टी / बंद' : 'Market Closed')
+                                : isPending 
+                                ? undefined 
+                                : isOpenOnly 
+                                ? (isMr ? 'दुपारचा ओपन निकाल जाहीर (क्लोज संध्याकाळी ६:०० पर्यंत येईल)' : 'Open declared, Close pending until ~6:00 PM')
+                                : (isMr ? 'सविस्तर गणित पाहण्यासाठी क्लिक करा' : 'Click to inspect')
+                            }
+                          >
+                            {isClosed ? (
+                              <div className="flex flex-col items-center justify-center py-1">
+                                <span className="text-[10px] text-amber-400 font-bold bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.2 rounded font-sans">
+                                  {isMr ? 'मार्केट बंद' : 'CLOSED'}
+                                </span>
+                                <span className="text-xs font-mono text-slate-500 mt-0.5">XX</span>
+                              </div>
+                            ) : isPending ? (
+                              viewMode === 'panel' ? (
+                                <div className="flex flex-col items-center justify-center py-1 text-slate-600 text-xs font-mono">
+                                  <span className="text-[10px]">***</span>
+                                  <span className="font-bold my-0.5">**</span>
+                                  <span className="text-[10px]">***</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center gap-1.5 text-slate-600 text-xs">
+                                  <span>***</span>
+                                  <span className="font-bold">**</span>
+                                  <span>***</span>
+                                </div>
+                              )
+                            ) : isOpenOnly ? (
+                              viewMode === 'panel' ? (
+                                <div className="flex flex-col items-center justify-center py-1 font-mono">
+                                  <span className="text-[11px] text-amber-300 font-semibold tracking-tight">
+                                    {cell.openPana}
+                                  </span>
+                                  <span className="text-base sm:text-xl font-black tracking-tight my-0.5 px-2 py-0.5 rounded text-amber-400 bg-amber-500/20 border border-amber-500/50 shadow-sm shadow-amber-500/20">
+                                    {cell.jodi.replace('*', '')}*
+                                  </span>
+                                  <span className="text-[11px] text-slate-500 font-medium tracking-tight">
+                                    ***
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className="text-[11px] text-amber-300 font-semibold tracking-tight">
+                                    {cell.openPana}
+                                  </span>
+                                  <span className="text-base sm:text-lg font-black tracking-tight px-2 py-0.5 rounded text-amber-400 bg-amber-500/20 border border-amber-500/50 shadow-sm shadow-amber-500/20">
+                                    {cell.jodi.replace('*', '')}
+                                  </span>
+                                  <span className="text-[11px] text-slate-500 font-medium tracking-tight">
+                                    ***
+                                  </span>
+                                </div>
+                              )
+                            ) : (
+                              viewMode === 'panel' ? (
+                                <div className="flex flex-col items-center justify-center py-1 font-mono">
+                                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                                    {cell.openPana}
+                                  </span>
+                                  <span
+                                    className={`text-base sm:text-xl font-black tracking-tight my-0.5 px-2 py-0.5 rounded ${
+                                      isRed
+                                        ? 'text-red-400 bg-red-950/60 font-black'
+                                        : 'text-amber-300 font-black'
+                                    }`}
+                                  >
+                                    {cell.jodi}
+                                  </span>
+                                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                                    {cell.closePana}
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                                    {cell.openPana}
+                                  </span>
+                                  <span
+                                    className={`text-base sm:text-lg font-black tracking-tight px-1.5 py-0.5 rounded ${
+                                      isRed
+                                        ? 'text-red-400 bg-red-950/60 font-black'
+                                        : 'text-amber-300 font-black'
+                                    }`}
+                                  >
+                                    {cell.jodi}
+                                  </span>
+                                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                                    {cell.closePana}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {isMr ? 'मागील (Prev)' : 'Previous'}
-            </button>
-            <span className="px-2 font-mono text-slate-200">{page}</span>
-            <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-              className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {isMr ? 'पुढील (Next)' : 'Next'}
-            </button>
+          {/* Pagination Bar */}
+          <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
+            <div>
+              <span>
+                {isMr
+                  ? `एकूण ${filteredRows.length} आठवडे (पृष्ठ ${page} पैकी ${totalPages})`
+                  : `Showing page ${page} of ${totalPages} (${filteredRows.length} weeks)`}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isMr ? 'मागील (Prev)' : 'Previous'}
+              </button>
+              <span className="px-2 font-mono text-slate-200">{page}</span>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isMr ? 'पुढील (Next)' : 'Next'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* CELL INSPECTOR MODAL */}
       {activeCellDetail && (
