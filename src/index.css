@@ -425,6 +425,23 @@ html:not(.dark) button.bg-emerald-600 * {
   color: #ffffff !important;
 }
 
+/* Classic Satta Panel Chart - Dark Navy Header & Refresh Button MUST ALWAYS BE WHITE IN LIGHT THEME */
+html:not(.dark) .classic-chart-header,
+html:not(.dark) .classic-chart-header *,
+html:not(.dark) .classic-chart-th,
+html:not(.dark) .classic-chart-th *,
+html:not(.dark) th.bg-\[\#072448\],
+html:not(.dark) th.bg-\[\#072448\] *,
+html:not(.dark) thead.bg-\[\#072448\] *,
+html:not(.dark) .classic-refresh-btn,
+html:not(.dark) .classic-refresh-btn *,
+html:not(.dark) button.bg-\[\#072448\],
+html:not(.dark) button.bg-\[\#072448\] *,
+html:not(.dark) .classic-scroll-btn,
+html:not(.dark) .classic-scroll-btn * {
+  color: #ffffff !important;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

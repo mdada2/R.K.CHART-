@@ -341,19 +341,21 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
             >
               <table className="w-full table-fixed border-collapse text-center">
                 {/* Sticky Dark Navy Blue Header */}
-                <thead className="sticky top-0 z-20 bg-[#072448]">
+                <thead className="sticky top-0 z-20 bg-[#072448] classic-chart-header">
                   <tr className="bg-[#072448]">
                     <th
-                      className="sticky top-0 z-20 w-[13%] py-2 px-0.5 text-center text-white font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] bg-[#072448]"
+                      className="classic-chart-th sticky top-0 z-20 w-[13%] py-2 px-0.5 text-center font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] bg-[#072448] !text-white"
+                      style={{ color: '#ffffff', backgroundColor: '#072448' }}
                     >
-                      {isMr ? 'तारीख' : 'Date'}
+                      <span className="!text-white" style={{ color: '#ffffff' }}>{isMr ? 'तारीख' : 'Date'}</span>
                     </th>
                     {DAY_KEYS.map((day) => (
                       <th
                         key={day}
-                        className="sticky top-0 z-20 w-[14.5%] py-2 px-0.5 text-center text-white font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] last:border-r-0 bg-[#072448]"
+                        className="classic-chart-th sticky top-0 z-20 w-[14.5%] py-2 px-0.5 text-center font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] last:border-r-0 bg-[#072448] !text-white"
+                        style={{ color: '#ffffff', backgroundColor: '#072448' }}
                       >
-                        {classicDayLabels[day][language]}
+                        <span className="!text-white" style={{ color: '#ffffff' }}>{classicDayLabels[day][language]}</span>
                       </th>
                     ))}
                   </tr>
@@ -490,20 +492,22 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
             <button
               type="button"
               onClick={classicScrollUp}
-              className="w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
+              className="classic-scroll-btn w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
+              style={{ color: '#ffffff' }}
               title={isMr ? 'वर स्क्रोल करा' : 'Scroll Up'}
               aria-label="Scroll up"
             >
-              ↑
+              <span style={{ color: '#ffffff' }}>↑</span>
             </button>
             <button
               type="button"
               onClick={classicScrollDown}
-              className="w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
+              className="classic-scroll-btn w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
+              style={{ color: '#ffffff' }}
               title={isMr ? 'खाली स्क्रोल करा' : 'Scroll Down'}
               aria-label="Scroll down"
             >
-              ↓
+              <span style={{ color: '#ffffff' }}>↓</span>
             </button>
           </div>
 
@@ -511,11 +515,12 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
           <button
             type="button"
             onClick={handleClassicRefresh}
-            className="fixed bottom-6 right-4 z-40 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#072448] hover:bg-[#0a2f5c] text-white text-xs sm:text-sm font-bold shadow-xl border border-blue-900 flex items-center gap-1.5 active:scale-95 transition-transform"
+            className="classic-refresh-btn fixed bottom-6 right-4 z-40 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#072448] hover:bg-[#0a2f5c] !text-white text-xs sm:text-sm font-bold shadow-xl border border-blue-900 flex items-center gap-1.5 active:scale-95 transition-transform"
+            style={{ color: '#ffffff', backgroundColor: '#072448' }}
             title={isMr ? 'वरती जा' : 'Back to top'}
           >
-            <span className="text-base leading-none">⟳</span>
-            <span>{isMr ? 'रिफ्रेश' : 'Refresh'}</span>
+            <span className="text-base leading-none !text-white" style={{ color: '#ffffff' }}>⟳</span>
+            <span className="!text-white" style={{ color: '#ffffff' }}>{isMr ? 'रिफ्रेश' : 'Refresh'}</span>
           </button>
 
           {/* Row count info */}
