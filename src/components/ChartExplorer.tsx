@@ -41,7 +41,6 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
 
   // Classic view row navigation
   const classicTableRef = useRef<HTMLDivElement>(null);
-  const [classicScrollIdx, setClassicScrollIdx] = useState(0);
 
   // Selected cell for detailed modal
   const [activeCellDetail, setActiveCellDetail] = useState<{
@@ -150,30 +149,36 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     document.body.removeChild(link);
   };
 
-  // Classic view: scroll by ~3 row heights
+  // Classic view: smooth scroll navigation
   const classicScrollUp = () => {
     const container = classicTableRef.current;
     if (!container) return;
-    const newIdx = Math.max(0, classicScrollIdx - 3);
-    setClassicScrollIdx(newIdx);
-    // find the nth tr in tbody and scroll to it
-    const rows = container.querySelectorAll('tbody tr');
-    if (rows[newIdx]) {
-      (rows[newIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    container.scrollBy({ top: -320, behavior: 'smooth' });
   };
 
   const classicScrollDown = () => {
     const container = classicTableRef.current;
     if (!container) return;
-    const newIdx = Math.min(Math.max(0, filteredRows.length - 1), classicScrollIdx + 3);
-    setClassicScrollIdx(newIdx);
-    const rows = container.querySelectorAll('tbody tr');
-    if (rows[newIdx]) {
-      (rows[newIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    container.scrollBy({ top: 320, behavior: 'smooth' });
+  };
+
+  const handleClassicRefresh = () => {
+    const container = classicTableRef.current;
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  // Vertical pana renderer for mobile classic chart
+  const renderVerticalPana = (pana: string, colorClass: string) => {
+    const digits = pana && pana.length === 3 ? pana.split('') : ['*', '*', '*'];
+    return (
+      <div className={`flex flex-col items-center justify-center text-[8px] sm:text-[9.5px] font-bold font-mono leading-[1.05] shrink-0 select-none ${colorClass}`}>
+        {digits.map((d, i) => (
+          <span key={i}>{d}</span>
+        ))}
+      </div>
+    );
   };
 
   // Classic view column header labels
@@ -184,12 +189,6 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     thu: { en: 'Thu', mr: 'गुरु' },
     fri: { en: 'Fri', mr: 'शुक्र' },
     sat: { en: 'Sat', mr: 'शनि' },
-  };
-
-  // Format pana with spaces: "159" -> "1 5 9"
-  const formatPana = (pana: string) => {
-    if (!pana || pana === '***' || pana === '**' || pana === '*') return pana;
-    return pana.split('').join(' ');
   };
 
   return (
@@ -330,187 +329,177 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
       {/* Chart Table */}
       {viewMode === 'classic' ? (
         /* ── CLASSIC PANEL VIEW ── */
+        /* ── CLASSIC PANEL VIEW (EXACT TO SCREENSHOT) ── */
         <div className="relative">
-          {/* Scrollable table container */}
-          <div
-            ref={classicTableRef}
-            className="overflow-x-auto overflow-y-auto max-h-[70vh] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl"
-            style={{ WebkitOverflowScrolling: 'touch' }}
-          >
-            <table className="border-collapse text-center" style={{ minWidth: '520px' }}>
-              {/* Dark navy header */}
-              <thead className="sticky top-0 z-20">
-                <tr style={{ backgroundColor: '#1a237e' }}>
-                  <th
-                    className="sticky left-0 z-30 py-3 px-2 text-white font-bold text-xs border border-blue-900 whitespace-nowrap"
-                    style={{ backgroundColor: '#1a237e', minWidth: '90px' }}
-                  >
-                    {isMr ? 'तारीख' : 'Date'}
-                  </th>
-                  {DAY_KEYS.map((day) => (
+          {/* Outer container: Solid dark red border */}
+          <div className="border-2 sm:border-3 border-[#800000] rounded-none sm:rounded-lg overflow-hidden shadow-xl bg-white dark:bg-slate-900">
+            {/* Scrollable table container (NO horizontal scroll, smooth vertical scroll) */}
+            <div
+              ref={classicTableRef}
+              className="overflow-x-hidden overflow-y-auto max-h-[75vh]"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+              <table className="w-full table-fixed border-collapse text-center">
+                {/* Sticky Dark Navy Blue Header */}
+                <thead className="sticky top-0 z-20 bg-[#072448]">
+                  <tr className="bg-[#072448]">
                     <th
-                      key={day}
-                      className="py-3 px-2 text-white font-bold text-xs border border-blue-900 whitespace-nowrap"
-                      style={{ minWidth: '70px' }}
+                      className="sticky top-0 z-20 w-[13%] py-2 px-0.5 text-center text-white font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] bg-[#072448]"
                     >
-                      {classicDayLabels[day][language]}
+                      {isMr ? 'तारीख' : 'Date'}
                     </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredRows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={7}
-                      className="py-10 text-center text-slate-400 text-sm bg-white dark:bg-slate-900"
-                    >
-                      {isMr ? 'कोणतेही निकाल आढळले नाहीत.' : 'No records found matching filters.'}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredRows.map((row, rowIdx) => {
-                    const isEven = rowIdx % 2 === 0;
-                    // Split week range into two lines: "07-11-22" and "to 12-11-22"
-                    const weekParts = row.week.split(' to ');
-                    const weekLine1 = weekParts[0] || row.week;
-                    const weekLine2 = weekParts[1] ? `to ${weekParts[1]}` : '';
-
-                    return (
-                      <tr
-                        key={row.week}
-                        className={isEven ? 'bg-white dark:bg-slate-900' : 'bg-blue-50 dark:bg-slate-800/60'}
+                    {DAY_KEYS.map((day) => (
+                      <th
+                        key={day}
+                        className="sticky top-0 z-20 w-[14.5%] py-2 px-0.5 text-center text-white font-bold text-[11px] sm:text-xs border-r border-b border-[#04172e] last:border-r-0 bg-[#072448]"
                       >
-                        {/* Sticky Date Column */}
-                        <td
-                          className={`sticky left-0 z-10 py-1.5 px-2 text-left text-[10px] font-medium font-sans border border-slate-200 dark:border-slate-700 ${
-                            isEven
-                              ? 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400'
-                              : 'bg-blue-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400'
-                          }`}
-                          style={{ minWidth: '90px' }}
+                        {classicDayLabels[day][language]}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredRows.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="py-10 text-center text-slate-400 text-sm bg-white dark:bg-slate-900"
+                      >
+                        {isMr ? 'कोणतेही निकाल आढळले नाहीत.' : 'No records found matching filters.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredRows.map((row, rowIdx) => {
+                      const isEven = rowIdx % 2 === 0;
+                      // Split week range: "02-08-21 to 07-08-21"
+                      const weekParts = row.week.split(/\s+to\s+/i);
+                      const d1 = weekParts[0] || row.week;
+                      const d2 = weekParts[1] || '';
+
+                      return (
+                        <tr
+                          key={row.week}
+                          className={isEven ? 'bg-white dark:bg-slate-900' : 'bg-[#f0f2f5] dark:bg-slate-800/80'}
                         >
-                          <div className="leading-tight whitespace-nowrap">{weekLine1}</div>
-                          {weekLine2 && (
-                            <div className="leading-tight whitespace-nowrap text-slate-400 dark:text-slate-500">
-                              {weekLine2}
+                          {/* Date Column: 3 lines (d1, to, d2) */}
+                          <td className="w-[13%] py-1 px-0.5 text-center border-r border-b border-gray-300 dark:border-slate-700/80">
+                            <div className="flex flex-col items-center justify-center text-[7.5px] sm:text-[9px] font-bold font-mono leading-[1.1] text-slate-800 dark:text-slate-200 select-none py-0.5">
+                              <span>{d1}</span>
+                              {d2 ? (
+                                <>
+                                  <span className="text-[6.5px] sm:text-[7.5px] font-medium text-slate-500 dark:text-slate-400 lowercase leading-[1]">
+                                    to
+                                  </span>
+                                  <span>{d2}</span>
+                                </>
+                              ) : null}
                             </div>
-                          )}
-                        </td>
+                          </td>
 
-                        {/* Day cells */}
-                        {DAY_KEYS.map((day) => {
-                          const cell = row[day];
+                          {/* Day Cells: Left vertical open pana, Center Jodi, Right vertical close pana */}
+                          {DAY_KEYS.map((day) => {
+                            const cell = row[day];
 
-                          if (!cell) {
+                            if (!cell) {
+                              return (
+                                <td
+                                  key={day}
+                                  className="w-[14.5%] py-1 px-0.5 border-r border-b border-gray-300 dark:border-slate-700/80 last:border-r-0 text-slate-400 text-xs"
+                                >
+                                  —
+                                </td>
+                              );
+                            }
+
+                            const isRed = isRedJodi(cell.jodi);
+                            const isClosed = isMarketClosed(cell.jodi);
+                            const isOpenOnly = !isClosed && cell.openPana !== '***' && cell.closePana === '***';
+                            const isPending = !isOpenOnly && !isClosed && cell.jodi.includes('*');
+
                             return (
                               <td
                                 key={day}
-                                className="py-1.5 px-1 border border-slate-200 dark:border-slate-700 text-slate-400 text-xs"
+                                onClick={() => !isClosed && handleCellClick(row.week, day, cell)}
+                                className={`w-[14.5%] py-1 px-0.5 border-r border-b border-gray-300 dark:border-slate-700/80 last:border-r-0 transition-colors ${
+                                  isClosed
+                                    ? 'bg-slate-100/60 dark:bg-slate-900/40 cursor-default'
+                                    : isPending
+                                    ? 'cursor-default'
+                                    : isOpenOnly
+                                    ? 'cursor-pointer hover:bg-amber-100/60 dark:hover:bg-amber-500/10'
+                                    : 'cursor-pointer hover:bg-slate-200/70 dark:hover:bg-slate-700/50'
+                                }`}
+                                title={
+                                  isClosed
+                                    ? (isMr ? 'मार्केट सुट्टी / बंद' : 'Market Closed')
+                                    : isPending
+                                    ? undefined
+                                    : isOpenOnly
+                                    ? (isMr ? 'दुपारचा ओपन निकाल जाहीर (क्लोज संध्याकाळी ६:०० पर्यंत येईल)' : 'Open declared, Close pending until ~6:00 PM')
+                                    : (isMr ? 'सविस्तर गणित पाहण्यासाठी क्लिक करा' : 'Click to inspect')
+                                }
                               >
-                                —
+                                {isClosed ? (
+                                  <div className="flex items-center justify-center px-0.5 sm:px-1 py-1 w-full h-full font-mono text-slate-400">
+                                    <span className="text-[11px] sm:text-[13px] font-bold">**</span>
+                                  </div>
+                                ) : isPending ? (
+                                  <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
+                                    {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
+                                    <span className="text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter text-slate-400 dark:text-slate-500">
+                                      **
+                                    </span>
+                                    {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
+                                  </div>
+                                ) : isOpenOnly ? (
+                                  <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
+                                    {renderVerticalPana(cell.openPana, 'text-amber-500')}
+                                    <span className="text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter text-amber-500">
+                                      {cell.jodi.replace('*', '')}*
+                                    </span>
+                                    {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
+                                    {renderVerticalPana(cell.openPana, isRed ? 'text-[#e50000]' : 'text-black dark:text-slate-100')}
+                                    <span
+                                      className={`text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter ${
+                                        isRed ? 'text-[#e50000]' : 'text-black dark:text-white'
+                                      }`}
+                                    >
+                                      {cell.jodi}
+                                    </span>
+                                    {renderVerticalPana(cell.closePana, isRed ? 'text-[#e50000]' : 'text-black dark:text-slate-100')}
+                                  </div>
+                                )}
                               </td>
                             );
-                          }
-
-                          const isRed = isRedJodi(cell.jodi);
-                          const isClosed = isMarketClosed(cell.jodi);
-                          const isOpenOnly = !isClosed && cell.openPana !== '***' && cell.closePana === '***';
-                          const isPending = !isOpenOnly && !isClosed && cell.jodi.includes('*');
-
-                          return (
-                            <td
-                              key={day}
-                              onClick={() => !isClosed && handleCellClick(row.week, day, cell)}
-                              className={`py-1 px-1 border border-slate-200 dark:border-slate-700 transition-colors ${
-                                isClosed
-                                  ? 'bg-slate-100 dark:bg-slate-900/40 cursor-default'
-                                  : isPending
-                                  ? 'cursor-default'
-                                  : isOpenOnly
-                                  ? 'cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-500/10'
-                                  : 'cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/20'
-                              }`}
-                              title={
-                                isClosed
-                                  ? (isMr ? 'मार्केट सुट्टी / बंद' : 'Market Closed')
-                                  : isPending
-                                  ? undefined
-                                  : isOpenOnly
-                                  ? (isMr ? 'दुपारचा ओपन निकाल जाहीर (क्लोज संध्याकाळी ६:०० पर्यंत येईल)' : 'Open declared, Close pending until ~6:00 PM')
-                                  : (isMr ? 'सविस्तर गणित पाहण्यासाठी क्लिक करा' : 'Click to inspect')
-                              }
-                            >
-                              {isClosed ? (
-                                <div className="flex flex-col items-center justify-center py-0.5">
-                                  <span className="text-[9px] text-amber-500 font-bold font-sans">
-                                    {isMr ? 'बंद' : 'OFF'}
-                                  </span>
-                                  <span className="text-[11px] font-mono text-slate-400">XX</span>
-                                </div>
-                              ) : isPending ? (
-                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
-                                  <span className="text-[9px] text-slate-400">* * *</span>
-                                  <span className="text-sm font-black text-slate-500 leading-tight">**</span>
-                                  <span className="text-[9px] text-slate-400">* * *</span>
-                                </div>
-                              ) : isOpenOnly ? (
-                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
-                                  <span className="text-[9px] text-amber-400 tracking-wider">
-                                    {formatPana(cell.openPana)}
-                                  </span>
-                                  <span className="text-lg font-black leading-tight text-amber-500">
-                                    {cell.jodi.replace('*', '')}*
-                                  </span>
-                                  <span className="text-[9px] text-slate-400 tracking-wider">* * *</span>
-                                </div>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center py-0.5 font-mono">
-                                  {/* Open Pana - small */}
-                                  <span className="text-[9px] text-slate-500 dark:text-slate-400 tracking-wider leading-tight">
-                                    {formatPana(cell.openPana)}
-                                  </span>
-                                  {/* Jodi - large and bold */}
-                                  <span
-                                    className={`text-xl font-black leading-tight ${
-                                      isRed
-                                        ? 'text-red-600 dark:text-red-500'
-                                        : 'text-[#1a237e] dark:text-blue-300'
-                                    }`}
-                                  >
-                                    {cell.jodi}
-                                  </span>
-                                  {/* Close Pana - small */}
-                                  <span className="text-[9px] text-slate-500 dark:text-slate-400 tracking-wider leading-tight">
-                                    {formatPana(cell.closePana)}
-                                  </span>
-                                </div>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                          })}
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Floating ↑ ↓ navigation — bottom-left */}
           <div className="fixed bottom-6 left-4 z-40 flex flex-col gap-2">
             <button
+              type="button"
               onClick={classicScrollUp}
-              className="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-white shadow-lg flex items-center justify-center text-xl font-bold transition-colors"
+              className="w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
               title={isMr ? 'वर स्क्रोल करा' : 'Scroll Up'}
               aria-label="Scroll up"
             >
               ↑
             </button>
             <button
+              type="button"
               onClick={classicScrollDown}
-              className="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-white shadow-lg flex items-center justify-center text-xl font-bold transition-colors"
+              className="w-11 h-11 rounded-full bg-[#e91e63] hover:bg-[#d81b60] text-white shadow-lg flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
               title={isMr ? 'खाली स्क्रोल करा' : 'Scroll Down'}
               aria-label="Scroll down"
             >
@@ -520,16 +509,13 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
 
           {/* Floating Refresh button — bottom-right */}
           <button
-            onClick={() => {
-              setClassicScrollIdx(0);
-              const container = classicTableRef.current;
-              if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="fixed bottom-6 right-4 z-40 px-4 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transition-colors"
+            type="button"
+            onClick={handleClassicRefresh}
+            className="fixed bottom-6 right-4 z-40 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#072448] hover:bg-[#0a2f5c] text-white text-xs sm:text-sm font-bold shadow-xl border border-blue-900 flex items-center gap-1.5 active:scale-95 transition-transform"
             title={isMr ? 'वरती जा' : 'Back to top'}
           >
-            <span>⟳</span>
-            <span className="hidden sm:inline">{isMr ? 'रिफ्रेश' : 'Refresh'}</span>
+            <span className="text-base leading-none">⟳</span>
+            <span>{isMr ? 'रिफ्रेश' : 'Refresh'}</span>
           </button>
 
           {/* Row count info */}

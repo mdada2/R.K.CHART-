@@ -215,14 +215,17 @@ export function isMarketClosed(jodi?: string): boolean {
 }
 
 export function isValidPlayedJodi(jodi?: string): boolean {
-  if (!jodi || jodi.length !== 2 || jodi.includes('*') || isMarketClosed(jodi)) return false;
-  return /^\d{2}$/.test(jodi);
+  if (!jodi) return false;
+  const clean = jodi.trim();
+  if (clean.length !== 2 || clean.includes('*') || isMarketClosed(clean)) return false;
+  return /^\d{2}$/.test(clean);
 }
 
-export function isRedJodi(jodi: string): boolean {
+export function isRedJodi(jodi?: string): boolean {
   if (!isValidPlayedJodi(jodi)) return false;
-  const a = parseInt(jodi[0], 10);
-  const b = parseInt(jodi[1], 10);
+  const clean = jodi!.trim();
+  const a = parseInt(clean[0], 10);
+  const b = parseInt(clean[1], 10);
   if (isNaN(a) || isNaN(b)) return false;
   // Identical digits: 00, 11, 22...
   if (a === b) return true;

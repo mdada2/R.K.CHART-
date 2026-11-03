@@ -161,7 +161,11 @@ export default function App() {
       />
 
       {/* Main Content Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+      <main
+        className={`flex-1 max-w-7xl w-full mx-auto ${
+          activeTab === 'chart' ? 'px-0.5 sm:px-4 pt-3 sm:pt-6' : 'px-3 sm:px-6 pt-6'
+        }`}
+      >
         {activeTab === 'predictor' && (
           <PredictorView
             history={history}
