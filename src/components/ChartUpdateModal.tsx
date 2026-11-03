@@ -21,6 +21,53 @@ import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { DAY_NAMES, DAY_KEYS, getEffectiveHistory } from '../utils/matkaMath';
 import { useFirebaseApp } from '../contexts/FirebaseContext';
 
+const FALLBACK_ERROR_MR = 'सर्व्हरकडून वैध निकाल मिळाला नाही किंवा साईट तात्पुरती व्यस्त आहे. कृपया पुन्हा प्रयत्न करा किंवा निकाल मॅन्युअली प्रविष्ट करा.';
+const FALLBACK_ERROR_EN = 'Could not get valid response from server or site is temporarily busy. Please try again or enter manually.';
+
+function cleanErrorMessage(msg: any, isMr: boolean): string {
+  if (typeof msg === 'string' && msg.trim() && !msg.includes('Unexpected') && !msg.includes('JSON') && !msg.toLowerCase().includes('server error')) {
+    return msg;
+  }
+  return isMr ? FALLBACK_ERROR_MR : FALLBACK_ERROR_EN;
+}
+
+async function safeFetchJson(
+  url: string,
+  options?: RequestInit
+): Promise<{ ok: boolean; status: number; data: any; errorText?: string }> {
+  try {
+    const res = await fetch(url, options);
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      try {
+        const data = await res.json();
+        return { ok: res.ok, status: res.status, data };
+      } catch (jsonErr: any) {
+        return {
+          ok: false,
+          status: res.status,
+          data: null,
+          errorText: jsonErr?.message || 'Non-JSON server response',
+        };
+      }
+    }
+    const text = await res.text();
+    return {
+      ok: false,
+      status: res.status,
+      data: null,
+      errorText: text.slice(0, 150) || 'Non-JSON server response',
+    };
+  } catch (networkErr: any) {
+    return {
+      ok: false,
+      status: 0,
+      data: null,
+      errorText: networkErr?.message || 'Network error',
+    };
+  }
+}
+
 interface ChartUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -153,13 +200,19 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setFetchError(null);
     setFetchedData(null);
 
+    const friendlyError = isMr ? FALLBACK_ERROR_MR : FALLBACK_ERROR_EN;
+
     try {
-      const res = await fetch('/api/fetch-live', {
+      const { ok, data: json } = await safeFetchJson('/api/fetch-live', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customUrl: fetchUrl, market }),
       });
-      const json = await res.json();
+
+      if (!ok || !json) {
+        setFetchError(friendlyError);
+        return;
+      }
 
       if (json.success && json.found && json.data) {
         setFetchedData(json.data);
@@ -172,12 +225,12 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
         const currentMarketTitle = marketInfo.name[language];
         setFetchMessage(isMr ? `वेबसाईटवरून ${currentMarketTitle} निकाल यशस्वीरित्या फेच झाला!` : `Live result for ${currentMarketTitle} successfully fetched from website!`);
       } else if (json.message) {
-        setFetchError(json.message);
+        setFetchError(cleanErrorMessage(json.message, isMr));
       } else {
-        setFetchError(json.error || (isMr ? 'निकाल फेच करताना त्रुटी आली.' : 'Failed to fetch result.'));
+        setFetchError(cleanErrorMessage(json.error, isMr));
       }
-    } catch (err: any) {
-      setFetchError(err.message || (isMr ? 'सर्व्हरशी संपर्क होऊ शकला नाही.' : 'Connection error.'));
+    } catch {
+      setFetchError(friendlyError);
     } finally {
       setIsFetching(false);
     }
@@ -227,6 +280,8 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setSaveError(null);
     setSaveSuccess(null);
 
+    const friendlyError = isMr ? FALLBACK_ERROR_MR : FALLBACK_ERROR_EN;
+
     const payload = {
       market,
       week: weekString,
@@ -237,13 +292,17 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     };
 
     try {
-      const res = await fetch('/api/update-chart', {
+      const { ok, data: json } = await safeFetchJson('/api/update-chart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const json = await res.json();
+      if (!ok || !json) {
+        setSaveError(friendlyError);
+        return;
+      }
+
       if (json.success && json.history) {
         onHistoryUpdated(json.history);
         let syncedCloud = false;
@@ -265,10 +324,10 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
           onClose();
         }, 1800);
       } else {
-        setSaveError(json.error || (isMr ? 'सेव्ह करताना त्रुटी आली.' : 'Failed to save record.'));
+        setSaveError(cleanErrorMessage(json.error, isMr));
       }
-    } catch (err: any) {
-      setSaveError(err.message || (isMr ? 'सर्व्हर त्रुटी आली.' : 'Server communication error.'));
+    } catch {
+      setSaveError(friendlyError);
     } finally {
       setIsSaving(false);
     }
@@ -280,9 +339,15 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setBulkScanMessage(null);
     setBulkScanError(null);
 
+    const friendlyError = isMr ? FALLBACK_ERROR_MR : FALLBACK_ERROR_EN;
+
     try {
-      const res = await fetch(`/api/fetch-week-chart?market=${market}&week=${encodeURIComponent(bulkWeekString)}`);
-      const json = await res.json();
+      const { ok, data: json } = await safeFetchJson(`/api/fetch-week-chart?market=${market}&week=${encodeURIComponent(bulkWeekString)}`);
+
+      if (!ok || !json) {
+        setBulkScanError(friendlyError);
+        return;
+      }
 
       if (json.success && json.weekData) {
         setBulkWeekData((prev) => {
@@ -319,10 +384,10 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
             : `✓ Week (${json.rawDateStr || bulkWeekString}) successfully scanned from DPBoss!`)
         );
       } else {
-        setBulkScanError(json.message || json.error || (isMr ? 'वेबसाईटवरून आठवडा वाचता आला नाही.' : 'Failed to scan week.'));
+        setBulkScanError(cleanErrorMessage(json.message || json.error, isMr));
       }
-    } catch (err: any) {
-      setBulkScanError(err.message || (isMr ? 'सर्व्हरशी संपर्क होऊ शकला नाही.' : 'Network error.'));
+    } catch {
+      setBulkScanError(friendlyError);
     } finally {
       setIsBulkScanning(false);
     }
@@ -334,8 +399,10 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     setSaveError(null);
     setSaveSuccess(null);
 
+    const friendlyError = isMr ? FALLBACK_ERROR_MR : FALLBACK_ERROR_EN;
+
     try {
-      const res = await fetch('/api/update-full-week', {
+      const { ok, data: json } = await safeFetchJson('/api/update-full-week', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -345,7 +412,11 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
         }),
       });
 
-      const json = await res.json();
+      if (!ok || !json) {
+        setSaveError(friendlyError);
+        return;
+      }
+
       if (json.success && json.history) {
         onHistoryUpdated(json.history);
         let syncedCloud = false;
@@ -367,10 +438,10 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
           onClose();
         }, 1800);
       } else {
-        setSaveError(json.error || (isMr ? 'आठवडा सेव्ह करताना त्रुटी आली.' : 'Failed to save full week.'));
+        setSaveError(cleanErrorMessage(json.error, isMr));
       }
-    } catch (err: any) {
-      setSaveError(err.message || (isMr ? 'सर्व्हर त्रुटी आली.' : 'Server communication error.'));
+    } catch {
+      setSaveError(friendlyError);
     } finally {
       setIsBulkSaving(false);
     }
