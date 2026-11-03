@@ -1,10 +1,38 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
+import { createRequire } from 'module';
 import { GoogleGenAI } from '@google/genai';
-import kalyanData from '../src/data/kalyanHistorical.json';
-import rajdhaniData from '../src/data/rajdhaniNightHistorical.json';
-import manipurData from '../src/data/manipurHistorical.json';
+
+const require = createRequire(import.meta.url);
+
+function loadInitialJson(relPath: string, filename: string): any[] {
+  try {
+    const data = require(relPath);
+    if (Array.isArray(data)) return data;
+  } catch {}
+
+  try {
+    const candidatePaths = [
+      path.resolve(process.cwd(), 'src/data', filename),
+      path.resolve(process.cwd(), filename),
+      path.join('/var/task/src/data', filename),
+    ];
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        const raw = fs.readFileSync(p, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    }
+  } catch {}
+
+  return [];
+}
+
+const kalyanData = loadInitialJson('../src/data/kalyanHistorical.json', 'kalyanHistorical.json');
+const rajdhaniData = loadInitialJson('../src/data/rajdhaniNightHistorical.json', 'rajdhaniNightHistorical.json');
+const manipurData = loadInitialJson('../src/data/manipurHistorical.json', 'manipurHistorical.json');
 
 const app = express();
 app.use(express.json());
@@ -37,14 +65,26 @@ function setMemoryData(market: string | undefined, data: any[]): void {
 }
 
 function loadHistory(market?: string): any[] {
+  const filename = market === 'rajdhani_night'
+    ? 'rajdhaniNightHistorical.json'
+    : market === 'manipur'
+    ? 'manipurHistorical.json'
+    : 'kalyanHistorical.json';
+
   try {
-    const fp = getDataFilePath(market);
-    if (fs.existsSync(fp)) {
-      const raw = fs.readFileSync(fp, 'utf8');
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        setMemoryData(market, parsed);
-        return parsed;
+    const candidatePaths = [
+      getDataFilePath(market),
+      path.resolve(process.cwd(), 'src/data', filename),
+      path.join('/var/task/src/data', filename),
+    ];
+    for (const fp of candidatePaths) {
+      if (fs.existsSync(fp)) {
+        const raw = fs.readFileSync(fp, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMemoryData(market, parsed);
+          return parsed;
+        }
       }
     }
   } catch {
