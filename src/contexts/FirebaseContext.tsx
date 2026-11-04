@@ -47,8 +47,9 @@ interface FirebaseContextValue {
   syncAllMarketsToCloud: (
     kalyanHistory: WeekRecord[],
     rajdhaniHistory: WeekRecord[],
+    manipurHistory: WeekRecord[],
     count?: number
-  ) => Promise<{ kalyan: number; rajdhani: number }>;
+  ) => Promise<{ kalyan: number; rajdhani: number; manipur: number }>;
 }
 
 const FirebaseContext = createContext<FirebaseContextValue | null>(null);
@@ -574,12 +575,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     async (
       kalyanHistory: WeekRecord[],
       rajdhaniHistory: WeekRecord[],
+      manipurHistory: WeekRecord[],
       count: number = 12
-    ): Promise<{ kalyan: number; rajdhani: number }> => {
-      if (!user || !isAdmin) return { kalyan: 0, rajdhani: 0 };
+    ): Promise<{ kalyan: number; rajdhani: number; manipur: number }> => {
+      if (!user || !isAdmin) return { kalyan: 0, rajdhani: 0, manipur: 0 };
       const kCount = await syncRecentChartToCloud('kalyan', kalyanHistory, count);
       const rCount = await syncRecentChartToCloud('rajdhani_night', rajdhaniHistory, count);
-      return { kalyan: kCount, rajdhani: rCount };
+      const mCount = await syncRecentChartToCloud('manipur', manipurHistory, count);
+      return { kalyan: kCount, rajdhani: rCount, manipur: mCount };
     },
     [user, isAdmin, syncRecentChartToCloud]
   );

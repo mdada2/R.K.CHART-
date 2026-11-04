@@ -507,12 +507,13 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
     try {
       const effectiveKalyan = kalyanHistory && kalyanHistory.length > 0 ? kalyanHistory : effectiveHistory;
       const effectiveRajdhani = rajdhaniHistory && rajdhaniHistory.length > 0 ? rajdhaniHistory : effectiveHistory;
+      const effectiveManipurHistory = manipurHistory && manipurHistory.length > 0 ? manipurHistory : [];
 
-      const res = await syncAllMarketsToCloud(effectiveKalyan, effectiveRajdhani, 16);
+      const res = await syncAllMarketsToCloud(effectiveKalyan, effectiveRajdhani, effectiveManipurHistory, 16);
       setSaveSuccess(
         isMr
-          ? `✓ ॲडमिन मास्टर सिंक पूर्ण! कल्याण (${res.kalyan} आठवडे) व राजधानी नाईट (${res.rajdhani} आठवडे) दोन्ही चार्ट एकाच वेळी फायरबेस क्लाउडवर यशस्वीरित्या सिंक झाले!`
-          : `✓ Master Sync Complete! Kalyan (${res.kalyan} wks) & Rajdhani Night (${res.rajdhani} wks) both synced to Firebase Cloud!`
+          ? `✓ ॲडमिन मास्टर सिंक पूर्ण! कल्याण (${res.kalyan} आठवडे), राजधानी नाईट (${res.rajdhani} आठवडे) व मणीपुर (${res.manipur} आठवडे) तिन्ही चार्ट फायरबेस क्लाउडवर यशस्वीरित्या सिंक झाले!`
+          : `✓ Master Sync Complete! Kalyan (${res.kalyan} wks), Rajdhani Night (${res.rajdhani} wks) & Manipur (${res.manipur} wks) all synced to Firebase Cloud!`
       );
     } catch (err: any) {
       setSaveError(err?.message || (isMr ? 'मास्टर क्लाउड सिंक अयशस्वी.' : 'Master Cloud Sync failed.'));
@@ -1167,7 +1168,7 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-3 pt-2">
-                    {/* FEATURE 2: 1-Click Master Sync (Both Markets) */}
+                    {/* FEATURE 2: 1-Click Master Sync (All 3 Markets) */}
                     <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-slate-900 to-indigo-950/80 border border-indigo-500/40 space-y-2.5">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5 uppercase tracking-wider">
@@ -1175,14 +1176,14 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                           <span>{isMr ? '🌟 ॲडमिन मास्टर सिंक (Admin Master Sync)' : '🌟 Admin Master Sync'}</span>
                         </span>
                         <span className="text-[10px] bg-indigo-500 text-white font-bold px-2 py-0.5 rounded-full">
-                          {isMr ? '२ मार्केट एकत्र' : '2 Markets in 1'}
+                          {isMr ? '३ मार्केट एकत्र' : 'All 3 Markets in 1'}
                         </span>
                       </div>
 
                       <p className="text-xs text-slate-300 leading-relaxed">
                         {isMr
-                          ? 'कल्याण आणि राजधानी नाईट या दोन्ही चार्टचे मागील १६ आठवडे एकाच क्लिकवर फायरबेस क्लाउडवर अपलोड करा.'
-                          : 'Upload the last 16 weeks of BOTH Kalyan and Rajdhani Night charts to Firebase Cloud in one single click.'}
+                          ? 'कल्याण, राजधानी नाईट आणि मणीपुर या तिन्ही चार्टचे मागील १६ आठवडे एकाच क्लिकवर फायरबेस क्लाउडवर अपलोड करा.'
+                          : 'Upload the last 16 weeks of Kalyan, Rajdhani Night, and Manipur charts to Firebase Cloud in one single click.'}
                       </p>
 
                       <button
@@ -1195,11 +1196,11 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
                         <span>
                           {isMasterSyncing
                             ? isMr
-                              ? 'दोन्ही मार्केट क्लाउडवर सिंक होत आहेत...'
-                              : 'Syncing Both Markets to Cloud...'
+                              ? 'तिन्ही मार्केट क्लाउडवर सिंक होत आहेत...'
+                              : 'Syncing All 3 Markets to Cloud...'
                             : isMr
-                            ? '🚀 दोन्ही मार्केट (कल्याण + राजधानी) एकाच क्लिकवर क्लाउड सिंक करा'
-                            : '🚀 Master Sync: Both Kalyan & Rajdhani Night to Cloud'}
+                            ? '🚀 तिन्ही मार्केट (कल्याण + राजधानी + मणीपुर) एकाच क्लिकवर क्लाउड सिंक करा'
+                            : '🚀 Master Sync: Kalyan, Rajdhani Night & Manipur to Cloud'}
                         </span>
                       </button>
                     </div>
