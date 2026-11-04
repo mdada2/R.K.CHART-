@@ -39,7 +39,7 @@ export function handleFirestoreError(
   error: unknown,
   operationType: OperationType,
   path: string | null
-): never {
+): void {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -57,6 +57,12 @@ export function handleFirestoreError(
     operationType,
     path,
   };
+
+  if (operationType === OperationType.LIST || operationType === OperationType.GET) {
+    console.warn('Firestore Read Warning: ', JSON.stringify(errInfo));
+    return;
+  }
+
   console.error('Firestore Error: ', JSON.stringify(errInfo));
   throw new Error(JSON.stringify(errInfo));
 }

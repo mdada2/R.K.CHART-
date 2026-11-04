@@ -20,6 +20,7 @@ import {
 import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { DAY_NAMES, DAY_KEYS, getEffectiveHistory } from '../utils/matkaMath';
 import { useFirebaseApp } from '../contexts/FirebaseContext';
+import { saveSingleWeekOverride } from '../utils/chartStorage';
 
 const FALLBACK_ERROR_MR = 'सर्व्हरकडून वैध निकाल मिळाला नाही किंवा साईट तात्पुरती व्यस्त आहे. कृपया पुन्हा प्रयत्न करा किंवा निकाल मॅन्युअली प्रविष्ट करा.';
 const FALLBACK_ERROR_EN = 'Could not get valid response from server or site is temporarily busy. Please try again or enter manually.';
@@ -304,6 +305,33 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
       }
 
       if (json.success && json.history) {
+        // Direct local storage write so client never loses data even on serverless restarts
+        const savedWeek =
+          json.updatedWeek ||
+          (Array.isArray(json.history)
+            ? json.history.find((w: WeekRecord) => w.week === payload.week)
+            : null);
+        if (savedWeek) {
+          saveSingleWeekOverride(market, savedWeek);
+        } else {
+          const existing = history.find((w) => w.week === payload.week);
+          const fallbackRecord: WeekRecord = {
+            week: payload.week,
+            mon: existing?.mon || { openPana: '***', jodi: '**', closePana: '***' },
+            tue: existing?.tue || { openPana: '***', jodi: '**', closePana: '***' },
+            wed: existing?.wed || { openPana: '***', jodi: '**', closePana: '***' },
+            thu: existing?.thu || { openPana: '***', jodi: '**', closePana: '***' },
+            fri: existing?.fri || { openPana: '***', jodi: '**', closePana: '***' },
+            sat: existing?.sat || { openPana: '***', jodi: isNight ? 'XX' : '**', closePana: '***' },
+            [payload.day]: {
+              openPana: payload.openPana,
+              jodi: payload.jodi,
+              closePana: payload.closePana,
+            },
+          };
+          saveSingleWeekOverride(market, fallbackRecord);
+        }
+
         onHistoryUpdated(json.history);
         let syncedCloud = false;
         if (isAdmin && Array.isArray(json.history)) {
@@ -418,6 +446,29 @@ export const ChartUpdateModal: React.FC<ChartUpdateModalProps> = ({
       }
 
       if (json.success && json.history) {
+        // Direct local storage write so client never loses data even on serverless restarts
+        const savedWeek =
+          json.weekRecord ||
+          (Array.isArray(json.history)
+            ? json.history.find((w: WeekRecord) => w.week === bulkWeekString)
+            : null);
+        if (savedWeek) {
+          saveSingleWeekOverride(market, savedWeek);
+        } else {
+          const bulkFallback: WeekRecord = {
+            week: bulkWeekString,
+            mon: bulkWeekData.mon || { openPana: '***', jodi: '**', closePana: '***' },
+            tue: bulkWeekData.tue || { openPana: '***', jodi: '**', closePana: '***' },
+            wed: bulkWeekData.wed || { openPana: '***', jodi: '**', closePana: '***' },
+            thu: bulkWeekData.thu || { openPana: '***', jodi: '**', closePana: '***' },
+            fri: bulkWeekData.fri || { openPana: '***', jodi: '**', closePana: '***' },
+            sat: isNight
+              ? { openPana: '***', jodi: 'XX', closePana: '***' }
+              : bulkWeekData.sat || { openPana: '***', jodi: '**', closePana: '***' },
+          };
+          saveSingleWeekOverride(market, bulkFallback);
+        }
+
         onHistoryUpdated(json.history);
         let syncedCloud = false;
         if (isAdmin && Array.isArray(json.history)) {

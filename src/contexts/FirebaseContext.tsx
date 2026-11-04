@@ -229,6 +229,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       },
       (err) => {
         setCloudChartSyncStatus('offline');
+        if (err.code === 'permission-denied') return;
         try {
           handleFirestoreError(err, OperationType.LIST, kalyanPath);
         } catch {}
@@ -268,6 +269,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       },
       (err) => {
         setCloudChartSyncStatus('offline');
+        if (err.code === 'permission-denied') return;
         try {
           handleFirestoreError(err, OperationType.LIST, rajdhaniPath);
         } catch {}
@@ -307,6 +309,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       },
       (err) => {
         setCloudChartSyncStatus('offline');
+        if (err.code === 'permission-denied') return;
         try {
           handleFirestoreError(err, OperationType.LIST, manipurPath);
         } catch {}

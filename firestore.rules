@@ -238,12 +238,7 @@ service cloud.firestore {
 
     // 4. Public Weekly Market Charts (Public Read Enforcing Market Boundary; Verified Admin Write)
     match /charts/{marketId}/weeklyData/{weekId} {
-      allow get: if isValidMarketId(marketId) &&
-        isValidId(weekId) &&
-        (resource == null || existing().market == marketId);
-
-      allow list: if isValidMarketId(marketId) &&
-        existing().market == marketId;
+      allow get, list: if isValidMarketId(marketId);
 
       allow create: if isVerifiedUser() &&
         isValidMarketId(marketId) &&

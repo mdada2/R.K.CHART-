@@ -15,6 +15,19 @@ import { kalyanHistory, rajdhaniNightHistory, manipurHistory } from './data/hist
 import { Language, MarketType, WeekRecord } from './types';
 import { getEffectiveHistory } from './utils/matkaMath';
 import { mergeBaseAndCloudHistory, useFirebaseApp } from './contexts/FirebaseContext';
+import {
+  LOCAL_STORAGE_PREFIX,
+  loadLocalOverrides,
+  saveLocalOverrides,
+  mergeWithOverrides,
+} from './utils/chartStorage';
+
+export {
+  LOCAL_STORAGE_PREFIX,
+  loadLocalOverrides,
+  saveLocalOverrides,
+  mergeWithOverrides,
+};
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -67,10 +80,16 @@ export default function App() {
     }
   }, [theme]);
 
-  // Base historical state per market (updated by server API or local JSON)
-  const [kalyanBaseRecords, setKalyanBaseRecords] = useState<WeekRecord[]>(kalyanHistory);
-  const [rajdhaniBaseRecords, setRajdhaniBaseRecords] = useState<WeekRecord[]>(rajdhaniNightHistory);
-  const [manipurBaseRecords, setManipurBaseRecords] = useState<WeekRecord[]>(manipurHistory);
+  // Base historical state per market (updated by server API or local JSON with user overrides)
+  const [kalyanBaseRecords, setKalyanBaseRecords] = useState<WeekRecord[]>(() =>
+    mergeWithOverrides(kalyanHistory, loadLocalOverrides('kalyan'))
+  );
+  const [rajdhaniBaseRecords, setRajdhaniBaseRecords] = useState<WeekRecord[]>(() =>
+    mergeWithOverrides(rajdhaniNightHistory, loadLocalOverrides('rajdhani_night'))
+  );
+  const [manipurBaseRecords, setManipurBaseRecords] = useState<WeekRecord[]>(() =>
+    mergeWithOverrides(manipurHistory, loadLocalOverrides('manipur'))
+  );
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
 
   // Merge real-time Firestore cloud weeks onto base history
@@ -104,17 +123,20 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => {
         if (isMounted && data.success && Array.isArray(data.history) && data.history.length > 0) {
+          // Merge server data with user local overrides so updated/scanned weeks always take precedence
+          const localOverrides = loadLocalOverrides(market);
+          const mergedWithLocal = mergeWithOverrides(data.history, localOverrides);
           if (market === 'rajdhani_night') {
-            setRajdhaniBaseRecords(data.history);
+            setRajdhaniBaseRecords(mergedWithLocal);
           } else if (market === 'manipur') {
-            setManipurBaseRecords(data.history);
+            setManipurBaseRecords(mergedWithLocal);
           } else {
-            setKalyanBaseRecords(data.history);
+            setKalyanBaseRecords(mergedWithLocal);
           }
         }
       })
       .catch(() => {
-        // Offline / fallback to bundled + Firestore cached data
+        // Offline / fallback to bundled + local overrides + Firestore cached data
       });
     return () => {
       isMounted = false;
@@ -122,12 +144,43 @@ export default function App() {
   }, [market]);
 
   const handleHistoryUpdate = (newHistory: WeekRecord[]) => {
+    const baseStatic =
+      market === 'rajdhani_night'
+        ? rajdhaniNightHistory
+        : market === 'manipur'
+        ? manipurHistory
+        : kalyanHistory;
+
+    const staticMap = new Map<string, string>();
+    for (const b of baseStatic) {
+      staticMap.set(b.week, JSON.stringify(b));
+    }
+
+    const currentOverrides = loadLocalOverrides(market);
+    let changed = false;
+
+    // Detect modified or newly appended weeks compared to static baseline
+    for (const weekItem of newHistory) {
+      const staticJson = staticMap.get(weekItem.week);
+      const currentJson = JSON.stringify(weekItem);
+      if (!staticJson || staticJson !== currentJson) {
+        currentOverrides[weekItem.week] = weekItem;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      saveLocalOverrides(market, currentOverrides);
+    }
+
+    const finalMerged = mergeWithOverrides(newHistory, currentOverrides);
+
     if (market === 'rajdhani_night') {
-      setRajdhaniBaseRecords(newHistory);
+      setRajdhaniBaseRecords(finalMerged);
     } else if (market === 'manipur') {
-      setManipurBaseRecords(newHistory);
+      setManipurBaseRecords(finalMerged);
     } else {
-      setKalyanBaseRecords(newHistory);
+      setKalyanBaseRecords(finalMerged);
     }
   };
 
