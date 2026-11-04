@@ -40,7 +40,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return isVerifiedUser() && (
-        request.auth.token.email == "secretaryilada1425@gmail.com" ||
+        request.auth.token.email.lower() == "secretaryilada1425@gmail.com" ||
         exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       );
     }
@@ -236,30 +236,15 @@ service cloud.firestore {
       }
     }
 
-    // 4. Public Weekly Market Charts (Public Read Enforcing Market Boundary; Verified Admin Write)
-    match /charts/{marketId}/weeklyData/{weekId} {
+    // 4. Public Weekly Market Charts (Public Read; Verified Admin Write)
+    match /charts/{marketId} {
       allow get, list: if isValidMarketId(marketId);
+      allow write: if isAdmin() && isValidMarketId(marketId);
 
-      allow create: if isVerifiedUser() &&
-        isValidMarketId(marketId) &&
-        isValidId(weekId) &&
-        isValidChartWeek(incoming(), marketId) &&
-        incoming().updatedAt == request.time &&
-        isAdmin();
-
-      allow update: if isVerifiedUser() &&
-        isValidMarketId(marketId) &&
-        isValidId(weekId) &&
-        isValidChartWeek(incoming(), marketId) &&
-        incoming().market == existing().market &&
-        incoming().updatedAt == request.time &&
-        incoming().diff(existing()).affectedKeys().hasOnly(['week', 'weekIndex', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'updatedAt']) &&
-        isAdmin();
-
-      allow delete: if isVerifiedUser() &&
-        isValidMarketId(marketId) &&
-        isValidId(weekId) &&
-        isAdmin();
+      match /weeklyData/{weekId} {
+        allow get, list: if isValidMarketId(marketId);
+        allow write: if isAdmin() && isValidMarketId(marketId) && isValidId(weekId);
+      }
     }
   }
 }
