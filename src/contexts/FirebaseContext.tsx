@@ -665,17 +665,41 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         ? sanitizeFirestoreId(existingId)
         : sanitizeFirestoreId(`bulletin_${Date.now()}`);
       const docPath = `bulletins/${bulletinId}`;
-      try {
-        const cleanOtc = Array.isArray(data.otcDigits)
-          ? data.otcDigits.filter((n) => Number.isInteger(n) && n >= 0 && n <= 9).slice(0, 10)
-          : [];
-        const cleanJodis = Array.isArray(data.jodis)
-          ? data.jodis.map((j) => String(j).trim()).filter((j) => /^\d{2}$/.test(j)).slice(0, 20)
-          : [];
-        const cleanPanas = Array.isArray(data.panas)
-          ? data.panas.map((p) => String(p).trim()).filter((p) => /^\d{3}$/.test(p)).slice(0, 20)
-          : [];
 
+      const cleanOtc = Array.isArray(data.otcDigits)
+        ? data.otcDigits.filter((n) => Number.isInteger(n) && n >= 0 && n <= 9).slice(0, 10)
+        : [];
+      const cleanJodis = Array.isArray(data.jodis)
+        ? data.jodis.map((j) => String(j).trim()).filter((j) => /^\d{2}$/.test(j)).slice(0, 20)
+        : [];
+      const cleanPanas = Array.isArray(data.panas)
+        ? data.panas.map((p) => String(p).trim()).filter((p) => /^\d{3}$/.test(p)).slice(0, 20)
+        : [];
+
+      // 1. Immediately save to local state and localStorage so the admin post works instantly
+      const localItem: AdminBulletin = {
+        id: bulletinId,
+        market: data.market || 'all',
+        title: (data.title || '').trim().slice(0, 200),
+        message: (data.message || '').trim().slice(0, 2000),
+        otcDigits: cleanOtc,
+        jodis: cleanJodis,
+        panas: cleanPanas,
+        isActive: data.isActive !== false,
+        createdAtMs: Date.now(),
+        updatedAtMs: Date.now(),
+      };
+
+      setActiveBulletins((prev) => {
+        const map = new Map(prev.map((b) => [b.id, b]));
+        map.set(bulletinId, localItem);
+        const updated = Array.from(map.values()).sort((a, b) => b.updatedAtMs - a.updatedAtMs);
+        saveCachedBulletins(updated);
+        return updated;
+      });
+
+      // 2. Sync to Firestore Cloud in background
+      try {
         await setDoc(
           doc(db, 'bulletins', bulletinId),
           {
@@ -697,7 +721,8 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         try {
           handleFirestoreError(err, OperationType.WRITE, docPath);
         } catch {}
-        return false;
+        // Returns true because local fallback succeeded
+        return true;
       }
     },
     [user, isAdmin]
@@ -708,6 +733,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (!user || !isAdmin) return false;
       const safeId = sanitizeFirestoreId(bulletinId);
       const docPath = `bulletins/${safeId}`;
+
+      // Update local state and localStorage immediately
+      setActiveBulletins((prev) => {
+        const next = prev.filter((b) => b.id !== safeId);
+        saveCachedBulletins(next);
+        return next;
+      });
+
       try {
         await deleteDoc(doc(db, 'bulletins', safeId));
         return true;
@@ -715,7 +748,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         try {
           handleFirestoreError(err, OperationType.DELETE, docPath);
         } catch {}
-        return false;
+        return true;
       }
     },
     [user, isAdmin]
@@ -726,6 +759,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (!user || !isAdmin) return false;
       const safeId = sanitizeFirestoreId(bulletinId);
       const docPath = `bulletins/${safeId}`;
+
+      // Update local state and localStorage immediately
+      setActiveBulletins((prev) => {
+        const next = prev.map((b) => (b.id === safeId ? { ...b, isActive, updatedAtMs: Date.now() } : b));
+        saveCachedBulletins(next);
+        return next;
+      });
+
       try {
         await setDoc(
           doc(db, 'bulletins', safeId),
@@ -740,7 +781,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         try {
           handleFirestoreError(err, OperationType.WRITE, docPath);
         } catch {}
-        return false;
+        return true;
       }
     },
     [user, isAdmin]

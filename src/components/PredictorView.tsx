@@ -793,43 +793,44 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-6">
+              {/* Single-row horizontal Sangam: Guaranteed no-wrap on all mobile screens */}
+              <div className="grid grid-cols-[1fr_auto_1.3fr_auto_1fr] items-center gap-1 sm:gap-4 max-w-lg mx-auto">
                 {/* Open Pana */}
-                <div className="flex flex-col items-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 min-w-[85px] sm:min-w-[105px] shadow-sm">
-                  <span className="text-[10px] uppercase font-bold text-slate-400">
+                <div className="flex flex-col items-center justify-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-1.5 py-2 sm:px-4 sm:py-2.5 shadow-sm min-w-0">
+                  <span className="text-[9px] sm:text-[11px] uppercase font-bold text-slate-400 truncate w-full text-center">
                     {isMr ? 'ओपन पाना' : 'Open Pana'}
                   </span>
-                  <span className="text-lg sm:text-2xl font-black font-mono text-amber-200 mt-0.5">
+                  <span className="text-base sm:text-2xl font-black font-mono text-amber-200 mt-0.5 tracking-tight">
                     {master.openPana}
                   </span>
                 </div>
 
-                <span className="text-amber-400/70 font-bold text-xl sm:text-2xl">-</span>
+                <span className="text-amber-400/70 font-bold text-sm sm:text-2xl shrink-0 select-none px-0.5">-</span>
 
                 {/* Big Master Jodi Display */}
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-yellow-300 rounded-2xl blur-sm opacity-50 group-hover:opacity-80 transition duration-300" />
-                  <div className="relative px-5 py-2.5 sm:px-8 sm:py-3 rounded-2xl bg-gradient-to-b from-amber-500/30 via-slate-900 to-amber-950/80 border-2 border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.35)] flex flex-col items-center">
-                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-amber-300">
+                <div className="relative group min-w-0">
+                  <div className="absolute -inset-0.5 sm:-inset-1 bg-gradient-to-r from-amber-400 to-yellow-300 rounded-2xl blur-sm opacity-50 group-hover:opacity-80 transition duration-300" />
+                  <div className="relative px-2 py-2 sm:px-6 sm:py-3 rounded-2xl bg-gradient-to-b from-amber-500/30 via-slate-900 to-amber-950/80 border-2 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.35)] flex flex-col items-center">
+                    <span className="text-[8.5px] sm:text-[11px] uppercase tracking-wider font-extrabold text-amber-300 truncate">
                       {isMr ? '🎯 महा-जोडी' : '🎯 Master Strike'}
                     </span>
-                    <span className="text-4xl sm:text-6xl font-black font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-amber-300 to-yellow-400 drop-shadow-[0_2px_12px_rgba(251,191,36,0.45)] my-0.5">
+                    <span className="text-2xl sm:text-5xl font-black font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-amber-300 to-yellow-400 drop-shadow-[0_2px_12px_rgba(251,191,36,0.45)] my-0.5 whitespace-nowrap">
                       [ {master.jodi} ]
                     </span>
-                    <span className="text-[10px] text-amber-300/80 font-medium">
-                      {isMr ? 'सर्वोच्च संभाव्य स्ट्राइक' : 'Top Strike Jodi'}
+                    <span className="text-[8px] sm:text-[10px] text-amber-300/80 font-medium truncate">
+                      {isMr ? 'सर्वोच्च स्ट्राइक' : 'Top Strike'}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-amber-400/70 font-bold text-xl sm:text-2xl">-</span>
+                <span className="text-amber-400/70 font-bold text-sm sm:text-2xl shrink-0 select-none px-0.5">-</span>
 
                 {/* Close Pana */}
-                <div className="flex flex-col items-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 min-w-[85px] sm:min-w-[105px] shadow-sm">
-                  <span className="text-[10px] uppercase font-bold text-slate-400">
+                <div className="flex flex-col items-center justify-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-1.5 py-2 sm:px-4 sm:py-2.5 shadow-sm min-w-0">
+                  <span className="text-[9px] sm:text-[11px] uppercase font-bold text-slate-400 truncate w-full text-center">
                     {isMr ? 'क्लोज पाना' : 'Close Pana'}
                   </span>
-                  <span className="text-lg sm:text-2xl font-black font-mono text-amber-200 mt-0.5">
+                  <span className="text-base sm:text-2xl font-black font-mono text-amber-200 mt-0.5 tracking-tight">
                     {master.closePana}
                   </span>
                 </div>

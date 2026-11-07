@@ -482,19 +482,19 @@ export const AdminFlashBulletin: React.FC<AdminFlashBulletinProps> = ({
 
       {/* 3. Admin Creator & Manager Modal */}
       {isCreatorOpen && isAdmin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-          <div className="bg-slate-900 border-2 border-amber-500/40 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.3)] text-slate-100 my-6 max-h-[92vh] overflow-y-auto space-y-6">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 text-slate-950 font-black shadow-md shadow-amber-500/30">
-                  <Megaphone className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="bg-slate-900 border-2 border-amber-500/40 rounded-2xl max-w-2xl w-full flex flex-col shadow-[0_0_50px_rgba(245,158,11,0.3)] text-slate-100 max-h-[94vh] overflow-hidden">
+            {/* Modal Sticky Header */}
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-800 bg-slate-950/95 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="p-1.5 sm:p-2 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 text-slate-950 font-black shadow-md shadow-amber-500/30 shrink-0">
+                  <Megaphone className="w-4 h-4 sm:w-5 sm:h-5" />
                 </span>
-                <div>
-                  <h2 className="text-lg sm:text-xl font-black text-amber-200">
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-xl font-black text-amber-200 truncate">
                     {isMr ? '📢 ॲडमिन फ्लॅश पोस्ट व बुलेटिन बोर्ड' : '📢 Admin Flash Post & Bulletin Board'}
                   </h2>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-[10px] sm:text-xs text-slate-400 truncate">
                     {isMr
                       ? 'येथे पोस्ट केलेली घोषणा सर्व युजर्सना रिअल-टाइम फ्लॅश होईल.'
                       : 'Posts appear as live flash announcements to all users in real time.'}
@@ -502,136 +502,141 @@ export const AdminFlashBulletin: React.FC<AdminFlashBulletinProps> = ({
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsCreatorOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Existing Bulletins Management List */}
-            {activeBulletins.length > 0 && (
-              <div className="space-y-2.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-                  <span className="flex items-center gap-1.5 text-amber-400">
-                    <Layers className="w-4 h-4" />
-                    {isMr ? `विद्यमान फ्लॅश पोस्ट्स (${activeBulletins.length})` : `Existing Bulletins (${activeBulletins.length})`}
-                  </span>
-                  {editingBulletinId && (
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      className="text-xs text-amber-400 hover:underline font-semibold"
-                    >
-                      {isMr ? '+ नवीन पोस्ट तयार करा' : '+ Create New Post'}
-                    </button>
-                  )}
-                </div>
-
-                <div className="max-h-44 overflow-y-auto space-y-2 pr-1 divide-y divide-slate-800/60">
-                  {activeBulletins.map((b) => (
-                    <div
-                      key={b.id}
-                      className={`pt-2 first:pt-0 flex items-center justify-between gap-2 text-xs ${
-                        editingBulletinId === b.id ? 'bg-amber-500/10 p-2 rounded-lg' : ''
-                      }`}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                              b.isActive
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-slate-800 text-slate-400 border border-slate-700'
-                            }`}
-                          >
-                            {b.isActive ? (isMr ? 'सक्रिय (Live)' : 'Live') : (isMr ? 'बंद (Paused)' : 'Paused')}
-                          </span>
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-amber-300">
-                            {getMarketName(b.market)}
-                          </span>
-                          <span className="font-bold text-slate-200 truncate max-w-[200px] sm:max-w-[280px]">
-                            {b.title}
-                          </span>
-                        </div>
-                        <span className="text-[10px] text-slate-500 block pt-0.5">
-                          {formatRelativeTime(b.updatedAtMs, isMr)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1 shrink-0">
+            {/* Form wrapping body + sticky footer */}
+            <form onSubmit={handlePublish} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Form Body */}
+              <div className="p-3.5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+                {/* Existing Bulletins Management List */}
+                {activeBulletins.length > 0 && (
+                  <div className="space-y-2.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                      <span className="flex items-center gap-1.5 text-amber-400">
+                        <Layers className="w-4 h-4" />
+                        {isMr ? `विद्यमान फ्लॅश पोस्ट्स (${activeBulletins.length})` : `Existing Bulletins (${activeBulletins.length})`}
+                      </span>
+                      {editingBulletinId && (
                         <button
                           type="button"
-                          onClick={() => handleToggleActive(b.id, b.isActive)}
-                          className={`p-1.5 rounded transition-colors ${
-                            b.isActive
-                              ? 'text-emerald-400 hover:bg-emerald-500/20'
-                              : 'text-slate-400 hover:bg-slate-700'
-                          }`}
-                          title={b.isActive ? (isMr ? 'बंद करा' : 'Pause') : (isMr ? 'सक्रिय करा' : 'Activate')}
+                          onClick={resetForm}
+                          className="text-xs text-amber-400 hover:underline font-semibold"
                         >
-                          {b.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          {isMr ? '+ नवीन पोस्ट तयार करा' : '+ Create New Post'}
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => startEditBulletin(b)}
-                          className="p-1.5 text-amber-400 hover:bg-amber-500/20 rounded transition-colors"
-                          title={isMr ? 'संपादित करा' : 'Edit'}
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        {confirmDeleteId === b.id ? (
-                          <div className="flex items-center gap-1 bg-red-950 p-1 rounded border border-red-500/40">
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(b.id)}
-                              className="px-1.5 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-[10px] font-bold"
-                            >
-                              {isMr ? 'नक्की' : 'Confirm'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setConfirmDeleteId(null)}
-                              className="px-1 py-0.5 text-slate-400 text-[10px]"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => setConfirmDeleteId(b.id)}
-                            className="p-1.5 text-red-400 hover:bg-red-500/20 rounded transition-colors"
-                            title={isMr ? 'हटवा' : 'Delete'}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* Creator / Editor Form */}
-            <form onSubmit={handlePublish} className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
-                  {editingBulletinId
-                    ? isMr ? '✏️ पोस्ट संपादित करा' : '✏️ Edit Bulletin'
-                    : isMr ? '✍️ नवीन फ्लॅश पोस्ट तयार करा' : '✍️ Create New Flash Post'}
-                </span>
-                {editingBulletinId && (
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="text-xs text-slate-400 hover:text-white"
-                  >
-                    {isMr ? 'रद्द करा (Cancel)' : 'Cancel'}
-                  </button>
+                    <div className="max-h-44 overflow-y-auto space-y-2 pr-1 divide-y divide-slate-800/60">
+                      {activeBulletins.map((b) => (
+                        <div
+                          key={b.id}
+                          className={`pt-2 first:pt-0 flex items-center justify-between gap-2 text-xs ${
+                            editingBulletinId === b.id ? 'bg-amber-500/10 p-2 rounded-lg' : ''
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  b.isActive
+                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                                }`}
+                              >
+                                {b.isActive ? (isMr ? 'सक्रिय (Live)' : 'Live') : (isMr ? 'बंद (Paused)' : 'Paused')}
+                              </span>
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-amber-300">
+                                {getMarketName(b.market)}
+                              </span>
+                              <span className="font-bold text-slate-200 truncate max-w-[200px] sm:max-w-[280px]">
+                                {b.title}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-slate-500 block pt-0.5">
+                              {formatRelativeTime(b.updatedAtMs, isMr)}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleActive(b.id, b.isActive)}
+                              className={`p-1.5 rounded transition-colors ${
+                                b.isActive
+                                  ? 'text-emerald-400 hover:bg-emerald-500/20'
+                                  : 'text-slate-400 hover:bg-slate-700'
+                              }`}
+                              title={b.isActive ? (isMr ? 'बंद करा' : 'Pause') : (isMr ? 'सक्रिय करा' : 'Activate')}
+                            >
+                              {b.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => startEditBulletin(b)}
+                              className="p-1.5 text-amber-400 hover:bg-amber-500/20 rounded transition-colors"
+                              title={isMr ? 'संपादित करा' : 'Edit'}
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            {confirmDeleteId === b.id ? (
+                              <div className="flex items-center gap-1 bg-red-950 p-1 rounded border border-red-500/40">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDelete(b.id)}
+                                  className="px-1.5 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-[10px] font-bold"
+                                >
+                                  {isMr ? 'नक्की' : 'Confirm'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setConfirmDeleteId(null)}
+                                  className="px-1 py-0.5 text-slate-400 text-[10px]"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setConfirmDeleteId(b.id)}
+                                className="p-1.5 text-red-400 hover:bg-red-500/20 rounded transition-colors"
+                                title={isMr ? 'हटवा' : 'Delete'}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </div>
+
+                {/* Creator / Editor Fields */}
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                      {editingBulletinId
+                        ? isMr ? '✏️ पोस्ट संपादित करा' : '✏️ Edit Bulletin'
+                        : isMr ? '✍️ नवीन फ्लॅश पोस्ट तयार करा' : '✍️ Create New Flash Post'}
+                    </span>
+                    {editingBulletinId && (
+                      <button
+                        type="button"
+                        onClick={resetForm}
+                        className="text-xs text-slate-400 hover:text-white"
+                      >
+                        {isMr ? 'रद्द करा (Cancel)' : 'Cancel'}
+                      </button>
+                    )}
+                  </div>
 
               {/* Market Selector */}
               <div>
@@ -787,13 +792,15 @@ export const AdminFlashBulletin: React.FC<AdminFlashBulletinProps> = ({
                   <span>{statusMessage.text}</span>
                 </div>
               )}
+                </div>
+              </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-2">
+              {/* Sticky Action Footer */}
+              <div className="px-4 py-3 sm:px-6 sm:py-3.5 border-t border-slate-800 bg-slate-950/95 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsCreatorOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+                  className="px-4 py-2 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors cursor-pointer"
                 >
                   {isMr ? 'रद्द करा' : 'Cancel'}
                 </button>
@@ -801,14 +808,14 @@ export const AdminFlashBulletin: React.FC<AdminFlashBulletinProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 shadow-lg shadow-amber-500/25 transition-all disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 shadow-lg shadow-amber-500/25 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>
                     {isSubmitting
                       ? isMr ? 'पब्लिश होत आहे...' : 'Publishing...'
                       : editingBulletinId
-                      ? isMr ? 'बदल सेव्ह करा (Save Changes)' : 'Save Changes'
+                      ? isMr ? 'बदल सेव्ह करा' : 'Save Changes'
                       : isMr ? '🚀 लाईव्ह फ्लॅश पब्लिश करा' : '🚀 Publish Live Flash'}
                   </span>
                 </button>
