@@ -246,5 +246,11 @@ service cloud.firestore {
         allow write: if isAdmin() && isValidMarketId(marketId) && isValidId(weekId);
       }
     }
+
+    // 5. Admin Live Flash Bulletins (Public Read; Verified Admin Write)
+    match /bulletins/{bulletinId} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import { LiveAlertBar } from './components/LiveAlertBar';
+import { AdminFlashBulletin } from './components/AdminFlashBulletin';
 import { PredictorView } from './components/PredictorView';
 import { PatternScannerView } from './components/PatternScannerView';
 import { PersonalPassbookView } from './components/PersonalPassbookView';
@@ -211,6 +212,12 @@ export default function App() {
         market={market}
         history={history}
         onHistoryUpdated={handleHistoryUpdate}
+      />
+
+      {/* Admin Flash Bulletin / Real-Time Live Post */}
+      <AdminFlashBulletin
+        language={language}
+        market={market}
       />
 
       {/* Main Content Body */}

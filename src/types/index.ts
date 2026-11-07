@@ -138,6 +138,15 @@ export interface PredictionResult {
     combinedDirectJodis: string[];
     combinedNearbyJodis: string[];
   };
+  singleMasterJodi?: {
+    jodi: string;
+    openPana: string;
+    closePana: string;
+    confidence: number;
+    reasonMr: string;
+    reasonEn: string;
+    safetyCovers: string[];
+  };
 }
 
 export interface BacktestSummary {
@@ -197,5 +206,18 @@ export interface PassbookEvaluation {
   matchedPanas: string[];
   badgeTextMr: string;
   badgeTextEn: string;
+}
+
+export interface AdminBulletin {
+  id: string;
+  market: MarketType | 'all';
+  title: string;
+  message: string;
+  otcDigits?: number[];
+  jodis?: string[];
+  panas?: string[];
+  isActive: boolean;
+  createdAtMs: number;
+  updatedAtMs: number;
 }
 

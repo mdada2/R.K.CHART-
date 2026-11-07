@@ -1625,6 +1625,108 @@ export function generateSolidPredictions(
     jodiProbabilities[j] = calculateJodiProbability(j);
   });
 
+  // Calculate Single Master Strike Jodi (👑 एकमेव महा-जोडी)
+  let masterJodi = strongJodis[0] || '46';
+  let bestProb = jodiProbabilities[masterJodi]?.probability ?? 0;
+  for (const j of strongJodis) {
+    const p = jodiProbabilities[j]?.probability ?? 0;
+    if (p > bestProb) {
+      bestProb = p;
+      masterJodi = j;
+    }
+  }
+
+  const masterOpen = parseInt(masterJodi[0], 10);
+  const masterClose = parseInt(masterJodi[1], 10);
+
+  const findBestPana = (ank: number): string => {
+    const spEntry = singlePanas.find(p => p.ank === ank);
+    if (spEntry && spEntry.panas.length > 0) return spEntry.panas[0];
+    const dpEntry = doublePanas.find(p => p.ank === ank);
+    if (dpEntry && dpEntry.panas.length > 0) return dpEntry.panas[0];
+    return ALL_PANAS.singlePanas[ank]?.[0] || ALL_PANAS.doublePanas[ank]?.[0] || '123';
+  };
+
+  const masterOpenPana = findBestPana(masterOpen);
+  const masterClosePana = findBestPana(masterClose);
+
+  // Confidence clamped between 91% and 94%
+  let masterConfidence = 92;
+  if (bestProb >= 92) {
+    masterConfidence = 94;
+  } else if (bestProb >= 86) {
+    masterConfidence = 93;
+  } else if (bestProb >= 80) {
+    masterConfidence = 92;
+  } else {
+    masterConfidence = 91;
+  }
+
+  const dayNameMr = DAY_NAMES[targetDay]?.mr || 'वार';
+  const dayNameEn = DAY_NAMES[targetDay]?.en || 'Day';
+  let reasonMr = '';
+  let reasonEn = '';
+
+  const isChainActive = fDiag.verification.isChainActive;
+  const isFamily = sameDayFamily.includes(masterJodi);
+
+  if (isChainActive && isFamily) {
+    reasonMr = `${dayNameMr}च्या क्रॉस फरक, तिरपी लाईन व समान वार फॅमिली संगमावरून सिद्ध`;
+    reasonEn = `Derived from ${dayNameEn} cross-difference, diagonal chain & family confluence`;
+  } else if (isChainActive) {
+    reasonMr = `मागील जोडी ${prevJodi} चा क्रॉस फरक व तिरपी लाईन संगमावरून सिद्ध`;
+    reasonEn = `Derived from preceding pair ${prevJodi} cross-difference & diagonal confluence`;
+  } else if (isFamily) {
+    reasonMr = `मागील समान वाराची फॅमिली लाईन व मुख्य ५-सूत्री ओटीसी संगमावरून सिद्ध`;
+    reasonEn = `Derived from same-day family recurring line & primary OTC confluence`;
+  } else {
+    reasonMr = `मागील जोडी ${prevJodi} च्या क्रॉस बेरीज-फरक व ५-सूत्री मास्टर संगमावरून सिद्ध`;
+    reasonEn = `Derived from preceding pair ${prevJodi} sum-difference law & master consensus`;
+  }
+
+  // Generate 2 backup safety covers: palat/reverse jodi and cut/family jodi
+  const a = parseInt(masterJodi[0], 10);
+  const b = parseInt(masterJodi[1], 10);
+  const cutA = CUT_MAP[a];
+  const cutB = CUT_MAP[b];
+  const palat = `${b}${a}`;
+  const fullCut = `${cutA}${cutB}`;
+  const halfCut1 = `${a}${cutB}`;
+  const halfCut2 = `${cutA}${b}`;
+
+  const covers: string[] = [];
+  if (palat !== masterJodi) {
+    covers.push(palat);
+  }
+  if (fullCut !== masterJodi && !covers.includes(fullCut)) {
+    covers.push(fullCut);
+  }
+  if (covers.length < 2 && halfCut1 !== masterJodi && !covers.includes(halfCut1)) {
+    covers.push(halfCut1);
+  }
+  if (covers.length < 2 && halfCut2 !== masterJodi && !covers.includes(halfCut2)) {
+    covers.push(halfCut2);
+  }
+  if (covers.length < 2) {
+    for (const fj of getFamilyJodis(masterJodi)) {
+      if (fj !== masterJodi && !covers.includes(fj)) {
+        covers.push(fj);
+        if (covers.length >= 2) break;
+      }
+    }
+  }
+  const safetyCovers = covers.slice(0, 2);
+
+  const singleMasterJodi = {
+    jodi: masterJodi,
+    openPana: masterOpenPana,
+    closePana: masterClosePana,
+    confidence: masterConfidence,
+    reasonMr,
+    reasonEn,
+    safetyCovers,
+  };
+
   return {
     targetDay,
     targetWeek: latestWeek.week,
@@ -1653,6 +1755,7 @@ export function generateSolidPredictions(
       combinedDirectJodis: fDiag.directJodis,
       combinedNearbyJodis: fDiag.nearbyJodis,
     },
+    singleMasterJodi,
   };
 }
 

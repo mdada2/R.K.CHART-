@@ -19,11 +19,12 @@ import {
   OperationType,
   sanitizeFirestoreId,
 } from '../firebase';
-import { MarketType, PassbookEntry, WeekRecord } from '../types';
+import { MarketType, PassbookEntry, WeekRecord, AdminBulletin } from '../types';
 
 const ADMIN_EMAIL = 'secretaryilada1425@gmail.com';
 const LOCAL_PASSBOOK_KEY = 'ankganit_passbook_v1';
 const LOCAL_CHART_CACHE_PREFIX = 'ankganit_cloud_chart_v1_';
+const LOCAL_BULLETINS_KEY = 'ankganit_bulletins_cache';
 
 interface FirebaseContextValue {
   user: FirebaseUser | null;
@@ -36,12 +37,19 @@ interface FirebaseContextValue {
   cloudRajdhaniWeeks: Record<string, WeekRecord>;
   cloudManipurWeeks: Record<string, WeekRecord>;
   passbookEntries: PassbookEntry[];
+  activeBulletins: AdminBulletin[];
   signInWithGoogle: () => Promise<void>;
   signOutUser: () => Promise<void>;
   savePassbookEntry: (
     entry: Omit<PassbookEntry, 'id' | 'userId' | 'createdAtMs' | 'syncedToCloud'>
   ) => Promise<void>;
   deletePassbookEntry: (entryId: string) => Promise<void>;
+  publishBulletin: (
+    data: Omit<AdminBulletin, 'id' | 'createdAtMs' | 'updatedAtMs'>,
+    existingId?: string
+  ) => Promise<boolean>;
+  deleteBulletin: (bulletinId: string) => Promise<boolean>;
+  toggleBulletinActive: (bulletinId: string, isActive: boolean) => Promise<boolean>;
   syncWeekToCloud: (market: MarketType, weekRecord: WeekRecord, weekIndex: number) => Promise<boolean>;
   syncRecentChartToCloud: (market: MarketType, history: WeekRecord[], count?: number) => Promise<number>;
   syncAllMarketsToCloud: (
@@ -88,6 +96,23 @@ function saveCachedCloudWeeks(market: MarketType, map: Record<string, WeekRecord
   } catch {}
 }
 
+function loadCachedBulletins(): AdminBulletin[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_BULLETINS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCachedBulletins(bulletins: AdminBulletin[]) {
+  try {
+    localStorage.setItem(LOCAL_BULLETINS_KEY, JSON.stringify(bulletins));
+  } catch {}
+}
+
 export function mergeBaseAndCloudHistory(
   baseHistory: WeekRecord[],
   cloudWeeks: Record<string, WeekRecord>
@@ -125,6 +150,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [localEntries, setLocalEntries] = useState<PassbookEntry[]>(() => loadLocalPassbook());
   const [cloudEntries, setCloudEntries] = useState<PassbookEntry[]>([]);
+  const [activeBulletins, setActiveBulletins] = useState<AdminBulletin[]>(() => loadCachedBulletins());
 
   const isAdmin = Boolean(
     user && user.emailVerified && user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
@@ -368,6 +394,48 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return () => unsub();
   }, [authReady, user]);
 
+  // 5. Public Real-Time Bulletins Listener
+  useEffect(() => {
+    const bulletinsPath = 'bulletins';
+    const unsub = onSnapshot(
+      collection(db, 'bulletins'),
+      (snap) => {
+        const loaded: AdminBulletin[] = snap.docs.map((d) => {
+          const data = d.data();
+          const createdMs = data.createdAt?.toMillis
+            ? data.createdAt.toMillis()
+            : (typeof data.createdAtMs === 'number' ? data.createdAtMs : Date.now());
+          const updatedMs = data.updatedAt?.toMillis
+            ? data.updatedAt.toMillis()
+            : (typeof data.updatedAtMs === 'number' ? data.updatedAtMs : createdMs);
+          return {
+            id: data.id || d.id,
+            market: data.market || 'all',
+            title: data.title || '',
+            message: data.message || '',
+            otcDigits: Array.isArray(data.otcDigits) ? data.otcDigits : [],
+            jodis: Array.isArray(data.jodis) ? data.jodis : [],
+            panas: Array.isArray(data.panas) ? data.panas : [],
+            isActive: data.isActive !== false,
+            createdAtMs: createdMs,
+            updatedAtMs: updatedMs,
+          };
+        }).sort((a, b) => b.updatedAtMs - a.updatedAtMs);
+
+        setActiveBulletins(loaded);
+        saveCachedBulletins(loaded);
+      },
+      (err) => {
+        if (err.code === 'permission-denied') return;
+        try {
+          handleFirestoreError(err, OperationType.LIST, bulletinsPath);
+        } catch {}
+      }
+    );
+
+    return () => unsub();
+  }, []);
+
   // Migrate unsynced local entries into Firestore once signed in
   useEffect(() => {
     if (!authReady || !user || !user.emailVerified || localEntries.length === 0) return;
@@ -587,6 +655,97 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     [user, isAdmin, syncRecentChartToCloud]
   );
 
+  const publishBulletin = useCallback(
+    async (
+      data: Omit<AdminBulletin, 'id' | 'createdAtMs' | 'updatedAtMs'>,
+      existingId?: string
+    ): Promise<boolean> => {
+      if (!user || !isAdmin) return false;
+      const bulletinId = existingId
+        ? sanitizeFirestoreId(existingId)
+        : sanitizeFirestoreId(`bulletin_${Date.now()}`);
+      const docPath = `bulletins/${bulletinId}`;
+      try {
+        const cleanOtc = Array.isArray(data.otcDigits)
+          ? data.otcDigits.filter((n) => Number.isInteger(n) && n >= 0 && n <= 9).slice(0, 10)
+          : [];
+        const cleanJodis = Array.isArray(data.jodis)
+          ? data.jodis.map((j) => String(j).trim()).filter((j) => /^\d{2}$/.test(j)).slice(0, 20)
+          : [];
+        const cleanPanas = Array.isArray(data.panas)
+          ? data.panas.map((p) => String(p).trim()).filter((p) => /^\d{3}$/.test(p)).slice(0, 20)
+          : [];
+
+        await setDoc(
+          doc(db, 'bulletins', bulletinId),
+          {
+            id: bulletinId,
+            market: data.market || 'all',
+            title: (data.title || '').trim().slice(0, 200),
+            message: (data.message || '').trim().slice(0, 2000),
+            otcDigits: cleanOtc,
+            jodis: cleanJodis,
+            panas: cleanPanas,
+            isActive: data.isActive !== false,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+        return true;
+      } catch (err) {
+        try {
+          handleFirestoreError(err, OperationType.WRITE, docPath);
+        } catch {}
+        return false;
+      }
+    },
+    [user, isAdmin]
+  );
+
+  const deleteBulletin = useCallback(
+    async (bulletinId: string): Promise<boolean> => {
+      if (!user || !isAdmin) return false;
+      const safeId = sanitizeFirestoreId(bulletinId);
+      const docPath = `bulletins/${safeId}`;
+      try {
+        await deleteDoc(doc(db, 'bulletins', safeId));
+        return true;
+      } catch (err) {
+        try {
+          handleFirestoreError(err, OperationType.DELETE, docPath);
+        } catch {}
+        return false;
+      }
+    },
+    [user, isAdmin]
+  );
+
+  const toggleBulletinActive = useCallback(
+    async (bulletinId: string, isActive: boolean): Promise<boolean> => {
+      if (!user || !isAdmin) return false;
+      const safeId = sanitizeFirestoreId(bulletinId);
+      const docPath = `bulletins/${safeId}`;
+      try {
+        await setDoc(
+          doc(db, 'bulletins', safeId),
+          {
+            isActive,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+        return true;
+      } catch (err) {
+        try {
+          handleFirestoreError(err, OperationType.WRITE, docPath);
+        } catch {}
+        return false;
+      }
+    },
+    [user, isAdmin]
+  );
+
   const combinedEntries = useMemo(() => {
     if (user && user.emailVerified) {
       const cloudIds = new Set(cloudEntries.map((c) => c.id));
@@ -608,10 +767,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       cloudRajdhaniWeeks,
       cloudManipurWeeks,
       passbookEntries: combinedEntries,
+      activeBulletins,
       signInWithGoogle,
       signOutUser,
       savePassbookEntry,
       deletePassbookEntry,
+      publishBulletin,
+      deleteBulletin,
+      toggleBulletinActive,
       syncWeekToCloud,
       syncRecentChartToCloud,
       syncAllMarketsToCloud,
@@ -627,10 +790,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       cloudRajdhaniWeeks,
       cloudManipurWeeks,
       combinedEntries,
+      activeBulletins,
       signInWithGoogle,
       signOutUser,
       savePassbookEntry,
       deletePassbookEntry,
+      publishBulletin,
+      deleteBulletin,
+      toggleBulletinActive,
       syncWeekToCloud,
       syncRecentChartToCloud,
       syncAllMarketsToCloud,

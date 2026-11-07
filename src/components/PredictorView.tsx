@@ -17,6 +17,7 @@ import {
   Share2,
   Send,
   Award,
+  Crown,
   Image as ImageIcon
 } from 'lucide-react';
 import { PhotoCardModal } from './PhotoCardModal';
@@ -120,6 +121,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   );
   const [showDerivation, setShowDerivation] = useState(true);
   const [copiedJodi, setCopiedJodi] = useState<string | null>(null);
+  const [copiedMaster, setCopiedMaster] = useState<boolean>(false);
   const [copiedShareCard, setCopiedShareCard] = useState<boolean>(false);
   const [isPhotoCardOpen, setIsPhotoCardOpen] = useState<boolean>(false);
 
@@ -142,9 +144,42 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
 
   const marketLabelMr = currentMarketInfo.name.mr;
 
+  const handleMasterWhatsAppShare = () => {
+    if (!prediction.singleMasterJodi) return;
+    const master = prediction.singleMasterJodi;
+    const dayName = DAY_NAMES[selectedDay].mr;
+    const text = `👑 *${marketLabelMr} निकाल - आजची एकमेव महा-जोडी (Single Master Strike)* 👑\n\n` +
+      `📅 *वार:* ${dayName} (${activeWeekRecord?.week || ''})\n` +
+      `🎯 *एकमेव महा-जोडी:* [ *${master.jodi}* ]\n` +
+      `🔮 *फुल संगम:* ${master.openPana} - [ ${master.jodi} ] - ${master.closePana}\n` +
+      `⭐ *कॉन्फ्लुएन्स:* ${master.confidence}%\n` +
+      `🛡️ *सुरक्षित कव्हर:* ${master.safetyCovers.join(', ')}\n` +
+      `💡 *तर्क:* ${master.reasonMr}\n\n` +
+      `👉 *${marketLabelMr} अंक गणित अभ्यास ॲप*`;
+    
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.click();
+  };
+
+  const handleCopyMasterJodi = () => {
+    if (!prediction.singleMasterJodi) return;
+    const master = prediction.singleMasterJodi;
+    const text = `👑 ${marketLabelMr} एकमेव महा-जोडी: ${master.openPana} - [ ${master.jodi} ] - ${master.closePana} | सुरक्षित कव्हर: ${master.safetyCovers.join(', ')} (${master.confidence}% कॉन्फ्लुएन्स)`;
+    navigator.clipboard.writeText(text);
+    setCopiedMaster(true);
+    setTimeout(() => setCopiedMaster(false), 2000);
+  };
+
   const handleWhatsAppShare = () => {
     const dayName = DAY_NAMES[selectedDay].mr;
     const otcStr = prediction.primaryOTC.join(' - ');
+    const masterLine = prediction.singleMasterJodi
+      ? `👑 *एकमेव महा-जोडी:* ${prediction.singleMasterJodi.openPana} - [ *${prediction.singleMasterJodi.jodi}* ] - ${prediction.singleMasterJodi.closePana} (कव्हर: ${prediction.singleMasterJodi.safetyCovers.join(', ')}) [${prediction.singleMasterJodi.confidence}%]\n\n`
+      : '';
     const strongStr = prediction.strongJodis
       .map(j => `${j} (${prediction.jodiProbabilities?.[j]?.probability || 85}%)`)
       .join(', ');
@@ -153,6 +188,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
       .join(', ');
     const text = `🎰 *${marketLabelMr} निकाल & मजबूत ओटीसी अंदाज* 🎰\n\n` +
       `📅 *वार:* ${dayName} (${activeWeekRecord?.week || ''})\n` +
+      masterLine +
       `⭐ *मजबूत OTC (ओपन/क्लोज):* ${otcStr}\n` +
       `🎯 *पक्की जोडी (संभाव्यतेसह):* ${strongStr}\n` +
       `🛡️ *सपोर्ट जोडी:* ${supportStr}\n\n` +
@@ -170,6 +206,9 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
   const handleCopyShareCard = () => {
     const dayName = DAY_NAMES[selectedDay].mr;
     const otcStr = prediction.primaryOTC.join(' - ');
+    const masterLine = prediction.singleMasterJodi
+      ? `👑 एकमेव महा-जोडी: ${prediction.singleMasterJodi.openPana} - [ ${prediction.singleMasterJodi.jodi} ] - ${prediction.singleMasterJodi.closePana} (कव्हर: ${prediction.singleMasterJodi.safetyCovers.join(', ')})\n\n`
+      : '';
     const strongStr = prediction.strongJodis
       .map(j => `${j} (${prediction.jodiProbabilities?.[j]?.probability || 85}%)`)
       .join(', ');
@@ -178,6 +217,7 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
       .join(', ');
     const text = `🎰 ${marketLabelMr} निकाल & मजबूत ओटीसी अंदाज 🎰\n\n` +
       `📅 वार: ${dayName} (${activeWeekRecord?.week || ''})\n` +
+      masterLine +
       `⭐ मजबूत OTC: ${otcStr}\n` +
       `🎯 पक्की जोडी (संभाव्यतेसह): ${strongStr}\n` +
       `🛡️ सपोर्ट जोडी: ${supportStr}\n\n` +
@@ -700,6 +740,153 @@ export const PredictorView: React.FC<PredictorViewProps> = ({
                 {copiedShareCard ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-300" />}
                 <span>{copiedShareCard ? (isMr ? 'कॉपी झाले!' : 'Copied!') : (isMr ? 'अंदाज कॉपी करा' : 'Copy Card')}</span>
               </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* 👑 VIP GOLDEN CROWN CARD: आजची एकमेव महा-जोडी (Single Master Strike Jodi) */}
+      {prediction.singleMasterJodi && (() => {
+        const master = prediction.singleMasterJodi;
+        return (
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-amber-400/80 bg-gradient-to-br from-amber-950/50 via-slate-900 to-amber-950/40 p-4 sm:p-6 shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+            {/* Ambient Background Glows */}
+            <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Header: Golden Crown, Title & Confidence Meter */}
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-amber-500/25">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 shrink-0">
+                  <Crown className="w-6 h-6 fill-slate-950 text-slate-950" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 flex items-center gap-1 shadow-sm">
+                      <Sparkles className="w-3 h-3 fill-slate-950" />
+                      <span>VIP MASTER STRIKE</span>
+                    </span>
+                    <span className="text-[11px] font-bold text-amber-300/80 hidden sm:inline">
+                      {isMr ? DAY_NAMES[selectedDay].mr : DAY_NAMES[selectedDay].en} स्पेशल
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-xl font-black text-white flex items-center gap-2 mt-0.5 tracking-tight">
+                    <span>👑 {isMr ? 'आजची एकमेव महा-जोडी (Single Master Strike Jodi)' : 'Single Master Strike Jodi (आजची एकमेव महा-जोडी)'}</span>
+                  </h3>
+                </div>
+              </div>
+
+              {/* Confidence Meter Badge */}
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-400/50 text-amber-300 shadow-sm self-start sm:self-auto">
+                <span className="text-xs sm:text-sm font-extrabold font-mono flex items-center gap-1.5">
+                  <span className="text-amber-400">⭐</span>
+                  <span>{master.confidence}% {isMr ? 'मॅथमॅटिकल कॉन्फ्लुएन्स' : 'Mathematical Confluence'}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Sangam Breakdown & Big Bold Jodi */}
+            <div className="relative z-10 bg-slate-950/80 border border-amber-500/30 rounded-2xl p-4 sm:p-5 text-center my-4 shadow-inner">
+              <div className="text-[11px] font-bold text-amber-400/90 uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>{isMr ? 'फुल संगम रचना (Full Sangam Breakdown)' : 'Full Sangam Breakdown'}</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-6">
+                {/* Open Pana */}
+                <div className="flex flex-col items-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 min-w-[85px] sm:min-w-[105px] shadow-sm">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">
+                    {isMr ? 'ओपन पाना' : 'Open Pana'}
+                  </span>
+                  <span className="text-lg sm:text-2xl font-black font-mono text-amber-200 mt-0.5">
+                    {master.openPana}
+                  </span>
+                </div>
+
+                <span className="text-amber-400/70 font-bold text-xl sm:text-2xl">-</span>
+
+                {/* Big Master Jodi Display */}
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-yellow-300 rounded-2xl blur-sm opacity-50 group-hover:opacity-80 transition duration-300" />
+                  <div className="relative px-5 py-2.5 sm:px-8 sm:py-3 rounded-2xl bg-gradient-to-b from-amber-500/30 via-slate-900 to-amber-950/80 border-2 border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.35)] flex flex-col items-center">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-extrabold text-amber-300">
+                      {isMr ? '🎯 महा-जोडी' : '🎯 Master Strike'}
+                    </span>
+                    <span className="text-4xl sm:text-6xl font-black font-mono tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-100 via-amber-300 to-yellow-400 drop-shadow-[0_2px_12px_rgba(251,191,36,0.45)] my-0.5">
+                      [ {master.jodi} ]
+                    </span>
+                    <span className="text-[10px] text-amber-300/80 font-medium">
+                      {isMr ? 'सर्वोच्च संभाव्य स्ट्राइक' : 'Top Strike Jodi'}
+                    </span>
+                  </div>
+                </div>
+
+                <span className="text-amber-400/70 font-bold text-xl sm:text-2xl">-</span>
+
+                {/* Close Pana */}
+                <div className="flex flex-col items-center bg-slate-900/90 border border-amber-500/40 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 min-w-[85px] sm:min-w-[105px] shadow-sm">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">
+                    {isMr ? 'क्लोज पाना' : 'Close Pana'}
+                  </span>
+                  <span className="text-lg sm:text-2xl font-black font-mono text-amber-200 mt-0.5">
+                    {master.closePana}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Why This Jodi? (Confluence Reason) */}
+            <div className="relative z-10 p-3 sm:p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-2.5 text-xs sm:text-sm text-amber-100/90">
+              <BrainCircuit className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-amber-300 mr-1.5">
+                  {isMr ? 'हेच समीकरण का?' : 'Confluence Logic:'}
+                </span>
+                <span className="text-slate-200">{isMr ? master.reasonMr : master.reasonEn}</span>
+              </div>
+            </div>
+
+            {/* Footer: Safety Covers & Action Buttons */}
+            <div className="relative z-10 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-amber-500/20">
+              {/* Safety Covers */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{isMr ? 'सुरक्षित कव्हर बॅकअप:' : 'Safety Covers:'}</span>
+                </span>
+                {master.safetyCovers.map((coverJodi) => (
+                  <span
+                    key={coverJodi}
+                    className="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono font-bold text-xs sm:text-sm shadow-sm"
+                  >
+                    {coverJodi}
+                  </span>
+                ))}
+                <span className="text-[11px] text-slate-400 italic">
+                  ({isMr ? 'पलट व कट' : 'Reverse & Cut'})
+                </span>
+              </div>
+
+              {/* Action Buttons: Copy & WhatsApp */}
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={handleCopyMasterJodi}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950/80 hover:bg-slate-900 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/40 transition-all cursor-pointer shadow-sm hover:border-amber-400"
+                >
+                  {copiedMaster ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-amber-400" />}
+                  <span>{copiedMaster ? (isMr ? 'कॉपी झाले!' : 'Copied!') : (isMr ? 'महा-जोडी कॉपी' : 'Copy Strike')}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMasterWhatsAppShare}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-950/40 transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{isMr ? 'WhatsApp वर पाठवा' : 'WhatsApp Share'}</span>
+                </button>
+              </div>
             </div>
           </div>
         );
