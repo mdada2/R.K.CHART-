@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, Filter, Calendar, X, Eye, Info, Sparkles, Layers, Download, Grid, LayoutList, Table } from 'lucide-react';
 import { DayKey, Language, WeekRecord, MarketType, MARKETS } from '../types';
 import { 
@@ -169,11 +169,23 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
     }
   };
 
+  // Close inspector modal on Escape key
+  useEffect(() => {
+    if (!activeCellDetail) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveCellDetail(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeCellDetail]);
+
   // Vertical pana renderer for mobile classic chart
   const renderVerticalPana = (pana: string, colorClass: string) => {
     const digits = pana && pana.length === 3 ? pana.split('') : ['*', '*', '*'];
     return (
-      <div className={`flex flex-col items-center justify-center text-[8px] sm:text-[9.5px] font-bold font-mono leading-[1.05] shrink-0 select-none ${colorClass}`}>
+      <div className={`flex flex-col items-center justify-center text-[10.5px] sm:text-[12px] font-semibold font-mono leading-[1.03] sm:leading-[1.08] shrink-0 select-none ${colorClass}`}>
         {digits.map((d, i) => (
           <span key={i}>{d}</span>
         ))}
@@ -444,12 +456,12 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
                               >
                                 {isClosed ? (
                                   <div className="flex items-center justify-center px-0.5 sm:px-1 py-1 w-full h-full font-mono text-slate-400">
-                                    <span className="text-[11px] sm:text-[13px] font-bold">**</span>
+                                    <span className="text-[14px] sm:text-[18px] font-bold">**</span>
                                   </div>
                                 ) : isPending ? (
                                   <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
                                     {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
-                                    <span className="text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter text-slate-400 dark:text-slate-500">
+                                    <span className="text-[18px] sm:text-[24px] font-bold leading-none px-0.5 tracking-tight text-slate-400 dark:text-slate-500">
                                       **
                                     </span>
                                     {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
@@ -457,7 +469,7 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
                                 ) : isOpenOnly ? (
                                   <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
                                     {renderVerticalPana(cell.openPana, 'text-amber-500')}
-                                    <span className="text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter text-amber-500">
+                                    <span className="text-[18px] sm:text-[24px] font-bold leading-none px-0.5 tracking-tight text-amber-500">
                                       {cell.jodi.replace('*', '')}*
                                     </span>
                                     {renderVerticalPana('***', 'text-slate-400 dark:text-slate-500')}
@@ -466,7 +478,7 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
                                   <div className="flex items-center justify-between px-0.5 sm:px-1 py-1 w-full h-full font-mono">
                                     {renderVerticalPana(cell.openPana, isRed ? 'text-[#e50000]' : 'text-black dark:text-slate-100')}
                                     <span
-                                      className={`text-[13px] sm:text-[15px] font-black leading-none px-0.5 tracking-tighter ${
+                                      className={`text-[18px] sm:text-[24px] font-bold leading-none px-0.5 tracking-tight ${
                                         isRed ? 'text-[#e50000]' : 'text-black dark:text-white'
                                       }`}
                                     >
@@ -731,124 +743,137 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
 
       {/* CELL INSPECTOR MODAL */}
       {activeCellDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative space-y-4">
-            <button
-              onClick={() => setActiveCellDetail(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Modal Title */}
-            <div>
-              <div className="text-xs uppercase tracking-wider font-semibold text-amber-400">
-                {DAY_NAMES[activeCellDetail.dayKey][language]} · {activeCellDetail.week}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveCellDetail(null);
+          }}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full max-h-[88vh] flex flex-col shadow-2xl relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Sticky Header with prominent Close button */}
+            <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-800 bg-slate-950/95 flex items-center justify-between gap-3 shrink-0">
+              <div className="min-w-0">
+                <div className="text-[11px] uppercase tracking-wider font-semibold text-amber-400 truncate">
+                  {DAY_NAMES[activeCellDetail.dayKey][language]} · {activeCellDetail.week}
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2 truncate">
+                  <span>{marketInfo.name[language]} {isMr ? 'निकाल सविस्तर गणित' : 'Result Mathematical Breakdown'}</span>
+                </h3>
               </div>
-              <h3 className="text-xl font-bold text-white mt-1 flex items-center gap-2">
-                <span>{isMr ? 'कल्याण निकाल सविस्तर गणित' : 'Result Mathematical Breakdown'}</span>
-              </h3>
+              <button
+                type="button"
+                onClick={() => setActiveCellDetail(null)}
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer border border-slate-700 shrink-0"
+                title={isMr ? 'बंद करा' : 'Close'}
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            {/* Core Box: Pana - Jodi - Pana */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center justify-around text-center">
-              <div>
-                <div className="text-[11px] text-slate-400 mb-0.5">{isMr ? 'ओपन पाना' : 'Open Pana'}</div>
-                <div className="text-xl font-black font-mono text-slate-200">{activeCellDetail.openPana}</div>
-                <div className="text-[10px] text-emerald-400 font-mono mt-1">
-                  ∑ = {calculatePanaSum(activeCellDetail.openPana)} (अंक)
+            {/* Scrollable Body */}
+            <div className="p-3.5 sm:p-4 overflow-y-auto space-y-3 flex-1 text-slate-200">
+              {/* Core Box: Pana - Jodi - Pana */}
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 sm:p-3.5 flex items-center justify-around text-center">
+                <div>
+                  <div className="text-[10.5px] text-slate-400 mb-0.5">{isMr ? 'ओपन पाना' : 'Open Pana'}</div>
+                  <div className="text-lg sm:text-xl font-black font-mono text-slate-200">{activeCellDetail.openPana}</div>
+                  <div className="text-[10px] text-emerald-400 font-mono mt-0.5">
+                    ∑ = {calculatePanaSum(activeCellDetail.openPana)} (अंक)
+                  </div>
                 </div>
-              </div>
 
-              <div className="h-10 w-px bg-slate-800" />
+                <div className="h-10 w-px bg-slate-800" />
 
-              <div>
-                <div className="text-[11px] text-slate-400 mb-0.5">{isMr ? 'जोडी' : 'Jodi'}</div>
-                <div
-                  className={`text-3xl font-black font-mono ${
-                    isRedJodi(activeCellDetail.jodi) ? 'text-red-400' : 'text-amber-400'
-                  }`}
-                >
-                  {activeCellDetail.jodi}
-                </div>
-                <div className="text-[10px] font-semibold mt-1">
-                  {isRedJodi(activeCellDetail.jodi) ? (
-                    <span className="text-red-400">{isMr ? 'लाल जोडी' : 'Red Jodi'}</span>
-                  ) : (
-                    <span className="text-slate-400">{isMr ? 'रेग्युलर जोडी' : 'Standard Jodi'}</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="h-10 w-px bg-slate-800" />
-
-              <div>
-                <div className="text-[11px] text-slate-400 mb-0.5">{isMr ? 'क्लोज पाना' : 'Close Pana'}</div>
-                <div className="text-xl font-black font-mono text-slate-200">{activeCellDetail.closePana}</div>
-                <div className="text-[10px] text-emerald-400 font-mono mt-1">
-                  ∑ = {calculatePanaSum(activeCellDetail.closePana)} (अंक)
-                </div>
-              </div>
-            </div>
-
-            {/* Mathematical Properties */}
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl">
-                <span className="text-slate-400 block">{isMr ? 'जोडी बेरीज (Total):' : 'Jodi Sum Total:'}</span>
-                <span className="text-base font-bold font-mono text-white">
-                  {getJodiTotal(activeCellDetail.jodi)}
-                </span>
-              </div>
-              <div className="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl">
-                <span className="text-slate-400 block">{isMr ? 'जोडी फरक (Difference):' : 'Jodi Difference:'}</span>
-                <span className="text-base font-bold font-mono text-white">
-                  {getJodiDifference(activeCellDetail.jodi)}
-                </span>
-              </div>
-            </div>
-
-            {/* Cut Ank Table for this Jodi */}
-            <div className="bg-slate-950/70 border border-slate-800 p-3 rounded-xl text-xs space-y-1">
-              <span className="font-semibold text-amber-400 block">
-                {isMr ? 'कट अंक संबंध (Cut Ank Relationship):' : 'Cut Ank Relationship:'}
-              </span>
-              <div className="text-slate-300 flex items-center justify-between">
-                <span>
-                  ओपन {activeCellDetail.jodi[0]} चा कट: <strong className="text-white font-mono">{getCutAnk(parseInt(activeCellDetail.jodi[0], 10))}</strong>
-                </span>
-                <span>
-                  क्लोज {activeCellDetail.jodi[1]} चा कट: <strong className="text-white font-mono">{getCutAnk(parseInt(activeCellDetail.jodi[1], 10))}</strong>
-                </span>
-              </div>
-            </div>
-
-            {/* Family Jodis */}
-            <div className="bg-slate-950/70 border border-slate-800 p-3 rounded-xl text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-200">
-                  {isMr ? 'या जोडीची संपूर्ण फॅमिली (Family Jodis):' : 'Complete Family Pairs:'}
-                </span>
-                <span className="text-[10px] text-slate-400">
-                  {getFamilyJodis(activeCellDetail.jodi).length} {isMr ? 'जोड्या' : 'pairs'}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1.5 font-mono text-sm">
-                {getFamilyJodis(activeCellDetail.jodi).map(fj => (
-                  <span
-                    key={fj}
-                    className={`px-2 py-1 rounded-lg border font-bold ${
-                      fj === activeCellDetail.jodi
-                        ? 'bg-amber-500/20 border-amber-500 text-amber-300'
-                        : isRedJodi(fj)
-                        ? 'bg-red-950/40 border-red-500/40 text-red-300'
-                        : 'bg-slate-900 border-slate-800 text-slate-300'
+                <div>
+                  <div className="text-[10.5px] text-slate-400 mb-0.5">{isMr ? 'जोडी' : 'Jodi'}</div>
+                  <div
+                    className={`text-2xl sm:text-3xl font-black font-mono ${
+                      isRedJodi(activeCellDetail.jodi) ? 'text-red-400' : 'text-amber-400'
                     }`}
                   >
-                    {fj}
-                  </span>
-                ))}
+                    {activeCellDetail.jodi}
+                  </div>
+                  <div className="text-[10px] font-semibold mt-0.5">
+                    {isRedJodi(activeCellDetail.jodi) ? (
+                      <span className="text-red-400">{isMr ? 'लाल जोडी' : 'Red Jodi'}</span>
+                    ) : (
+                      <span className="text-slate-400">{isMr ? 'रेग्युलर जोडी' : 'Standard Jodi'}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="h-10 w-px bg-slate-800" />
+
+                <div>
+                  <div className="text-[10.5px] text-slate-400 mb-0.5">{isMr ? 'क्लोज पाना' : 'Close Pana'}</div>
+                  <div className="text-lg sm:text-xl font-black font-mono text-slate-200">{activeCellDetail.closePana}</div>
+                  <div className="text-[10px] text-emerald-400 font-mono mt-0.5">
+                    ∑ = {calculatePanaSum(activeCellDetail.closePana)} (अंक)
+                  </div>
+                </div>
               </div>
-            </div>
+
+              {/* Mathematical Properties */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl">
+                  <span className="text-slate-400 block text-[11px]">{isMr ? 'जोडी बेरीज (Total):' : 'Jodi Sum Total:'}</span>
+                  <span className="text-base font-bold font-mono text-white">
+                    {getJodiTotal(activeCellDetail.jodi)}
+                  </span>
+                </div>
+                <div className="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl">
+                  <span className="text-slate-400 block text-[11px]">{isMr ? 'जोडी फरक (Difference):' : 'Jodi Difference:'}</span>
+                  <span className="text-base font-bold font-mono text-white">
+                    {getJodiDifference(activeCellDetail.jodi)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Cut Ank Table for this Jodi */}
+              <div className="bg-slate-950/70 border border-slate-800 p-2.5 sm:p-3 rounded-xl text-xs space-y-1">
+                <span className="font-semibold text-amber-400 block text-[11px]">
+                  {isMr ? 'कट अंक संबंध (Cut Ank Relationship):' : 'Cut Ank Relationship:'}
+                </span>
+                <div className="text-slate-300 flex items-center justify-between text-[11px] sm:text-xs">
+                  <span>
+                    ओपन {activeCellDetail.jodi[0]} चा कट: <strong className="text-white font-mono">{getCutAnk(parseInt(activeCellDetail.jodi[0], 10))}</strong>
+                  </span>
+                  <span>
+                    क्लोज {activeCellDetail.jodi[1]} चा कट: <strong className="text-white font-mono">{getCutAnk(parseInt(activeCellDetail.jodi[1], 10))}</strong>
+                  </span>
+                </div>
+              </div>
+
+              {/* Family Jodis */}
+              <div className="bg-slate-950/70 border border-slate-800 p-2.5 sm:p-3 rounded-xl text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-slate-200 text-[11px]">
+                    {isMr ? 'या जोडीची संपूर्ण फॅमिली (Family Jodis):' : 'Complete Family Pairs:'}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    {getFamilyJodis(activeCellDetail.jodi).length} {isMr ? 'जोड्या' : 'pairs'}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1 font-mono text-xs sm:text-sm">
+                  {getFamilyJodis(activeCellDetail.jodi).map(fj => (
+                    <span
+                      key={fj}
+                      className={`px-2 py-0.5 rounded-lg border font-bold ${
+                        fj === activeCellDetail.jodi
+                          ? 'bg-amber-500/20 border-amber-500 text-amber-300'
+                          : isRedJodi(fj)
+                          ? 'bg-red-950/40 border-red-500/40 text-red-300'
+                          : 'bg-slate-900 border-slate-800 text-slate-300'
+                      }`}
+                    >
+                      {fj}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
             {/* Line & Trick Analysis Section (खेळ कसा झाला?) */}
             {(() => {
@@ -1017,12 +1042,19 @@ export const ChartExplorer: React.FC<ChartExplorerProps> = ({
               );
             })()}
 
-            <div className="text-right pt-2">
+            </div>
+
+            {/* Sticky Footer with Cancel / Close Button */}
+            <div className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-950/95 border-t border-slate-800 flex items-center justify-between gap-2 shrink-0">
+              <span className="text-[11px] text-slate-400 font-mono">
+                {DAY_NAMES[activeCellDetail.dayKey][language]} · {activeCellDetail.jodi}
+              </span>
               <button
+                type="button"
                 onClick={() => setActiveCellDetail(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl"
+                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md cursor-pointer transition-all active:scale-95"
               >
-                {isMr ? 'बंद करा' : 'Close'}
+                {isMr ? '✕ बंद करा (Close)' : '✕ Close'}
               </button>
             </div>
           </div>
